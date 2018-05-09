@@ -7,6 +7,8 @@
 class Event;
 class MoveEvent;
 class CollisionEvent;
+class DeathEvent;
+class BirthEvent;
 
 class GameObject :
 	public Updatable
@@ -48,11 +50,29 @@ public:
 	// handles events
 	virtual void onEvent(Event* e);
 
+	// These might be useful
+	// Maybe we'll have an instance to the object pool and it'll call onDeath then release..
+	virtual void destroy() 
+	{
+		onDeathEvent(nullptr);
+		
+
+		OutputDebugString(TEXT("this thing has been destroyed"));
+		_x = 0;
+		_y = 0;
+		updateBoundingRect();
+	}
+
+	// if returns true, it won't render or update or collide
+	virtual bool isActive() const {	return _is_active; }
+
 protected:
 
 	// Events
 	virtual void onMoveEvent(MoveEvent* e) {}
 	virtual void onCollisionEvent(CollisionEvent* e) {}
+	virtual void onDeathEvent(DeathEvent* ) { _is_active = false; }
+	virtual void onBirthEvent(BirthEvent* e) {}
 	
 
 	bool hasCollision(const RECTF_TYPE& rect1, const RECTF_TYPE& rect2) const;
@@ -64,5 +84,6 @@ protected:
 	bool _is_solid;
 
 	DynamicList<RECTF_TYPE> _fine_collision_boxes;
+	bool _is_active;
 };
 

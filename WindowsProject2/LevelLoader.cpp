@@ -10,7 +10,7 @@
 
 #include "Robot.h"
 #include "Slime.h"
-
+#include "SpriteSheetManager.h"
 #include "FPSCounter.h"
 #include "Camera.h"
 #include "HumanPossessor.h"
@@ -24,7 +24,8 @@ LevelLoader::LevelLoader() :
 	_game_loop(nullptr),
 	_render_thing(nullptr),
 	_hid_state(nullptr),
-	_sheets(8)
+	_sheets(8),
+	_obj_factory(_game_loop, _render_thing)
 {
 }
 
@@ -42,6 +43,12 @@ void LevelLoader::loadLevel()
 	assert(_game_loop);
 	assert(_render_thing);
 	assert(_hid_state);
+
+	// This is probably temporary....
+	// TODO: The constructor should likely just take the dep inj and give it so these don't have to be called
+	_obj_factory.setGameLoop(_game_loop);
+	_obj_factory.setRenderEngine(_render_thing);
+
 
 	if (0)
 	{
@@ -125,6 +132,8 @@ void LevelLoader::loadLevel()
 		_sheets.append(new SpriteSheet(image_handle, tile_width, tile_height, max_cols));
 	}// end of tiles
 
+
+
 	const std::vector<tmx::Layer::Ptr>& layers = map.getLayers();
 	for (int layer_i = 0; layer_i < layers.size(); layer_i++)
 	{
@@ -184,7 +193,7 @@ void LevelLoader::loadLevel()
 					float y = objects.at(i).getPosition().y;
 					
 					Possessor* poss = new HumanPossessor(_hid_state);
-					Robot *thing = new Robot(x, y, 32, 32);
+					Robot *thing = new Robot(x, y, 32, 32, &_obj_factory);
 
 					//objects.at(i).getTileID();
 					// TODO: use newly minted sprite manager
@@ -224,6 +233,30 @@ void LevelLoader::loadLevel()
 			}
 		}
 	}
+
+
+
+
+
+
+	/*
+	<tileset firstgid="42" name="projectile" tilewidth="32" tileheight="32" tilecount="1" columns="1">
+	<image source="../../../Sprites/bullet1.png" width="32" height="32"/>
+	<tile id="0">
+	<objectgroup draworder="index">
+	<object id="1" x="10" y="12.6667" width="11.6667" height="6"/>
+	</objectgroup>
+	</tile>
+	</tileset>
+	*/
+	// TODO: This is temp, move it somewhere better
+	_obj_factory.setSpriteForProjectile(_sheets.at(3)->createSprite(0, 0));
+	_obj_factory.setCollisionForProjectile(tile_collision_walls[41].front());
+
+
+
+
+
 
 	// Set up camera stuff
 	if (0)

@@ -17,7 +17,7 @@ public:
 	void addUpdatableObject(GameObject* updatable_object);
 
 private:
-	DynamicList<Updatable*> _updatables;
+	DynamicList<GameObject*> _updatables;
 	DynamicList<GameObject*> _collideables;
 };
 

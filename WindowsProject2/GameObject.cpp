@@ -8,7 +8,8 @@ GameObject::GameObject() :
 	_y(0),
 	_w(0),
 	_h(0),
-	_is_solid(false)
+	_is_solid(false),
+	_is_active(true)
 {
 	_bounding_rect.left   = 0;
 	_bounding_rect.right  = 0;
@@ -21,7 +22,8 @@ GameObject::GameObject(float x, float y, float width, float height) :
 	_y(y),
 	_w(width),
 	_h(height),
-	_is_solid(false)
+	_is_solid(false),
+	_is_active(true)
 {
 	updateBoundingRect();
 }

@@ -208,6 +208,9 @@ HRESULT RenderBullshit::OnRender()
 		{
 			for (int i = 0; i < _displayables[layer].count(); i++)
 			{
+				if (!_displayables[layer].operator[](i)->isActive())
+					continue;
+
 				switch (_displayables[layer].operator[](i)->getDrawType())
 				{
 				case Displayable::Rectangle:

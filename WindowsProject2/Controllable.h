@@ -12,6 +12,7 @@ public:
 	virtual void moveUp(__int64 dt) = 0;
 	virtual void moveRight(__int64 dt) = 0;
 	virtual void moveDown(__int64 dt) = 0;
+	virtual void firePrimary(__int64 dt) {}
 
 	virtual void setPossesor(Possessor* possessor) = 0;
 };

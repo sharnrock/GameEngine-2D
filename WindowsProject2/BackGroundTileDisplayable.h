@@ -15,7 +15,6 @@ public:
 	const Sprite& getSprite() const;
 	void          setSprite(const Sprite& sprite);
 
-
 private:
 	Sprite _sprite;
 };

@@ -32,5 +32,7 @@ void HumanPossessor::update(__int64 dt)
 		_controller->moveLeft(dt);
 	if (_input_devices->isPressed('D'))
 		_controller->moveRight(dt);
+	if (_input_devices->isPressed('F'))
+		_controller->firePrimary(dt);
 #endif
 }

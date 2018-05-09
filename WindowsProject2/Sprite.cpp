@@ -24,3 +24,11 @@ D2D1_RECT_F Sprite::getSourceRect() const
 		(float)bottom
 	); // portion of bitmap
 }
+
+
+//Sprite& Sprite::operator=(const Sprite& other)
+//{
+//	// TODO: finish if this is needed
+//	int _bm_hndl;
+//	int left, top, right, bottom;
+//}

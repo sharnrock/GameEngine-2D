@@ -1,4 +1,6 @@
 #pragma once
+
+// This interface can go away
 class Updatable
 {
 public:

@@ -12,6 +12,8 @@ public:
 	int getBitmapHandle() const { return _bm_hndl; }
 	D2D1_RECT_F getSourceRect() const;
 
+	//Sprite& operator=(const Sprite& other);
+
 private:
 	int _bm_hndl;
 	int left, top, right, bottom;

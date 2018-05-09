@@ -1,12 +1,13 @@
 #include "Robot.h"
 #include "Possessor.h"
 #include "CollisionEvent.h"
+#include "ObjectFactory.h"
 
-
-Robot::Robot(float x, float y, float w, float h) :
+Robot::Robot(float x, float y, float w, float h, ObjectFactory* obj_factory) :
 	DisplayableBitmap(x, y, w, h),
 	_possessor(nullptr),
-	speed_px_s(100)
+	speed_px_s(100),
+	_obj_factory(obj_factory)
 {
 }
 
@@ -36,6 +37,11 @@ void Robot::moveDown(__int64 dt)
 {
 	_y += speed_px_s * dt / 1E6f;
 	updateBoundingRect();
+}
+
+void Robot::firePrimary(__int64 dt)
+{
+	_obj_factory->createProjectile(_x+30.0f, _y, _x + 30, _y); // fires to the right
 }
 
 void Robot::setPossesor(Possessor* possessor)

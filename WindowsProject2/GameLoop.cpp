@@ -18,7 +18,8 @@ void GameLoop::update(__int64 delta_t_us)
 {
 	for (int i = 0; i < _updatables.count(); i++)
 	{
-		_updatables[i]->update(delta_t_us);
+		if (_updatables[i]->isActive())
+			_updatables[i]->update(delta_t_us);
 	}
 	updateCollisions(delta_t_us);
 }
@@ -49,12 +50,16 @@ void GameLoop::updateCollisions(__int64 delta_t_us)
 	for (int i = 0; i < _collideables.count(); i++)
 	{
 		GameObject* one = _collideables[i];
+		if (!one->isActive())
+			continue;
 		for (int y = 0; y < _collideables.count(); y++)
 		{
 			if (i == y)
 				continue;
 
 			GameObject* two = _collideables[y];
+			if (!two->isActive())
+				continue;
 			if (one->hasCoarseCollisionWith(*two) && one->hasFineCollisionWith(*two))
 			{
 				CollisionEvent event(two);
