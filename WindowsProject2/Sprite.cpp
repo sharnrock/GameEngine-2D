@@ -3,6 +3,7 @@
 
 
 Sprite::Sprite(int bm_handle, int left, int top, int right, int bottom) :
+	_is_null(false),
 	_bm_hndl(bm_handle),
 	left(left), 
 	top(top), 
@@ -17,18 +18,22 @@ Sprite::~Sprite()
 
 D2D1_RECT_F Sprite::getSourceRect() const
 {
-	return D2D1::RectF(
-		(float)left, 
-		(float)top, 
-		(float)right, 
-		(float)bottom
-	); // portion of bitmap
+	RECTF_TYPE result;
+
+	result.left   = left;
+	result.right  = right;
+	result.top    = top;
+	result.bottom = bottom;
+
+	return result;
 }
 
+float Sprite::getWidth() const
+{
+	return right - left;
+}
 
-//Sprite& Sprite::operator=(const Sprite& other)
-//{
-//	// TODO: finish if this is needed
-//	int _bm_hndl;
-//	int left, top, right, bottom;
-//}
+float Sprite::getHeight() const
+{
+	return bottom - top;
+}

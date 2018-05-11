@@ -3,12 +3,19 @@
 #include "DynamicList.h"
 #include "GMap.h"
 #include "ObjectFactory.h"
+#include "SpriteSheetManager.h"
 
 class GameLoop;
 class RenderBullshit;
 class HumanInputDeviceState;
 class SpriteSheet;
 class WallCollisions;
+
+namespace tmx
+{
+	class TileLayer;
+	class ObjectGroup;
+}
 
 class LevelLoader
 {
@@ -23,11 +30,13 @@ public:
 	void setHumanInputDeviceState(HumanInputDeviceState* hid_state) { _hid_state    = hid_state; }
 
 private:
+	void createTileLayer(tmx::TileLayer* tile_layer, int layer);
+	void createObjectLayer(tmx::ObjectGroup* obj_layer, int layer);
+
 	GameLoop*                  _game_loop;
 	RenderBullshit*            _render_thing;
 	HumanInputDeviceState*     _hid_state;
-	DynamicList<SpriteSheet*>  _sheets;
-	GMap<int, WallCollisions*> _wall_collisions;
-	ObjectFactory _obj_factory;
+	ObjectFactory              _obj_factory;
+	SpriteSheetManager         _sprite_manager;
 };
 

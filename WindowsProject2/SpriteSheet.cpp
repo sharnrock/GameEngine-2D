@@ -6,7 +6,9 @@ SpriteSheet::SpriteSheet(int image_handle, int tile_width, int tile_height, int 
 	_bm_hndl(image_handle),
 	_sprite_width(tile_width),
 	_sprite_height(tile_height),
-	_max_columns(col_count)
+	_max_columns(col_count),
+	_first_gid(0),
+	_last_gid(0)
 {
 }
 

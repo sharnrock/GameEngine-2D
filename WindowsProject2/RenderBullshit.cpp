@@ -54,7 +54,7 @@ void RenderBullshit::addDisplayableObject(Displayable* object, int layer)
 	{
 		_displayables.append( DynamicList<Displayable*>() );
 	}
-	_displayables[0].append(object);
+	_displayables[layer].append(object);
 }
 
 void RenderBullshit::clearDisplayables()
@@ -248,38 +248,12 @@ HRESULT RenderBullshit::OnRender()
 						// draw text options,
 						// dwrite measuring mode
 					);
-#if 0
-					void DrawText(
-						[in]        WCHAR                  *string,
-						UINT                   stringLength,
-						[in]        IDWriteTextFormat      *textFormat,
-						[ref] const D2D1_RECT_F            &layoutRect,
-						[in]        ID2D1Brush             *defaultForegroundBrush,
-						D2D1_DRAW_TEXT_OPTIONS options = D2D1_DRAW_TEXT_OPTIONS_NONE,
-						DWRITE_MEASURING_MODE  measuringMode = DWRITE_MEASURING_MODE_NATURAL
-					);
-#endif
 				}
 				break;
 				}
 			}
 		}
 
-
-
-
-
-		// temp
-#if 0
-		m_pRenderTarget->DrawText(
-			TEXT("Hello"),
-			5,
-			m_pTextFormat,
-			D2D1::RectF(0, 0, 200, 200),
-			m_pLightSlateGrayBrush
-		);
-#endif
-		// temp
 
 
 

@@ -11,6 +11,7 @@ GString::~GString()
 
 GString::GString(const char* c_str)
 {
+	_is_null = false;
 	while (*c_str != '\0')
 	{
 		append(*c_str);
@@ -21,6 +22,7 @@ GString::GString(const char* c_str)
 
 GString::GString(const std::string& str)
 {
+	_is_null = false;
 	const char* c_str = str.c_str();
 	while (*c_str != '\0')
 	{
@@ -35,9 +37,17 @@ GString::GString(const GString& other)
 	*this = other;
 }
 
-GString::GString(const GString&& other)
+GString::GString(GString&& other)
 {
+	_array = other._array;
+	_count = other._count;
+	_size = other._size;
+	_is_null = other._is_null;
 
+	other._array = nullptr;
+	other._count = 0;
+	other._size = 0;
+	other._is_null = true;
 }
 
 GString& GString::operator=(const GString& other)
@@ -59,6 +69,28 @@ GString& GString::operator=(const GString& other)
 	*ths = '\0';
 
 	this->_count = other._count;
+	this->_is_null = other._is_null;
+	return *this;
+}
+
+GString& GString::operator=(GString&& other)
+{
+	if (this == &other)
+		return *this;
+
+	if (_array != nullptr)
+		delete[] _array;
+
+	_array = other._array;
+	_count = other._count;
+	_size = other._size;
+	_is_null = other._is_null;
+
+	other._array = nullptr;
+	other._count = 0;
+	other._size = 0;
+	other._is_null = true;
+
 	return *this;
 }
 

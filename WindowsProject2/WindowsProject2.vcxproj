@@ -182,6 +182,7 @@
     <ClInclude Include="LevelData.h" />
     <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="MoveEvent.h" />
+    <ClInclude Include="ObjectDefines.h" />
     <ClInclude Include="ObjectFactory.h" />
     <ClInclude Include="Possessor.h" />
     <ClInclude Include="Projectile.h" />
@@ -220,6 +221,7 @@
     <ClCompile Include="LevelData.cpp" />
     <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="MoveEvent.cpp" />
+    <ClCompile Include="ObjectDefines.cpp" />
     <ClCompile Include="ObjectFactory.cpp" />
     <ClCompile Include="Possessor.cpp" />
     <ClCompile Include="Projectile.cpp" />

@@ -35,7 +35,9 @@ source distribution.
 using namespace tmx;
 
 TileLayer::TileLayer(std::size_t tileCount)
-    : m_tileCount (tileCount)
+    : m_tileCount (tileCount),
+	_height(0), 
+	_width(0)
 {
     m_tiles.reserve(tileCount);
 }
@@ -54,6 +56,9 @@ void TileLayer::parse(const pugi::xml_node& node)
     setOpacity(node.attribute("opacity").as_float(1.f));
     setVisible(node.attribute("visible").as_bool(true));
     setOffset(node.attribute("offsetx").as_int(), node.attribute("offsety").as_int());
+
+	_height = node.attribute("height").as_float(0.0f);
+	_width = node.attribute("width").as_float(0.0f);
 
     for (const auto& child : node.children())
     {

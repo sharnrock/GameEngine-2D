@@ -27,6 +27,7 @@ void FPSCounter::update(__int64 dt)
 	if (dt_count > 500000)
 	{
 		content = GString::number(fps_count*2);
-		fps_count = dt_count = 0;
+		dt_count = 0;
+		fps_count = 0;
 	}
 }

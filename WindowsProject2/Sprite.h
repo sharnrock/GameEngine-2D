@@ -1,20 +1,24 @@
 #pragma once
 
-#include <d2d1.h>
+#include "Types.h"
 
 class Sprite
 {
 public:
-	Sprite() {}
+	Sprite() : _is_null(true) {}
 	Sprite(int bm_handle, int left, int top, int right, int bottom);
 	~Sprite();
 
 	int getBitmapHandle() const { return _bm_hndl; }
-	D2D1_RECT_F getSourceRect() const;
+	RECTF_TYPE getSourceRect() const;
 
-	//Sprite& operator=(const Sprite& other);
+	bool isNull() const { return _is_null; }
+
+	float getWidth() const;
+	float getHeight() const;
 
 private:
+	bool _is_null;
 	int _bm_hndl;
 	int left, top, right, bottom;
 };

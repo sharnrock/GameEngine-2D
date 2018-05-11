@@ -68,6 +68,9 @@ namespace tmx
         */
         const std::vector<Tile>& getTiles() const { return m_tiles; }
 
+		float getHeight() const { return _height; }
+		float getWidth() const { return _width; } 
+
     private:
         std::vector<Tile> m_tiles;
         std::size_t m_tileCount;
@@ -77,6 +80,8 @@ namespace tmx
         void parseUnencoded(const pugi::xml_node&);
 
         void createTiles(const std::vector<std::uint32_t>&);
+
+		float _height, _width;
     };
 }
 
