@@ -24,7 +24,11 @@
 
 // TODO: again.. sort these out for what's not needed
 
+
 #include "comptr.h"
+
+// TODO: Will this break stuf or improve comptr?
+#include <wrl.h>
 
 
 #include <algorithm> 
@@ -45,6 +49,8 @@
 #include <Shobjidl.h>
 
 #include <string>
+
+
 
 
 #ifndef HINST_THISCOMPONENT

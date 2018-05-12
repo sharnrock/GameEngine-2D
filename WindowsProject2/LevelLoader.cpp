@@ -20,13 +20,18 @@
 #include "SpriteSheet.h"
 #include "GString.h"
 
+// this might change..
+#include "AudioEngineFactory.h"
+#include "AudioEngine.h"
+
 #include <vector>
 
 LevelLoader::LevelLoader() :
 	_game_loop(nullptr),
 	_render_thing(nullptr),
 	_hid_state(nullptr),
-	_obj_factory(_game_loop, _render_thing, &_sprite_manager)
+	_obj_factory(_game_loop, _render_thing, &_sprite_manager),
+	_audio_engine(nullptr)
 {
 }
 
@@ -39,6 +44,13 @@ void LevelLoader::loadLevel()
 	assert(_game_loop);
 	assert(_render_thing);
 	assert(_hid_state);
+
+	_audio_engine = AudioEngineFactory::getAudioEngine();
+	_audio_engine->init();
+	_audio_engine->initMasterVoice();
+	
+	_audio_engine->loadTestSound();
+	//_audio_engine->playTestSound();
 
 	// This is probably temporary....
 	// TODO: The constructor should likely just take the dep inj and give it so these don't have to be called
@@ -97,7 +109,7 @@ void LevelLoader::createTileLayer(tmx::TileLayer* tile_layer, int layer)
 		if (!id)
 			continue;
 
-		int tile_count_in_width = tile_layer->getWidth();
+		int tile_count_in_width = (int)tile_layer->getWidth();
 
 		float x = (float)((int)(i % tile_count_in_width)) * _sprite_manager.getSpriteFromID(id).getWidth();
 		float y = (float)((int)(i / tile_count_in_width)) * _sprite_manager.getSpriteFromID(id).getHeight();

@@ -5,6 +5,10 @@
 #include "ObjectFactory.h"
 #include "SpriteSheetManager.h"
 
+
+//#include "AudioEngine.h"
+class AudioEngine;
+
 class GameLoop;
 class RenderBullshit;
 class HumanInputDeviceState;
@@ -38,5 +42,6 @@ private:
 	HumanInputDeviceState*     _hid_state;
 	ObjectFactory              _obj_factory;
 	SpriteSheetManager         _sprite_manager;
+	AudioEngine* _audio_engine;
 };
 
