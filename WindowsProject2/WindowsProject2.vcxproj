@@ -166,8 +166,7 @@
     <ClInclude Include="BirthEvent.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CollisionEvent.h" />
-    <ClInclude Include="comhelpers.h" />
-    <ClInclude Include="comptr.h" />
+    <ClInclude Include="ComHelpers.h" />
     <ClInclude Include="ControlEvent.h" />
     <ClInclude Include="DestroyEvent.h" />
     <ClInclude Include="Direct2DUtility.h" />
@@ -175,6 +174,7 @@
     <ClInclude Include="Event.h" />
     <ClInclude Include="FPSCounter.h" />
     <ClInclude Include="GameObject.h" />
+    <ClInclude Include="GMap.h" />
     <ClInclude Include="HPElapsedTimer.h" />
     <ClInclude Include="HumanInputDeviceState.h" />
     <ClInclude Include="HumanPossessor.h" />
@@ -191,7 +191,6 @@
     <ClInclude Include="SpriteSheet.h" />
     <ClInclude Include="SpriteSheetManager.h" />
     <ClInclude Include="Types.h" />
-    <ClInclude Include="WallCollisions.h" />
     <ClInclude Include="WindowsBullshit.h" />
     <ClInclude Include="GameLoop.h" />
     <ClInclude Include="RenderBullshit.h" />
@@ -225,7 +224,6 @@
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteSheet.cpp" />
     <ClCompile Include="SpriteSheetManager.cpp" />
-    <ClCompile Include="WallCollisions.cpp" />
     <ClCompile Include="WindowsBullshit.cpp" />
     <ClCompile Include="GameLoop.cpp" />
     <ClCompile Include="Main.cpp" />

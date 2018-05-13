@@ -26,9 +26,8 @@ int WindowsBullshit::exec()
 	{
 		if (SUCCEEDED(initialize()))
 			mainLoop();
-		CoUninitialize();
+		CoUninitialize(); 
 	}
-
 	return 0;
 }
 

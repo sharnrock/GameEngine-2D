@@ -3,7 +3,7 @@
 #include "AudioEngine.h"
 #include "XAudio2.h"
 #include "DynamicList.h"
-#include "GMap.h"
+#include <map>
 #include <memory>
 
 class AudioBullshit :
@@ -62,7 +62,7 @@ private:
 	DynamicList<IXAudio2SourceVoice*> _available_source_voices;
 	DynamicList<IXAudio2SourceVoice*> _in_use_source_voices;
 
-	GMap<UINT32, XAUDIO2_BUFFER*> _x2_buffers;
+	std::map<UINT32, XAUDIO2_BUFFER*> _x2_buffers;
 };
 // This might need to persist... I don't know.  I'm taking it out, but if the audio starts to 
 // buckle, put it back in to see if that fixes it

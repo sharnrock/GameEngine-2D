@@ -1,14 +1,10 @@
 #pragma once
 
 #include "Types.h"
+#include <string>
 
 class Camera;
 class Displayable;
-
-// TODO: sort out this forward declare
-#include <string>
-//namespace std {	class string; }
-
 
 
 class RenderEngine

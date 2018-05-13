@@ -89,10 +89,6 @@ void AudioBullshit::playSound(const GString& wav_file)
 
 
 	hr = pSourceVoice->Start(0);
-	//Sleep(100);
-	std::wstring msg(L"Trying to play string");
-	msg += wav_file.toWideString();
-	OutputDebugString(msg.c_str());
 	return;
 
 	// do this eventually somewhere..

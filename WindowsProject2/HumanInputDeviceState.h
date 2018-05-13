@@ -26,8 +26,6 @@ public:
 	{
 		_mouse_x = xPos;
 		_mouse_y = yPos;
-		//OutputDebugString(TEXT("x"));
-		//OutputDebugString(TEXT("y"));
 	}
 	
 	int mouseX() const { return _mouse_x; }
@@ -37,6 +35,6 @@ private:
 	int _mouse_x, _mouse_y;
 
 	// holds windows vkey as key and WM_KEYDOWN or WM_KEYUP as value
-	GMap<int,int> _key_states;
+	GMap<int, int> _key_states;
 };
 

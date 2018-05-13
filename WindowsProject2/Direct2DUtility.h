@@ -9,31 +9,12 @@
 // FITNESS FOR A PARTICULAR PURPOSE.                                                  
 //=================================================================================== 
 
-
-
-
-
-// This whole renderbullshit thing needs to be cleaned up and understood before
-// we get too far. 
-
-
-
-
-
-
-
-// TODO: again.. sort these out for what's not needed
-
-
-#include "comptr.h"
-
-// TODO: Will this break stuf or improve comptr?
-#include <wrl.h>
-
-
+#include <Shobjidl.h>
 #include <algorithm> 
-#include <d2d1.h> 
+#include <wrl/client.h>
+#include <d2d1.h>
 
+// all these from other page..
 #include <windows.h>
 
 #include <stdlib.h>
@@ -42,15 +23,14 @@
 #include <wchar.h>
 #include <math.h>
 
-#include <d2d1.h>
 #include <d2d1helper.h>
 #include <dwrite.h>
 #include <wincodec.h>
-#include <Shobjidl.h>
-
 #include <string>
 
-
+// these existed, but go throug anyway
+//#include "comhelpers.h"
+//#include <Wincodecsdk.h>
 
 
 #ifndef HINST_THISCOMPONENT
@@ -83,7 +63,7 @@ namespace Hilo
 			{
 				static D2D1_POINT_2F dpi = { 96, 96 }; // The default DPI 
 
-				ComPtr<ID2D1Factory> factory;
+				Microsoft::WRL::ComPtr<ID2D1Factory> factory;
 				if (SUCCEEDED(GetD2DFactory(&factory)))
 				{
 					factory->GetDesktopDpi(&dpi.x, &dpi.y);
@@ -97,7 +77,7 @@ namespace Hilo
 			static D2D1_POINT_2F GetMousePositionForCurrentDpi(float x, float y)
 			{
 				static D2D1_POINT_2F dpi = { 96, 96 }; // The default DPI 
-				ComPtr<ID2D1Factory> factory;
+				Microsoft::WRL::ComPtr<ID2D1Factory> factory;
 
 				if (SUCCEEDED(GetD2DFactory(&factory)))
 				{
@@ -110,7 +90,7 @@ namespace Hilo
 			static D2D1_POINT_2F GetPositionForCurrentDPI(POINTS location)
 			{
 				static D2D1_POINT_2F dpi = { 96, 96 }; // The default DPI 
-				ComPtr<ID2D1Factory> factory;
+				Microsoft::WRL::ComPtr<ID2D1Factory> factory;
 
 				if (SUCCEEDED(GetD2DFactory(&factory)))
 				{
@@ -123,7 +103,7 @@ namespace Hilo
 			static float ScaleValueForCurrentDPI(float value)
 			{
 				D2D1_POINT_2F dpi = { 96, 96 };
-				ComPtr<ID2D1Factory> factory;
+				Microsoft::WRL::ComPtr<ID2D1Factory> factory;
 
 				if (SUCCEEDED(GetD2DFactory(&factory)))
 				{

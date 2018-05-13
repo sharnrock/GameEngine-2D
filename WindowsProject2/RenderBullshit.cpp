@@ -5,7 +5,8 @@
 //#include "Types.h"
 //#include <wincodec.h>
 
-#include "comptr.h"
+//#include "comptr.h"
+#include <wrl/client.h>
 
 // probably temporary
 #include "Direct2DUtility.h"
@@ -47,6 +48,16 @@ RenderBullshit::~RenderBullshit()
 	SafeRelease(&m_pBlackBrush);
 	SafeRelease(&m_pCornflowerBlueBrush);
 }
+
+// Let's see if this keeps it from all crashing down
+//void RenderBullshit::releaseAll()
+//{
+//	SafeRelease(&m_pDirect2dFactory);
+//	SafeRelease(&m_pRenderTarget);
+//	SafeRelease(&m_pLightSlateGrayBrush);
+//	SafeRelease(&m_pBlackBrush);
+//	SafeRelease(&m_pCornflowerBlueBrush);
+//}
 
 void RenderBullshit::addDisplayableObject(Displayable* object, int layer)
 {

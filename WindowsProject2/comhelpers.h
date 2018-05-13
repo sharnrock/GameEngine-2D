@@ -9,13 +9,14 @@
 
 
 #pragma once
-#include "ComPtr.h"
+#include <wrl/client.h>
+#include <assert.h>
 
 template<class T>
-HRESULT AssignToOutputPointer(T** pp, const ComPtr<T> &p)
+HRESULT AssignToOutputPointer(T** pp, const Microsoft::WRL::ComPtr<T> &p)
 {
 	assert(pp);
-	*pp = p;
+	*pp = p.Get();
 	if (nullptr != (*pp))
 	{
 		(*pp)->AddRef();

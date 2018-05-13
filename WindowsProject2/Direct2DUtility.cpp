@@ -10,12 +10,39 @@
 //=================================================================================== 
 
 
-//#include "StdAfx.h" 
+
+
+
 #include "Direct2DUtility.h" 
 #include "comhelpers.h"
-#include <Wincodecsdk.h>
-#include <dwrite.h>
+#include <assert.h>
 
+// added from header
+// Go through these all
+//
+//#include <windows.h>
+//////
+//#include <stdlib.h>
+//#include <malloc.h>
+//#include <memory.h>
+//#include <wchar.h>
+//#include <math.h>
+////
+//#include <d2d1helper.h>
+//#include <dwrite.h>
+//#include <wincodec.h>
+//#include <string>
+
+// these existed, but go throug anyway
+#include <Wincodecsdk.h>
+#include <Objbase.h>
+
+
+
+
+
+
+using namespace Microsoft::WRL;
 using namespace Hilo::Direct2DHelpers;
 
 Direct2DUtility::Direct2DUtility()
@@ -46,7 +73,17 @@ HRESULT Direct2DUtility::LoadBitmapFromFile(
 	ComPtr<IWICBitmapScaler> scaler;
 	ComPtr<IWICImagingFactory> wicFactory;
 
-	hr = GetWICFactory(&wicFactory);
+	// old way
+	//hr = GetWICFactory(&wicFactory);
+
+	// new way
+	hr = CoCreateInstance(
+		CLSID_WICImagingFactory,
+		nullptr,
+		CLSCTX_INPROC_SERVER,
+		IID_PPV_ARGS(&wicFactory));
+	// end new way
+
 	if (SUCCEEDED(hr))
 	{
 		hr = wicFactory->CreateDecoderFromFilename(
@@ -95,7 +132,7 @@ HRESULT Direct2DUtility::LoadBitmapFromFile(
 				if (SUCCEEDED(hr))
 				{
 					hr = scaler->Initialize(
-						bitmapSource,
+						bitmapSource.Get(),
 						destinationWidth,
 						destinationHeight,
 						WICBitmapInterpolationModeCubic);
@@ -103,7 +140,7 @@ HRESULT Direct2DUtility::LoadBitmapFromFile(
 				if (SUCCEEDED(hr))
 				{
 					hr = converter->Initialize(
-						scaler,
+						scaler.Get(),
 						GUID_WICPixelFormat32bppPBGRA,
 						WICBitmapDitherTypeNone,
 						nullptr,
@@ -115,7 +152,7 @@ HRESULT Direct2DUtility::LoadBitmapFromFile(
 		else // Don't scale the image. 
 		{
 			hr = converter->Initialize(
-				bitmapSource,
+				bitmapSource.Get(),
 				GUID_WICPixelFormat32bppPBGRA,
 				WICBitmapDitherTypeNone,
 				nullptr,
@@ -128,10 +165,12 @@ HRESULT Direct2DUtility::LoadBitmapFromFile(
 	{
 		// Create a Direct2D bitmap from the WIC bitmap. 
 		hr = renderTarget->CreateBitmapFromWicBitmap(
-			converter,
+			converter.Get(),
 			nullptr,
 			bitmap);
 	}
+
+	wicFactory.Reset();
 
 	return hr;
 }
@@ -209,7 +248,7 @@ HRESULT Direct2DUtility::LoadBitmapFromResource(
 	{
 		// Create a decoder for the stream. 
 		hr = wicFactory->CreateDecoderFromStream(
-			stream,
+			stream.Get(),
 			nullptr,
 			WICDecodeMetadataCacheOnLoad,
 			&decoder);
@@ -253,14 +292,14 @@ HRESULT Direct2DUtility::LoadBitmapFromResource(
 				if (SUCCEEDED(hr))
 				{
 					hr = scaler->Initialize(
-						bitmapSource,
+						bitmapSource.Get(),
 						destinationWidth,
 						destinationHeight,
 						WICBitmapInterpolationModeCubic);
 					if (SUCCEEDED(hr))
 					{
 						hr = formatConverter->Initialize(
-							scaler,
+							scaler.Get(),
 							GUID_WICPixelFormat32bppPBGRA,
 							WICBitmapDitherTypeNone,
 							nullptr,
@@ -273,7 +312,7 @@ HRESULT Direct2DUtility::LoadBitmapFromResource(
 		else
 		{
 			hr = formatConverter->Initialize(
-				bitmapSource,
+				bitmapSource.Get(),
 				GUID_WICPixelFormat32bppPBGRA,
 				WICBitmapDitherTypeNone,
 				nullptr,
@@ -286,7 +325,7 @@ HRESULT Direct2DUtility::LoadBitmapFromResource(
 	{
 		//create a Direct2D bitmap from the WIC bitmap. 
 		hr = renderTarget->CreateBitmapFromWicBitmap(
-			formatConverter,
+			formatConverter.Get(),
 			nullptr,
 			bitmap);
 	}
@@ -419,7 +458,7 @@ HRESULT Direct2DUtility::SaveBitmapToFile(IWICBitmap* updatedBitmap,
 	if (SUCCEEDED(hr))
 	{
 		// Create encoder to write to image file 
-		hr = encoder->Initialize(stream, WICBitmapEncoderNoCache);
+		hr = encoder->Initialize(stream.Get(), WICBitmapEncoderNoCache);
 	}
 
 	// Process each frame 
@@ -501,12 +540,12 @@ HRESULT Direct2DUtility::SaveBitmapToFile(IWICBitmap* updatedBitmap,
 		if (SUCCEEDED(hr) && formatsEqual)
 		{
 			//Copy metadata using metadata block reader/writer 
-			frameDecode->QueryInterface(&blockReader);
-			frameEncode->QueryInterface(&blockWriter);
+			frameDecode->QueryInterface(blockReader.GetAddressOf());
+			frameEncode->QueryInterface(blockWriter.GetAddressOf());
 
 			if (nullptr != blockReader && nullptr != blockWriter)
 			{
-				blockWriter->InitializeFromBlockReader(blockReader);
+				blockWriter->InitializeFromBlockReader(blockReader.Get());
 			}
 		}
 
@@ -520,7 +559,7 @@ HRESULT Direct2DUtility::SaveBitmapToFile(IWICBitmap* updatedBitmap,
 			else
 			{
 				// Copy existing image to output 
-				hr = frameEncode->WriteSource(static_cast<IWICBitmapSource*> (frameDecode), nullptr);
+				hr = frameEncode->WriteSource(static_cast<IWICBitmapSource*> (frameDecode.Get()), nullptr);
 			}
 		}
 
@@ -594,7 +633,7 @@ HRESULT Direct2DUtility::DecodeImageFromThumbCache(
 	HBITMAP hBitmap = nullptr;
 	if (SUCCEEDED(hr))
 	{
-		SIZE size = { thumbnailSize, thumbnailSize };
+		SIZE size = { (LONG)thumbnailSize, (LONG)thumbnailSize };
 		hr = imageFactory->GetImage(
 			size,
 			SIIGBF_BIGGERSIZEOK, // improves performance, since we'll need to resize anyway 
@@ -636,7 +675,7 @@ HRESULT Direct2DUtility::DecodeImageFromThumbCache(
 	if (SUCCEEDED(hr))
 	{
 		hr = converter->Initialize(
-			wicBitmap,
+			wicBitmap.Get(),
 			GUID_WICPixelFormat32bppPBGRA,
 			WICBitmapDitherTypeNone,
 			nullptr,
@@ -648,7 +687,7 @@ HRESULT Direct2DUtility::DecodeImageFromThumbCache(
 	{
 		// Create a D2D bitmap from the WIC bitmap 
 		hr = renderTarget->CreateBitmapFromWicBitmap(
-			converter,
+			converter.Get(),
 			nullptr,
 			bitmap);
 	}
@@ -673,7 +712,7 @@ HRESULT Direct2DUtility::GetD2DFactory(ID2D1Factory** factory)
 		hr = D2D1CreateFactory(
 			D2D1_FACTORY_TYPE_MULTI_THREADED,
 			options,
-			&m_pD2DFactory);
+			m_pD2DFactory.GetAddressOf());
 #else 
 		hr = D2D1CreateFactory(
 			D2D1_FACTORY_TYPE_MULTI_THREADED,
@@ -724,7 +763,7 @@ HRESULT Direct2DUtility::GetDWriteFactory(IDWriteFactory** factory)
 
 	if (nullptr == m_pDWriteFactory)
 	{
-		hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(m_pDWriteFactory), reinterpret_cast<IUnknown**>(&m_pDWriteFactory));
+		hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(m_pDWriteFactory), reinterpret_cast<IUnknown**>(m_pDWriteFactory.Get()));
 	}
 
 	if (SUCCEEDED(hr))

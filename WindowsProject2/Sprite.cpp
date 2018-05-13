@@ -20,20 +20,20 @@ D2D1_RECT_F Sprite::getSourceRect() const
 {
 	RECTF_TYPE result;
 
-	result.left   = left;
-	result.right  = right;
-	result.top    = top;
-	result.bottom = bottom;
+	result.left   = (float)left;
+	result.right  = (float)right;
+	result.top    = (float)top;
+	result.bottom = (float)bottom;
 
 	return result;
 }
 
 float Sprite::getWidth() const
 {
-	return right - left;
+	return (float)(right - left);
 }
 
 float Sprite::getHeight() const
 {
-	return bottom - top;
+	return (float)(bottom - top);
 }

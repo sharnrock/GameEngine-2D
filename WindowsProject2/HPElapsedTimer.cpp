@@ -1,6 +1,5 @@
 #include "HPElapsedTimer.h"
 
-
 HPElapsedTimer::HPElapsedTimer()
 {
 	Frequency.QuadPart = 0;

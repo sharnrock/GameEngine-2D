@@ -50,6 +50,7 @@ public:
 
 	RenderBullshit();
 	~RenderBullshit();
+	//void releaseAll();
 
 	HRESULT OnRender();
 	void    OnResize(UINT width, UINT height);

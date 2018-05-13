@@ -3,6 +3,7 @@
 
 
 
+
 // I think this will only work in 64-bit Windows
 class HPElapsedTimer
 {

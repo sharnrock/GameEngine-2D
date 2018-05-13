@@ -15,9 +15,6 @@ FPSCounter::FPSCounter(float x, float y, float w, float h) :
 	DisplayableText(x, y, w, h)
 {
 	content = "hello again";
-	if (content == GString("hello again"))
-		OutputDebugString(TEXT("It worked"));
-	OutputDebugString(TEXT("It didn't work"));
 }
 
 void FPSCounter::update(__int64 dt)
