@@ -1,24 +1,27 @@
 #pragma once
 
-//#include <Windows.h>
-
-//#include "C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include\comdecl.h"
-//#include "XAudio2.h"
-
-//#include "audio\comdecl.h"
-//#include "XAudio2.h"
 
 #include "AudioEngineGlobal.h"
+class GString;
+
+
 
 class DllExport AudioEngine
 {
 public:
-	AudioEngine();
 	virtual ~AudioEngine();
 
+	// Must be called after instantiation and before any other function calls
 	virtual HRESULT init() = 0;
-	virtual HRESULT initMasterVoice() = 0;
+
+	// These will probably go away
 	virtual void loadTestSound() = 0;
 	virtual void playTestSound() = 0;
-	void thing();
+
+	// Loads a sound file into memory for continual reuse
+	virtual void loadSoundFile(const GString&) = 0;
+	virtual void loadFilesInThisDir(const GString&) = 0;
+	// Just play a sound in general; could be background music or something
+	virtual void playSound(const GString& wav_file) = 0;
+
 };

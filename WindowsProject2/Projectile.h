@@ -2,6 +2,7 @@
 
 #include "Displayable.h"
 #include "Sprite.h"
+#include "GString.h"
 
 class Projectile :
 	public DisplayableBitmap
@@ -18,9 +19,12 @@ public:
 	const Sprite & getSprite() const;
 	void setSprite(const Sprite& sprite);
 
+	// placeholder until we can get better event system
+	void destroy() {}
+
 protected:
 	void onCollisionEvent(CollisionEvent* e);
-
+	void onBirthEvent(BirthEvent*);
 private:
 	void updateAngle();
 
@@ -33,6 +37,6 @@ private:
 	float _distance_travelled; 
 
 	Sprite _sprite;
-
+	GString _fire_sound;
 };
 

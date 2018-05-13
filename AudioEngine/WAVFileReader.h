@@ -18,7 +18,6 @@
 #include <stdint.h>
 #include <objbase.h>
 #include <memory>
-//#include "mmreg.h"
 
 
 namespace DirectX

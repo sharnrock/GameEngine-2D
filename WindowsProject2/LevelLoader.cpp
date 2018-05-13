@@ -20,6 +20,7 @@
 #include "SpriteSheet.h"
 #include "GString.h"
 
+#include "Locations.h"
 // this might change..
 #include "AudioEngineFactory.h"
 #include "AudioEngine.h"
@@ -30,7 +31,7 @@ LevelLoader::LevelLoader() :
 	_game_loop(nullptr),
 	_render_thing(nullptr),
 	_hid_state(nullptr),
-	_obj_factory(_game_loop, _render_thing, &_sprite_manager),
+	_obj_factory(_game_loop, _render_thing, &_sprite_manager, nullptr),
 	_audio_engine(nullptr)
 {
 }
@@ -47,16 +48,16 @@ void LevelLoader::loadLevel()
 
 	_audio_engine = AudioEngineFactory::getAudioEngine();
 	_audio_engine->init();
-	_audio_engine->initMasterVoice();
-	
 	_audio_engine->loadTestSound();
-	//_audio_engine->playTestSound();
+	_audio_engine->playTestSound();
+	// _audio_engine->loadFilesInThisDir(AUDIO_PATH); // doesn't do anything yet..
 
 	// This is probably temporary....
 	// TODO: The constructor should likely just take the dep inj and give it so these don't have to be called
 	_obj_factory.setGameLoop(_game_loop);
 	_obj_factory.setRenderEngine(_render_thing);
 	_obj_factory.setSpriteManager(&_sprite_manager);
+	_obj_factory.setAudioEngine(_audio_engine);
 
 	tmx::Map map;
 	if (!map.load("E:\\Keith\\Documents\\TheBigGame\\Mapping\\images\\map3.tmx"))

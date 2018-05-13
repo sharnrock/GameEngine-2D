@@ -1,6 +1,6 @@
-#include "GString.h"
-#include "Windows.h"
-#include <string>
+#include "stdafx.h"
+
+
 
 GString::~GString()
 {
@@ -18,6 +18,8 @@ GString::GString(const char* c_str)
 		++c_str;
 	}
 	append('\0');
+
+	prepareHash(); 
 }
 
 GString::GString(const std::string& str)
@@ -30,6 +32,8 @@ GString::GString(const std::string& str)
 		++c_str;
 	}
 	append('\0');
+
+	prepareHash();
 }
 
 GString::GString(const GString& other)
@@ -43,11 +47,13 @@ GString::GString(GString&& other)
 	_count = other._count;
 	_size = other._size;
 	_is_null = other._is_null;
+	_hash = other._hash;
 
 	other._array = nullptr;
 	other._count = 0;
 	other._size = 0;
 	other._is_null = true;
+	other._hash = 0;
 }
 
 GString& GString::operator=(const GString& other)
@@ -70,6 +76,7 @@ GString& GString::operator=(const GString& other)
 
 	this->_count = other._count;
 	this->_is_null = other._is_null;
+	this->_hash = other._hash;
 	return *this;
 }
 
@@ -85,16 +92,59 @@ GString& GString::operator=(GString&& other)
 	_count = other._count;
 	_size = other._size;
 	_is_null = other._is_null;
+	_hash = other._hash;
 
 	other._array = nullptr;
 	other._count = 0;
 	other._size = 0;
 	other._is_null = true;
+	other._hash = 0;
 
 	return *this;
 }
 
+UINT32 GString::toHash() const
+{
+	return _hash;
+}
+
+void GString::prepareHash()
+{
+	UINT32 starter = ~0U; // I don't know what this is supposed to be, but it'll do for now
+	_hash = hash::calculate_crc32c(starter, (const UINT8*)_array, (UINT32)_count);
+}
+
 bool GString::operator==(const GString& other) const
+{
+	return this->toHash() == other.toHash();
+}
+
+bool GString::operator!=(const GString& other) const
+{
+	return !(*this == other);
+}
+
+bool GString::operator<(const GString& other) const
+{
+	return this->toHash() < other.toHash();
+}
+
+bool GString::operator>(const GString& other) const
+{
+	return this->toHash() > other.toHash();
+}
+
+bool GString::operator>=(const GString& other) const
+{
+	return this->toHash() >= other.toHash();
+}
+
+bool GString::operator<=(const GString& other) const
+{
+	return this->toHash() <= other.toHash();
+}
+
+bool GString::hasSameString(const GString& other) const
 {
 	if (this->_count != other._count)
 		return false;

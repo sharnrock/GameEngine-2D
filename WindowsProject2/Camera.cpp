@@ -15,26 +15,30 @@ Camera::~Camera()
 
 void Camera::moveLeft(__int64 dt)
 {
+	float _x = X();
 	_x -= speed_px_s * dt / 1E6f;
-	updateBoundingRect();
+	setWorldCoordinates(_x, Y());
 }
 
 void Camera::moveUp(__int64 dt)
 {
+	float _y = Y();
 	_y -= speed_px_s * dt / 1E6f;
-	updateBoundingRect();
+	setWorldCoordinates(X(), _y);
 }
 
 void Camera::moveRight(__int64 dt)
 {
+	float _x = X();
 	_x += speed_px_s * dt / 1E6f;
-	updateBoundingRect();
+	setWorldCoordinates(_x, Y());
 }
 
 void Camera::moveDown(__int64 dt)
 {
+	float _y = Y();
 	_y += speed_px_s * dt / 1E6f;
-	updateBoundingRect();
+	setWorldCoordinates(X(), _y);
 }
 
 void Camera::setPossesor(Possessor* possessor)
@@ -47,16 +51,18 @@ void Camera::update(__int64 dt)
 { 
 	if (_focus_object)
 	{
-		float offset_x = _w/2;// use own rect
-		float offset_y = _h/2;
+		float offset_x = getWidth() /2;// use own rect
+		float offset_y = getHeight()/2;
 
 		
 		float _focus_object_x_offset = _focus_object->getWidth() / 2;
 		float _focus_object_y_offset = _focus_object->getHeight() / 2;
 
 		// offset so the thing is in middle of screen
+		float _x, _y;
 		_x = (_focus_object->X() + _focus_object_x_offset) - offset_x;
 		_y = (_focus_object->Y() + _focus_object_y_offset) - offset_y;
+		setWorldCoordinates(_x, _y);
 
 		// gotta offset the dude too
 	}

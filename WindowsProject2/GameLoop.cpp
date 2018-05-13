@@ -1,6 +1,4 @@
 #include "GameLoop.h"
-#include "Updatable.h"
-
 #include "GameObject.h"
 #include "CollisionEvent.h"
 

@@ -13,6 +13,7 @@ public:
 	void update(__int64 delta_t_us);
 
 	// This creates N^2 time... we'll fix this soon
+	// IT's probably best to create a collision engine portion that'll update separate
 	void updateCollisions(__int64 delta_t_us);
 	void addUpdatableObject(GameObject* updatable_object);
 

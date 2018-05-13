@@ -91,7 +91,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>DemoApp.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Keith\source\repos\WindowsProject2\EngineCore;..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -108,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Keith\source\repos\WindowsProject2\EngineCore;..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -128,7 +128,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>DemoApp.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Keith\source\repos\WindowsProject2\EngineCore;..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -148,7 +148,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Keith\source\repos\WindowsProject2\EngineCore;..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -161,27 +161,28 @@
   <ItemGroup>
     <ClInclude Include="AIPossessor.h" />
     <ClInclude Include="AnimatedSprite.h" />
+    <ClInclude Include="AnimationEvent.h" />
     <ClInclude Include="BackGroundTileDisplayable.h" />
+    <ClInclude Include="BirthEvent.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CollisionEvent.h" />
     <ClInclude Include="comhelpers.h" />
     <ClInclude Include="comptr.h" />
+    <ClInclude Include="ControlEvent.h" />
     <ClInclude Include="Controllable.h" />
+    <ClInclude Include="DestroyEvent.h" />
     <ClInclude Include="Direct2DUtility.h" />
     <ClInclude Include="Displayable.h" />
     <ClInclude Include="DisplayableThing.h" />
-    <ClInclude Include="DynamicList.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="FPSCounter.h" />
     <ClInclude Include="GameObject.h" />
-    <ClInclude Include="GMap.h" />
-    <ClInclude Include="GString.h" />
     <ClInclude Include="HPElapsedTimer.h" />
     <ClInclude Include="HumanInputDeviceState.h" />
     <ClInclude Include="HumanPossessor.h" />
     <ClInclude Include="LevelData.h" />
     <ClInclude Include="LevelLoader.h" />
-    <ClInclude Include="MoveEvent.h" />
+    <ClInclude Include="Locations.h" />
     <ClInclude Include="ObjectDefines.h" />
     <ClInclude Include="ObjectFactory.h" />
     <ClInclude Include="Possessor.h" />
@@ -193,7 +194,6 @@
     <ClInclude Include="SpriteSheet.h" />
     <ClInclude Include="SpriteSheetManager.h" />
     <ClInclude Include="Types.h" />
-    <ClInclude Include="Updatable.h" />
     <ClInclude Include="WallCollisions.h" />
     <ClInclude Include="WindowsBullshit.h" />
     <ClInclude Include="GameLoop.h" />
@@ -202,25 +202,25 @@
   <ItemGroup>
     <ClCompile Include="AIPossessor.cpp" />
     <ClCompile Include="AnimatedSprite.cpp" />
+    <ClCompile Include="AnimationEvent.cpp" />
     <ClCompile Include="BackGroundTileDisplayable.cpp" />
+    <ClCompile Include="BirthEvent.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionEvent.cpp" />
+    <ClCompile Include="ControlEvent.cpp" />
     <ClCompile Include="Controllable.cpp" />
+    <ClCompile Include="DestroyEvent.cpp" />
     <ClCompile Include="Direct2DUtility.cpp" />
     <ClCompile Include="Displayable.cpp" />
     <ClCompile Include="DisplayableThing.cpp" />
-    <ClCompile Include="DynamicList.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="FPSCounter.cpp" />
     <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="GMap.cpp" />
-    <ClCompile Include="GString.cpp" />
     <ClCompile Include="HPElapsedTimer.cpp" />
     <ClCompile Include="HumanInputDeviceState.cpp" />
     <ClCompile Include="HumanPossessor.cpp" />
     <ClCompile Include="LevelData.cpp" />
     <ClCompile Include="LevelLoader.cpp" />
-    <ClCompile Include="MoveEvent.cpp" />
     <ClCompile Include="ObjectDefines.cpp" />
     <ClCompile Include="ObjectFactory.cpp" />
     <ClCompile Include="Possessor.cpp" />
@@ -231,7 +231,6 @@
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteSheet.cpp" />
     <ClCompile Include="SpriteSheetManager.cpp" />
-    <ClCompile Include="Updatable.cpp" />
     <ClCompile Include="WallCollisions.cpp" />
     <ClCompile Include="WindowsBullshit.cpp" />
     <ClCompile Include="GameLoop.cpp" />
@@ -241,6 +240,9 @@
   <ItemGroup>
     <ProjectReference Include="..\AudioEngine\AudioEngine.vcxproj">
       <Project>{5e96e394-72c5-4582-9087-7f890e8c2571}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\EngineCore\EngineCore.vcxproj">
+      <Project>{9b92568a-e439-4b32-bee2-6e713a65a4ed}</Project>
     </ProjectReference>
     <ProjectReference Include="..\tmxlite\tmxlite.vcxproj">
       <Project>{0bc0c535-febb-4a83-8197-af74fa26e100}</Project>

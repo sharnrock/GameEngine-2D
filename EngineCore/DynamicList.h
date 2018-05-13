@@ -1,5 +1,5 @@
 #pragma once
-
+#include "EngineCoreGlobal.h"
 #include <assert.h>
 
 
@@ -7,10 +7,11 @@
 Will create an array on the heap that will keep track of item count
 */
 template <class T>
-class DynamicList
+class DllExport DynamicList
 {
 public:
 	// Allocate an array of this many elements on the heap
+	// Typical sizes are factors of 2:  2,4,8,16,256,2048, etc....
 	DynamicList(int prealloc_size = 1);
 	virtual ~DynamicList();
 
@@ -21,6 +22,9 @@ public:
 	DynamicList<T>& operator=(const DynamicList<T>& other);
 	DynamicList<T>& operator=(DynamicList<T>&& other);
 
+	// Will return a rerence to the thing and remove it from the list
+	T& popFront(); // not nearly as fast as removing from back
+	T& popBack();  // pretty dang fast, because nothing has to shift
 
 	// Size of allocated space
 	int size() const { return _size; }
@@ -28,7 +32,7 @@ public:
 	// Element count
 	int count() const { return _count; }
 	
-		// Get element reference
+	// Get element reference
 	T& operator[](int ndx);
 
 	// Returns true if contents within count are equal
@@ -143,6 +147,22 @@ DynamicList<T>& DynamicList<T>::operator=(DynamicList<T>&& other)
 	other._size = 0;
 
 	return *this;
+}
+
+template <class T>
+T& DynamicList<T>::popFront() 
+{
+	T& result = front();
+	removeAt(0);
+	return result;
+}
+
+template <class T>
+T& DynamicList<T>::popBack() 
+{
+	T& result = back();
+	--_count;
+	return result;
 }
 
 template <class T>

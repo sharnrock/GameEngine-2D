@@ -1,28 +1,40 @@
 #include "stdafx.h"
-//#include "AudioBullshit.h"
-//#include "WAVFileReader.h"
-//
-//
-//#include <xaudio2.h>
 
-//#include <Windows.h>
 
-using Microsoft::WRL::ComPtr;;
 
-// fwd declare
-HRESULT PlayWave(_In_ IXAudio2* pXaudio2, _In_z_ LPCWSTR szFilename);
+
+// I don't know exactly what this thing does.  Maybe I can get rid of it or understand it better later
 HRESULT FindMediaFileCch(_Out_writes_(cchDest) WCHAR* strDestPath, _In_ int cchDest, _In_z_ LPCWSTR strFilename);
 
+// temp globals
+// This guy has to stay around..
+std::unique_ptr<uint8_t[]> waveFile;
 
 AudioBullshit::AudioBullshit() :
 	pXAudio2(nullptr),
-	pMasterVoice(nullptr)
+	pMasterVoice(nullptr),
+	hBufferEndEvent(CreateEvent(NULL, FALSE, FALSE, NULL))
 {
 }
 
-
 AudioBullshit::~AudioBullshit()
 {
+	CloseHandle(hBufferEndEvent);
+	// Take care of these
+	/*IXAudio2* pXAudio2;
+	IXAudio2MasteringVoice* pMasterVoice;
+
+	DynamicList<XAUDIO2_BUFFER*> _x2_buffers;
+	DynamicList<IXAudio2SourceVoice*> _source_voices;
+	DynamicList< std::unique_ptr<uint8_t[]>* > _wav_file_data;*/
+	
+
+	//for (int i = 0; i < _wav_file_data.count(); i++)
+	//{
+	//	_wav_file_data[i]->release();
+	//	delete _wav_file_data[i];
+	//}
+
 	if (pMasterVoice)
 		pMasterVoice->DestroyVoice();
 	
@@ -36,13 +48,7 @@ HRESULT AudioBullshit::init()
 	HRESULT hr = S_OK;
 	if (FAILED(hr = XAudio2Create(&pXAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR)))
 		return hr;
-	return hr;
-}
 
-
-HRESULT AudioBullshit::initMasterVoice()
-{
-	HRESULT hr = S_OK;
 	if (FAILED(hr = pXAudio2->CreateMasteringVoice(&pMasterVoice)))
 		return hr;
 	return hr;
@@ -50,238 +56,113 @@ HRESULT AudioBullshit::initMasterVoice()
 
 void AudioBullshit::loadTestSound()
 {
-#if 1
-	//"E:\\Keith\\Documents\\TheBigGame\\Mapping\\images\\map3.tmx"
-
-	//
-	// Play a PCM wave file
-	//
-	HRESULT hr = S_OK;
-
-	wprintf(L"Playing mono WAV PCM file...");
-	if (FAILED(hr = PlayWave(pXAudio2, L"C:\\Users\\Keith\\source\\XAudio2\\Media\\Wavs\\MusicMono.wav")))
-	{
-		wprintf(L"Failed creating source voice: %#X\n", hr);
-		//pXAudio2->Reset(); // TODO: what is reset?
-		CoUninitialize();
-		return;
-	}
-
-	//
-	// Play an ADPCM wave file
-	//
-	wprintf(L"\nPlaying mono WAV ADPCM file (loops twice)...");
-	if (FAILED(hr = PlayWave(pXAudio2, L"C:\\Users\\Keith\\source\\XAudio2\\Media\\Wavs\\MusicMono_adpcm.wav")))
-	{
-		wprintf(L"Failed creating source voice: %#X\n", hr);
-		//pXAudio2->Reset();
-		CoUninitialize();
-		return;
-	}
-
-	//
-	// Play a 5.1 PCM wave extensible file
-	//
-	wprintf(L"\nPlaying 5.1 WAV PCM file...");
-	if (FAILED(hr = PlayWave(pXAudio2, L"C:\\Users\\Keith\\source\\XAudio2\\Media\\Wavs\\MusicSurround.wav")))
-	{
-		wprintf(L"Failed creating source voice: %#X\n", hr);
-		//pXAudio2->Reset();
-		CoUninitialize();
-		return;
-	}
-
-#if (_WIN32_WINNT < 0x0602 /*_WIN32_WINNT_WIN8*/) || (_WIN32_WINNT >= 0x0A00 /*_WIN32_WINNT_WIN10*/ )
-
-	//
-	// Play a mono xWMA wave file
-	//
-
-	wprintf(L"\nPlaying mono xWMA file...");
-	if (FAILED(hr = PlayWave(pXAudio2, L"C:\\Users\\Keith\\source\\XAudio2\\Media\\Wavs\\MusicMono_xwma.wav")))
-	{
-		wprintf(L"Failed creating source voice: %#X\n", hr);
-		//pXAudio2->Reset();
-		CoUninitialize();
-		return;
-	}
-
-	//
-	// Play a 5.1 xWMA wave file
-	//
-
-	wprintf(L"\nPlaying 5.1 xWMA file...");
-	if (FAILED(hr = PlayWave(pXAudio2, L"C:\\Users\\Keith\\source\\XAudio2\\Media\\Wavs\\MusicSurround_xwma.wav")))
-	{
-		wprintf(L"Failed creating source voice: %#X\n", hr);
-		//pXAudio2->Reset();
-		CoUninitialize();
-		return;
-	}
-
-#endif
-
-	//
-	// Cleanup XAudio2
-	//
-	wprintf(L"\nFinished playing\n");
-
-	// All XAudio2 interfaces are released when the engine is destroyed, but being tidy
-	pMasterVoice->DestroyVoice();
-	pMasterVoice = nullptr;
-	//pXAudio2->Reset();
-
-#if ( _WIN32_WINNT < 0x0602 /*_WIN32_WINNT_WIN8*/)
-	if (mXAudioDLL)
-		FreeLibrary(mXAudioDLL);
-#endif
-
-#endif
-
+	// this is all going away
+	loadSoundFile("C:\\Users\\Keith\\source\\repos\\WindowsProject2\\Assets\\Audio\\shoot.wav");
+	loadSoundFile("C:\\Users\\Keith\\source\\repos\\WindowsProject2\\Assets\\Audio\\jump.wav");
 }
 
 void AudioBullshit::playTestSound()
 {
-#if 1
-	//
-	// Play a PCM wave file
-	//
-	HRESULT hr = S_OK;
-
-	wprintf(L"Playing mono WAV PCM file...");
-	if (FAILED(hr = PlayWave(pXAudio2, L"C:\\Users\\Keith\\source\\XAudio2\\Media\\Wavs\\MusicMono.wav")))
-	{
-		wprintf(L"Failed creating source voice: %#X\n", hr);
-		//pXAudio2->Reset();
-		CoUninitialize();
-		return;
-	}
-
-	//
-	// Play an ADPCM wave file
-	//
-	wprintf(L"\nPlaying mono WAV ADPCM file (loops twice)...");
-	if (FAILED(hr = PlayWave(pXAudio2, L"C:\\Users\\Keith\\source\\XAudio2\\Media\\Wavs\\MusicMono_adpcm.wav")))
-	{
-		wprintf(L"Failed creating source voice: %#X\n", hr);
-		//pXAudio2->Reset();
-		CoUninitialize();
-		return;
-	}
-
-	//
-	// Play a 5.1 PCM wave extensible file
-	//
-	wprintf(L"\nPlaying 5.1 WAV PCM file...");
-	if (FAILED(hr = PlayWave(pXAudio2, L"C:\\Users\\Keith\\source\\XAudio2\\Media\\Wavs\\MusicSurround.wav")))
-	{
-		wprintf(L"Failed creating source voice: %#X\n", hr);
-		//pXAudio2->Reset();
-		CoUninitialize();
-		return;
-	}
-
-#if (_WIN32_WINNT < 0x0602 /*_WIN32_WINNT_WIN8*/) || (_WIN32_WINNT >= 0x0A00 /*_WIN32_WINNT_WIN10*/ )
-
-	//
-	// Play a mono xWMA wave file
-	//
-
-	wprintf(L"\nPlaying mono xWMA file...");
-	if (FAILED(hr = PlayWave(pXAudio2, L"C:\\Users\\Keith\\source\\XAudio2\\Media\\Wavs\\MusicMono_xwma.wav")))
-	{
-		wprintf(L"Failed creating source voice: %#X\n", hr);
-		//pXAudio2->Reset();
-		CoUninitialize();
-		return;
-	}
-
-	//
-	// Play a 5.1 xWMA wave file
-	//
-
-	wprintf(L"\nPlaying 5.1 xWMA file...");
-	if (FAILED(hr = PlayWave(pXAudio2, L"C:\\Users\\Keith\\source\\XAudio2\\Media\\Wavs\\MusicSurround_xwma.wav")))
-	{
-		wprintf(L"Failed creating source voice: %#X\n", hr);
-		//pXAudio2->Reset();
-		CoUninitialize();
-		return;
-	}
-
-#endif
-
-	//
-	// Cleanup XAudio2
-	//
-	wprintf(L"\nFinished playing\n");
-
-	// All XAudio2 interfaces are released when the engine is destroyed, but being tidy
-	pMasterVoice->DestroyVoice();
-	pMasterVoice = nullptr;
-	//pXAudio2->Reset();
-
-#if ( _WIN32_WINNT < 0x0602 /*_WIN32_WINNT_WIN8*/)
-	if (mXAudioDLL)
-		FreeLibrary(mXAudioDLL);
-#endif
-
-#endif
+	playSound("C:\\Users\\Keith\\source\\repos\\WindowsProject2\\Assets\\Audio\\jump.wav");
 }
 
-
-
-
-
-
-#if 1
-
-
-
-
-//--------------------------------------------------------------------------------------
-// Name: PlayWave
-// Desc: Plays a wave and blocks until the wave finishes playing
-//--------------------------------------------------------------------------------------
-_Use_decl_annotations_
-HRESULT PlayWave(IXAudio2* pXaudio2, LPCWSTR szFilename)
+void AudioBullshit::playSound(const GString& wav_file)
 {
-	//
-	// Locate the wave file
-	//
+	IXAudio2SourceVoice *pSourceVoice = getSourceVoice();
+
+	HRESULT hr = S_OK;
+
+
+	XAUDIO2_BUFFER *buffer_ptr = _x2_buffers[wav_file.toHash()];
+	XAUDIO2_BUFFER &buffer = *buffer_ptr;
+
+
+
+
+	// This part should be in play sound!!!!!!!!
+	if (FAILED(hr = pSourceVoice->SubmitSourceBuffer(&buffer)))
+	{
+		wprintf(L"Error %#X submitting source buffer\n", hr);
+		//pSourceVoice->DestroyVoice();
+		return;
+	}
+
+
+	hr = pSourceVoice->Start(0);
+	//Sleep(100);
+	std::wstring msg(L"Trying to play string");
+	msg += wav_file.toWideString();
+	OutputDebugString(msg.c_str());
+	return;
+
+	// do this eventually somewhere..
+	//pSourceVoice->DestroyVoice();
+
+
+
+
+
+
+
+}
+
+void AudioBullshit::loadSoundFile(const GString& wav_file)
+{
+	// TODO: yank out the source creation so it can object pool instead
+	// Keep the loading of buffer and wav_file in
+
+	// S1 find file
+	// S2 create voice - take this out and create object pool
+	// S3 create buffer
+	// S4 load buffer in to voice - Probably take this out and come up with more complicated system
+	// S5 call start to play it - Create something totally different to start playback
+	
 	WCHAR strFilePath[MAX_PATH];
-	HRESULT hr = FindMediaFileCch(strFilePath, MAX_PATH, szFilename);
+	HRESULT hr = FindMediaFileCch(strFilePath, MAX_PATH, wav_file.toWideString().c_str());
 	if (FAILED(hr))
 	{
-		wprintf(L"Failed to find media file: %s\n", szFilename);
-		return hr;
+		wprintf(L"Failed to find media file: %s\n", wav_file.toWideString().c_str());
+		return;
 	}
 
-	//
 	// Read in the wave file
-	//
-	std::unique_ptr<uint8_t[]> waveFile;
+	std::unique_ptr<uint8_t[]>* waveFile = new std::unique_ptr<uint8_t[]>();
 	DirectX::WAVData waveData;
-	if (FAILED(hr = DirectX::LoadWAVAudioFromFileEx(strFilePath, waveFile, waveData)))
+	if (FAILED(hr = DirectX::LoadWAVAudioFromFileEx(strFilePath, *waveFile, waveData)))
 	{
 		wprintf(L"Failed reading WAV file: %#X (%s)\n", hr, strFilePath);
-		return hr;
+		return;
 	}
+	//_wav_file_data = (std::unique_ptr<uint8_t[]>&&)waveFile;
+	//_wav_file_data.append(waveFile); 
+	setMasterAudioFormat(*waveData.wfx);
+	// This is pretty much the point where we can Stop..
+	// Let some other piece of the program take over the handling of source voices
+	// actually, we still need to create the buffer
 
-	//
-	// Play the wave using a XAudio2SourceVoice
-	//
+
 
 	// Create the source voice
-	IXAudio2SourceVoice* pSourceVoice;
-	if (FAILED(hr = pXaudio2->CreateSourceVoice(&pSourceVoice, waveData.wfx)))
+#if 0
+
+	IXAudio2SourceVoice *pSourceVoice = getSourceVoice();
+	if (FAILED(hr = this->pXAudio2->CreateSourceVoice(&pSourceVoice, waveData.wfx)))
 	{
 		wprintf(L"Error %#X creating source voice\n", hr);
-		return hr;
+		return;
 	}
+	_source_voices.append(pSourceVoice);
+#endif
+
 
 	// Submit the wave sample data using an XAUDIO2_BUFFER structure
-	XAUDIO2_BUFFER buffer = { 0 };
+	// Create a new instance of this thing, but turn it into an alias so I don't have to change a bunch of code
+	XAUDIO2_BUFFER *buffer_ptr = new XAUDIO2_BUFFER;
+	XAUDIO2_BUFFER &buffer = *buffer_ptr;
+	_x2_buffers[wav_file.toHash()] = buffer_ptr;
+	//_x2_buffers.append(buffer_ptr);
+
+	buffer = { 0 };
 	buffer.pAudioData = waveData.startAudio;
 	buffer.Flags = XAUDIO2_END_OF_STREAM;  // tell the source voice not to expect any data after this buffer
 	buffer.AudioBytes = waveData.audioBytes;
@@ -293,59 +174,98 @@ HRESULT PlayWave(IXAudio2* pXaudio2, LPCWSTR szFilename)
 		buffer.LoopCount = 1; // We'll just assume we play the loop twice
 	}
 
-#if (_WIN32_WINNT < 0x0602 /*_WIN32_WINNT_WIN8*/) || (_WIN32_WINNT >= 0x0A00 /*_WIN32_WINNT_WIN10*/ )
-	if (waveData.seek)
-	{
-		XAUDIO2_BUFFER_WMA xwmaBuffer = { 0 };
-		xwmaBuffer.pDecodedPacketCumulativeBytes = waveData.seek;
-		xwmaBuffer.PacketCount = waveData.seekCount;
-		if (FAILED(hr = pSourceVoice->SubmitSourceBuffer(&buffer, &xwmaBuffer)))
-		{
-			wprintf(L"Error %#X submitting source buffer (xWMA)\n", hr);
-			pSourceVoice->DestroyVoice();
-			return hr;
-		}
-	}
-#else
-	if (waveData.seek)
-	{
-		wprintf(L"This platform does not support xWMA or XMA2\n");
-		pSourceVoice->DestroyVoice();
-		return hr;
-	}
-#endif
-	else if (FAILED(hr = pSourceVoice->SubmitSourceBuffer(&buffer)))
-	{
-		wprintf(L"Error %#X submitting source buffer\n", hr);
-		pSourceVoice->DestroyVoice();
-		return hr;
-	}
+return;
 
-	hr = pSourceVoice->Start(0);
-
-	// Let the sound play
-	BOOL isRunning = TRUE;
-	while (SUCCEEDED(hr) && isRunning)
-	{
-		XAUDIO2_VOICE_STATE state;
-		pSourceVoice->GetState(&state);
-		isRunning = (state.BuffersQueued > 0) != 0;
-
-		// Wait till the escape key is pressed
-		if (GetAsyncKeyState(VK_ESCAPE))
-			break;
-
-		Sleep(10);
-	}
-
-	// Wait till the escape key is released
-	while (GetAsyncKeyState(VK_ESCAPE))
-		Sleep(10);
-
-	pSourceVoice->DestroyVoice();
-
-	return hr;
 }
+
+void AudioBullshit::loadFilesInThisDir(const GString& audio_dir)
+{
+	OutputDebugString(TEXT("AudioBullshit::loadFilesInThisDir: Not yet implemented"));
+	return;
+#if 0
+	WIN32_FIND_DATA ffd;
+	//LARGE_INTEGER filesize;
+	TCHAR szDir[MAX_PATH];
+	//size_t length_of_arg;
+	HANDLE hFind = INVALID_HANDLE_VALUE;
+	//DWORD dwError = 0;
+	FindFirstFile(szDir, &ffd);
+		//if (INVALID_HANDLE_VALUE == hFind)
+
+	do
+	{
+		if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+		{
+			_tprintf(TEXT("  %s   <DIR>\n"), ffd.cFileName);
+		}
+		else
+		{
+			filesize.LowPart = ffd.nFileSizeLow;
+			filesize.HighPart = ffd.nFileSizeHigh;
+			_tprintf(TEXT("  %s   %ld bytes\n"), ffd.cFileName, filesize.QuadPart);
+		}
+	} while (FindNextFile(hFind, &ffd) != 0);
+
+	std::wstring msg(L"Trying to load asset dir");
+	msg += audio_dir.toWideString();
+	OutputDebugString(msg.c_str());
+#endif
+
+}
+
+IXAudio2SourceVoice* AudioBullshit::getSourceVoice()
+{
+	HRESULT hr = S_OK;
+	// Create the source voice
+
+	
+	if (_available_source_voices.isEmpty())
+	{
+		// TODO: find a way to use the callbacks, probably going to have to create some command pattern type class that 
+		// takes in the object pool stuff and handles all that... 
+		// later...
+		
+		// we create it..
+		IXAudio2SourceVoice *pSourceVoice;
+		if (FAILED(hr = this->pXAudio2->CreateSourceVoice(&pSourceVoice, &_master_format))) // old one
+		//if (FAILED(hr = pXAudio2->CreateSourceVoice(&pSourceVoice, &_master_format,
+		//	0, XAUDIO2_DEFAULT_FREQ_RATIO, this, NULL, NULL)))
+		{
+			wprintf(L"Error %#X creating source voice\n", hr);
+			return nullptr;
+		}
+		_in_use_source_voices.append(pSourceVoice);
+		return pSourceVoice;
+	}
+	else
+	{
+		IXAudio2SourceVoice *pSourceVoice = _available_source_voices.popBack();
+		_in_use_source_voices.append(pSourceVoice);
+		return pSourceVoice;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //--------------------------------------------------------------------------------------
@@ -427,14 +347,4 @@ HRESULT FindMediaFileCch(WCHAR* strDestPath, int cchDest, LPCWSTR strFilename)
 }
 
 
-
-
-
-
-
-
-
-
-
-#endif
 

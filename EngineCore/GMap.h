@@ -1,8 +1,9 @@
 #pragma once
+#include "EngineCoreGlobal.h"
 #include <map>
 
 template <class Key, class Value>
-class GMap :
+class DllExport GMap :
 	public std::map<Key, Value>
 {
 public:

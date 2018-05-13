@@ -4,8 +4,11 @@ class Event
 public:
 	enum Type
 	{
-		Move,
-		Collision
+		Collision,
+		Birth,
+		Destroy,
+		Animation,
+		Control
 	};
 
 	Event();
@@ -13,4 +16,3 @@ public:
 
 	virtual Type getType() const = 0;
 };
-

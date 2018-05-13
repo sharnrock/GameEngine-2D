@@ -1,23 +1,26 @@
 #pragma once
 
-#include "Updatable.h"
 #include "Types.h"
 #include "DynamicList.h"
 
 class Event;
-class MoveEvent;
 class CollisionEvent;
-class DeathEvent;
 class BirthEvent;
+class DestroyEvent;
+class ControlEvent;
+class AnimationEvent;
 
-class GameObject :
-	public Updatable
+class AudioEngine;
+
+// Base class for just about everything in the game world
+class GameObject
 {
 public:
-	GameObject(float x, float y, float width, float height);
+	GameObject(float x, float y, float width, float height, AudioEngine* audio_engine = nullptr);
 	GameObject();
 	~GameObject();
 
+	// similar to step event
 	virtual void update(__int64 dt) {}
 
 	// X,Y marks top left of object
@@ -50,40 +53,46 @@ public:
 	// handles events
 	virtual void onEvent(Event* e);
 
-	// These might be useful
-	// Maybe we'll have an instance to the object pool and it'll call onDeath then release..
-	virtual void destroy() 
-	{
-		onDeathEvent(nullptr);
-		
-
-		OutputDebugString(TEXT("this thing has been destroyed"));
-		_x = 0;
-		_y = 0;
-		updateBoundingRect();
-	}
-
 	// if returns true, it won't render or update or collide
+	virtual void setActive(bool is_active = true) { _is_active = is_active; }
 	virtual bool isActive() const {	return _is_active; }
+
+	void setAudioEngine(AudioEngine* audio_engine) { _audio_engine = audio_engine; }
 
 protected:
 
 	// Events
-	virtual void onMoveEvent(MoveEvent* e) {}
-	virtual void onCollisionEvent(CollisionEvent* e) {}
-	virtual void onDeathEvent(DeathEvent* ) { _is_active = false; }
-	virtual void onBirthEvent(BirthEvent* e) {}
 	
+	// ran into something
+	virtual void onCollisionEvent(CollisionEvent*) {}
+
+	// the object has become active or instantiated 
+	virtual void onBirthEvent(BirthEvent*) {}
+
+	// time to put the object away..
+	virtual void onDestroyEvent(DestroyEvent*) {}
+
+	// the animation has started or finished or something
+	virtual void onAnimationEvent(AnimationEvent*) {}
+
+	// A control action has been performed; could have been keyboard or AI control..
+	virtual void onControlEvent(ControlEvent*) {}
+
 
 	bool hasCollision(const RECTF_TYPE& rect1, const RECTF_TYPE& rect2) const;
-
 	void updateBoundingRect();
-	float _x, _y; // these should probably be private so whenever they change update bounding box has to be called. no forgetting it
-	float _w, _h;
+	
 	RECTF_TYPE _bounding_rect;
 	bool _is_solid;
-
 	DynamicList<RECTF_TYPE> _fine_collision_boxes;
 	bool _is_active;
+
+//private: // will make these private later..
+	float _x, _y; // these should probably be private so whenever they change update bounding box has to be called. no forgetting it
+	float _w, _h;
+
+	AudioEngine* getAudioEngine() { return _audio_engine; }
+private:
+	AudioEngine* _audio_engine;
 };
 

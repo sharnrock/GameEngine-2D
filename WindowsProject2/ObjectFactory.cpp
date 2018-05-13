@@ -11,14 +11,16 @@
 #include "RenderEngine.h"
 #include "SpriteSheetManager.h"
 
+#include "BirthEvent.h"
 
 #include <assert.h>
 
-ObjectFactory::ObjectFactory(GameLoop* gloop, RenderEngine* rengine, SpriteSheetManager* sprite_manager) :
+ObjectFactory::ObjectFactory(GameLoop* gloop, RenderEngine* rengine, SpriteSheetManager* sprite_manager, AudioEngine* audio_engine) :
 	_game_loop(gloop),
 	_render_engine(rengine),
 	_sprite_manager(sprite_manager),
-	_objects(256)
+	_objects(256),
+	_audio_engine(audio_engine)
 {
 }
 
@@ -30,7 +32,7 @@ Projectile* ObjectFactory::createProjectile(float x, float y, float target_x, fl
 {
 	// Eventually this will just be grabbed from the object pool 
 	Projectile* proj = new Projectile(x, y, target_x, target_y);
-
+	proj->setAudioEngine(_audio_engine);
 	proj->setSprite(_sprite_manager->getSpriteFromID(42));
 	for (int i = 0; i < _sprite_manager->getHitBoxesFromID(42).count(); i++)
 		proj->addTinyCollisionBoxesForStage2Detect(_sprite_manager->getHitBoxesFromID(42).at(i));
@@ -39,6 +41,9 @@ Projectile* ObjectFactory::createProjectile(float x, float y, float target_x, fl
 
 	_game_loop->addUpdatableObject(proj);
 	_render_engine->addDisplayableObject(proj,1); 
+
+	BirthEvent event;
+	proj->onEvent(&event);
 
 	return proj;
 }

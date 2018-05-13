@@ -1,7 +1,10 @@
 #include "GameObject.h"
 #include "Event.h"
-#include "MoveEvent.h"
 #include "CollisionEvent.h"
+#include "ControlEvent.h"
+#include "AnimationEvent.h"
+#include "DestroyEvent.h"
+#include "BirthEvent.h"
 
 GameObject::GameObject() :
 	_x(0),
@@ -9,7 +12,8 @@ GameObject::GameObject() :
 	_w(0),
 	_h(0),
 	_is_solid(false),
-	_is_active(true)
+	_is_active(true),
+	_audio_engine(nullptr)
 {
 	_bounding_rect.left   = 0;
 	_bounding_rect.right  = 0;
@@ -17,13 +21,14 @@ GameObject::GameObject() :
 	_bounding_rect.bottom = 0;
 }
 
-GameObject::GameObject(float x, float y, float width, float height) :
+GameObject::GameObject(float x, float y, float width, float height, AudioEngine* audio_engine) :
 	_x(x),
 	_y(y),
 	_w(width),
 	_h(height),
 	_is_solid(false),
-	_is_active(true)
+	_is_active(true),
+	_audio_engine(audio_engine)
 {
 	updateBoundingRect();
 }
@@ -105,11 +110,20 @@ void GameObject::onEvent(Event* e)
 {
 	switch (e->getType())
 	{
-	case Event::Move:
-		onMoveEvent(static_cast<MoveEvent*>(e));
+	case Event::Control:
+		onControlEvent(static_cast<ControlEvent*>(e));
 		break;
 	case Event::Collision:
 		onCollisionEvent(static_cast<CollisionEvent*>(e));
+		break;
+	case Event::Animation:
+		onAnimationEvent(nullptr);
+		break;
+	case Event::Destroy:
+		onDestroyEvent(nullptr);
+		break;
+	case Event::Birth:
+		onBirthEvent(nullptr);
 		break;
 	}
 }

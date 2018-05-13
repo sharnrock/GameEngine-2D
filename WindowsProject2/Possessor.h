@@ -1,11 +1,9 @@
 #pragma once
 
-#include "Updatable.h"
 class Controllable;
 
 // base class for AI or keyboard input
-class Possessor :
-	public Updatable
+class Possessor 
 {
 public:
 	Possessor();
