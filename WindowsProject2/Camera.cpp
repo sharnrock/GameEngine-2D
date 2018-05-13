@@ -1,6 +1,6 @@
 #include "Camera.h"
 #include "Possessor.h"
-
+#include "ControlEvent.h"
 
 
 Camera::Camera() :
@@ -71,4 +71,23 @@ void Camera::update(__int64 dt)
 		_possessor->update(dt);
 	}
 	// or nothing will happen...
+}
+
+void Camera::onControlEvent(ControlEvent* e)
+{
+	switch (e->getControl())
+	{
+	case ControlEvent::MoveDown:
+		moveDown(e->getDt());
+		break;
+	case ControlEvent::MoveUp:
+		moveUp(e->getDt());
+		break;
+	case ControlEvent::MoveLeft:
+		moveLeft(e->getDt());
+		break;
+	case ControlEvent::MoveRight:
+		moveRight(e->getDt());
+		break;
+	}
 }

@@ -11,7 +11,7 @@ public:
 	CollisionEvent(GameObject* collider);
 	~CollisionEvent();
 
-	Event::Type       getType()     const { return Event::Collision; }
+	Event::Type getType() const { return Event::Collision; }
 	GameObject* getCollider() { return _collider; }
 
 private:

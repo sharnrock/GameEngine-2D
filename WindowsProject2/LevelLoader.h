@@ -1,14 +1,11 @@
 #pragma once
 
-#include "DynamicList.h"
-#include "GMap.h"
+//#include "DynamicList.h"
+//#include "GMap.h"
 #include "ObjectFactory.h"
 #include "SpriteSheetManager.h"
 
-
-//#include "AudioEngine.h"
 class AudioEngine;
-
 class GameLoop;
 class RenderBullshit;
 class HumanInputDeviceState;
@@ -40,8 +37,7 @@ private:
 	GameLoop*                  _game_loop;
 	RenderBullshit*            _render_thing;
 	HumanInputDeviceState*     _hid_state;
-	ObjectFactory              _obj_factory;
 	SpriteSheetManager         _sprite_manager;
-	AudioEngine* _audio_engine;
+	AudioEngine*               _audio_engine;
 };
 

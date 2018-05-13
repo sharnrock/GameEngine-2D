@@ -2,10 +2,6 @@
 
 
 
-ControlEvent::ControlEvent()
-{
-}
-
 
 ControlEvent::~ControlEvent()
 {

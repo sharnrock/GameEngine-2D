@@ -1,23 +1,17 @@
 #pragma once
 #include "Displayable.h"
-#include "Controllable.h"
 #include "Sprite.h"
 
 class ObjectFactory;
+class ControlEvent;
+class Possessor;
 
 class Robot :
-	public DisplayableBitmap,
-	public Controllable
+	public DisplayableBitmap
 {
 public:
 	Robot(float x, float y, float w, float h, ObjectFactory* obj_factory);
 	~Robot();
-
-	void moveLeft(__int64 dt);
-	void moveUp(__int64 dt);
-	void moveRight(__int64 dt);
-	void moveDown(__int64 dt);
-	void firePrimary(__int64 dt);
 
 	void setPossesor(Possessor* possessor);
 	void update(__int64 dt);
@@ -29,8 +23,15 @@ public:
 
 protected:
 	void onCollisionEvent(CollisionEvent* e);
+	void onControlEvent(ControlEvent* e);
 
 private:
+	void moveLeft(__int64 dt);
+	void moveUp(__int64 dt);
+	void moveRight(__int64 dt);
+	void moveDown(__int64 dt);
+	void firePrimary(__int64 dt);
+
 	Possessor* _possessor;
 	float speed_px_s;
 	Sprite _sprite;

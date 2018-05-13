@@ -1,5 +1,6 @@
 #include "Slime.h"
 #include "Possessor.h"
+#include "ControlEvent.h"
 
 
 Slime::Slime(float x, float y, float w, float h) :
@@ -66,3 +67,22 @@ void Slime::onCollisionEvent(CollisionEvent* e)
 	OutputDebugString(TEXT("Something hit slime\n"));
 }
 
+void Slime::onControlEvent(ControlEvent* e)
+{
+	switch (e->getControl())
+	{
+	case ControlEvent::MoveLeft:
+		moveLeft(e->getDt());
+		break;
+	case ControlEvent::MoveRight:
+		moveRight(e->getDt());
+		break;
+	case ControlEvent::MoveUp:
+		moveUp(e->getDt());
+		break;
+	case ControlEvent::MoveDown:
+		moveDown(e->getDt());
+		break;
+	}
+	// Doesn't do anything else yet..
+}

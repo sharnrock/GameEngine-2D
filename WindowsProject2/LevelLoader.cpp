@@ -3,39 +3,34 @@
 #include "LevelLoader.h"
 #include "GameLoop.h"
 #include "RenderBullshit.h"
-#include "DisplayableThing.h"
-#include "AIPossessor.h"
-#include <assert.h>
-#include "tmxlite\Map.hpp"
-#include "tmxlite\Tileset.hpp"
-#include "tmxlite\TileLayer.hpp"
-
+#include "SpriteSheetManager.h"
 #include "Robot.h"
 #include "Slime.h"
-#include "SpriteSheetManager.h"
 #include "FPSCounter.h"
 #include "Camera.h"
+#include "AIPossessor.h"
 #include "HumanPossessor.h"
 #include "BackGroundTileDisplayable.h"
 #include "SpriteSheet.h"
 #include "GString.h"
 
 #include "Locations.h"
-// this might change..
+
 #include "AudioEngineFactory.h"
 #include "AudioEngine.h"
 
-// These are temporary just to test if box2d is grabbed correctly
-#include "Box2D\Box2D.h"
+// Map lib
+#include "tmxlite\Map.hpp"
+#include "tmxlite\Tileset.hpp"
+#include "tmxlite\TileLayer.hpp"
 
-
+#include <assert.h>
 #include <vector>
 
 LevelLoader::LevelLoader() :
 	_game_loop(nullptr),
 	_render_thing(nullptr),
 	_hid_state(nullptr),
-	_obj_factory(_game_loop, _render_thing, &_sprite_manager, nullptr),
 	_audio_engine(nullptr)
 {
 }
@@ -46,10 +41,6 @@ LevelLoader::~LevelLoader()
 
 void LevelLoader::loadLevel()
 {
-	// physics testing.. remove eventually
-	b2Vec2 gravity(0.0f, -10.0f);
-	b2World world(gravity);
-
 	assert(_game_loop);
 	assert(_render_thing);
 	assert(_hid_state);
@@ -60,12 +51,7 @@ void LevelLoader::loadLevel()
 	_audio_engine->playTestSound();
 	// _audio_engine->loadFilesInThisDir(AUDIO_PATH); // doesn't do anything yet..
 
-	// This is probably temporary....
-	// TODO: The constructor should likely just take the dep inj and give it so these don't have to be called
-	_obj_factory.setGameLoop(_game_loop);
-	_obj_factory.setRenderEngine(_render_thing);
-	_obj_factory.setSpriteManager(&_sprite_manager);
-	_obj_factory.setAudioEngine(_audio_engine);
+	ObjectFactory::Instance().initialize(_game_loop, _render_thing, &_sprite_manager, _audio_engine);
 
 	tmx::Map map;
 	if (!map.load("E:\\Keith\\Documents\\TheBigGame\\Mapping\\images\\map3.tmx"))
@@ -124,7 +110,7 @@ void LevelLoader::createTileLayer(tmx::TileLayer* tile_layer, int layer)
 		float x = (float)((int)(i % tile_count_in_width)) * _sprite_manager.getSpriteFromID(id).getWidth();
 		float y = (float)((int)(i / tile_count_in_width)) * _sprite_manager.getSpriteFromID(id).getHeight();
 
-		_obj_factory.createBackgroundTile(x, y, id, layer);
+		ObjectFactory::Instance().createBackgroundTile(x, y, id, layer);
 	}
 }
 
@@ -140,7 +126,7 @@ void LevelLoader::createObjectLayer(tmx::ObjectGroup* obj_layer, int layer)
 			float y = objects.at(i).getPosition().y;
 
 			Possessor* poss = new HumanPossessor(_hid_state);
-			Robot* robot = static_cast<Robot*>(_obj_factory.createRobot(x, y, layer));
+			Robot* robot = static_cast<Robot*>(ObjectFactory::Instance().createRobot(x, y, layer));
 
 			robot->setPossesor(poss);
 			poss->setControllable(robot);
@@ -149,7 +135,7 @@ void LevelLoader::createObjectLayer(tmx::ObjectGroup* obj_layer, int layer)
 		{
 			float x = objects.at(i).getPosition().x;
 			float y = objects.at(i).getPosition().y;
-			Slime *thing = static_cast<Slime*>(_obj_factory.createSlime(x, y, layer));
+			Slime *thing = static_cast<Slime*>(ObjectFactory::Instance().createSlime(x, y, layer));
 
 			Possessor* poss = new AIPossessor();
 			thing->setPossesor(poss);

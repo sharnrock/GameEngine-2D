@@ -2,9 +2,6 @@
 
 
 
-AnimationEvent::AnimationEvent()
-{
-}
 
 
 AnimationEvent::~AnimationEvent()

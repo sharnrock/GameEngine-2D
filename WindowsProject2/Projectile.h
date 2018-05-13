@@ -20,7 +20,7 @@ public:
 	void setSprite(const Sprite& sprite);
 
 	// placeholder until we can get better event system
-	void destroy() {}
+	void destroy();
 
 protected:
 	void onCollisionEvent(CollisionEvent* e);

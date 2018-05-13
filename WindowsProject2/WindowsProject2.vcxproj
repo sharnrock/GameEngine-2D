@@ -169,11 +169,9 @@
     <ClInclude Include="comhelpers.h" />
     <ClInclude Include="comptr.h" />
     <ClInclude Include="ControlEvent.h" />
-    <ClInclude Include="Controllable.h" />
     <ClInclude Include="DestroyEvent.h" />
     <ClInclude Include="Direct2DUtility.h" />
     <ClInclude Include="Displayable.h" />
-    <ClInclude Include="DisplayableThing.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="FPSCounter.h" />
     <ClInclude Include="GameObject.h" />
@@ -207,11 +205,9 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionEvent.cpp" />
     <ClCompile Include="ControlEvent.cpp" />
-    <ClCompile Include="Controllable.cpp" />
     <ClCompile Include="DestroyEvent.cpp" />
     <ClCompile Include="Direct2DUtility.cpp" />
     <ClCompile Include="Displayable.cpp" />
-    <ClCompile Include="DisplayableThing.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="FPSCounter.cpp" />
     <ClCompile Include="GameObject.cpp" />

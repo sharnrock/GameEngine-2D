@@ -15,13 +15,18 @@
 
 #include <assert.h>
 
-ObjectFactory::ObjectFactory(GameLoop* gloop, RenderEngine* rengine, SpriteSheetManager* sprite_manager, AudioEngine* audio_engine) :
-	_game_loop(gloop),
-	_render_engine(rengine),
-	_sprite_manager(sprite_manager),
-	_objects(256),
-	_audio_engine(audio_engine)
+ObjectFactory& ObjectFactory::Instance()
 {
+	static ObjectFactory instance;
+	return instance;
+}
+
+void ObjectFactory::initialize(GameLoop* gloop, RenderEngine* rengine, SpriteSheetManager* sprite_manager, AudioEngine* audio_engine)
+{
+	_game_loop      = (gloop);
+	_render_engine  = (rengine);
+	_sprite_manager = (sprite_manager);
+	_audio_engine   = (audio_engine);
 }
 
 ObjectFactory::~ObjectFactory()
@@ -30,22 +35,48 @@ ObjectFactory::~ObjectFactory()
 
 Projectile* ObjectFactory::createProjectile(float x, float y, float target_x, float target_y)
 {
-	// Eventually this will just be grabbed from the object pool 
-	Projectile* proj = new Projectile(x, y, target_x, target_y);
-	proj->setAudioEngine(_audio_engine);
-	proj->setSprite(_sprite_manager->getSpriteFromID(42));
-	for (int i = 0; i < _sprite_manager->getHitBoxesFromID(42).count(); i++)
-		proj->addTinyCollisionBoxesForStage2Detect(_sprite_manager->getHitBoxesFromID(42).at(i));
+	if (_idle_projs.isEmpty())
+	{
+		// create
+		Projectile* proj = new Projectile(x, y, target_x, target_y);
+		proj->setAudioEngine(_audio_engine);
+		proj->setObjectFactory(this);
 
-	proj->setSolid(true);
+		proj->setSprite(_sprite_manager->getSpriteFromID(42));
+		for (int i = 0; i < _sprite_manager->getHitBoxesFromID(42).count(); i++)
+			proj->addTinyCollisionBoxesForStage2Detect(_sprite_manager->getHitBoxesFromID(42).at(i));
 
-	_game_loop->addUpdatableObject(proj);
-	_render_engine->addDisplayableObject(proj,1); 
+		proj->setSolid(true);
 
-	BirthEvent event;
-	proj->onEvent(&event);
+		_game_loop->addUpdatableObject(proj);
+		_render_engine->addDisplayableObject(proj, 1);
 
-	return proj;
+		BirthEvent event;
+		proj->onEvent(&event);
+
+		_active_projs.append(proj);
+		return proj;
+	}
+	else
+	{
+		// recycle
+		Projectile* proj = _idle_projs.popBack();
+		_active_projs.append(proj);
+		proj->setWorldCoordinates(x,y);
+
+		proj->setActive(true);
+		BirthEvent event;
+		proj->onEvent(&event);
+
+		return proj;
+	}
+}
+
+void ObjectFactory::releaseProjectile(Projectile* obj)
+{
+	obj->setActive(false);
+	_active_projs.remove(obj);
+	_idle_projs.append(obj);
 }
 
 void ObjectFactory::releaseObject(GameObject * object)

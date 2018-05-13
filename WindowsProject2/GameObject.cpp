@@ -28,7 +28,8 @@ GameObject::GameObject(float x, float y, float width, float height, AudioEngine*
 	_h(height),
 	_is_solid(false),
 	_is_active(true),
-	_audio_engine(audio_engine)
+	_audio_engine(audio_engine),
+	_obj_factory(nullptr)
 {
 	updateBoundingRect();
 }

@@ -2,6 +2,7 @@
 #include "Possessor.h"
 #include "CollisionEvent.h"
 #include "ObjectFactory.h"
+#include "ControlEvent.h"
 
 Robot::Robot(float x, float y, float w, float h, ObjectFactory* obj_factory) :
 	DisplayableBitmap(x, y, w, h),
@@ -148,4 +149,26 @@ void Robot::onCollisionEvent(CollisionEvent* e)
 	}
 	updateBoundingRect();
 	
+}
+
+void Robot::onControlEvent(ControlEvent* e)
+{
+	switch (e->getControl())
+	{
+	case ControlEvent::MoveDown:
+		moveDown(e->getDt());
+		break;
+	case ControlEvent::MoveLeft:
+		moveLeft(e->getDt());
+		break;
+	case ControlEvent::MoveRight:
+		moveRight(e->getDt());
+		break;
+	case ControlEvent::MoveUp:
+		moveUp(e->getDt());
+		break;
+	case ControlEvent::FirePrimary:
+		firePrimary(e->getDt());
+		break;
+	}
 }

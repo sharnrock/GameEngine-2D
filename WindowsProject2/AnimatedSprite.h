@@ -1,7 +1,6 @@
 #pragma once
 #include "Sprite.h"
-class AnimatedSprite //:
-	//public Sprite
+class AnimatedSprite
 {
 public:
 	AnimatedSprite();
@@ -16,5 +15,7 @@ public:
 protected:
 	int _frame_count;
 	int _current_frame;
+
+	int _last_frame;
 };
 

@@ -3,6 +3,7 @@
 
 #include "Locations.h"
 #include "AudioEngine.h"
+#include "ObjectFactory.h"
 #include <assert.h>
 
 Projectile::Projectile(float x, float y, float target_x, float target_y) :
@@ -11,7 +12,8 @@ Projectile::Projectile(float x, float y, float target_x, float target_y) :
 	_target_y(target_y),
 	_speed(400),
 	_distance_travelled(0),
-	_fire_sound(AUDIO_PATH "shoot.wav")
+	_fire_sound(AUDIO_PATH "shoot.wav"),
+	_max_distance(400)
 {
 	updateAngle();
 	_w = 32;
@@ -29,7 +31,10 @@ Projectile::~Projectile()
 {
 }
 
-
+void Projectile::destroy()
+{
+	getObjectFactory()->releaseProjectile(this);
+}
 
 void Projectile::setSpeed(float speed)
 {
@@ -64,12 +69,12 @@ void Projectile::onCollisionEvent(CollisionEvent* e)
 	if (obj->isSolid())
 	{
 		this->destroy();
-
 	}
 }
 
 void Projectile::onBirthEvent(BirthEvent*)
 {
+	_distance_travelled = 0;
 	getAudioEngine()->playSound(_fire_sound);
 }
 
