@@ -14,7 +14,7 @@ public:
 	AudioBullshit();
 	~AudioBullshit();
 
-	HRESULT init();
+	HRESULT init(); 
 
 	// Currently loads all the sounds needed by the program..
 	// This will change eventually

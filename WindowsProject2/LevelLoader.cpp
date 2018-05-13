@@ -25,6 +25,10 @@
 #include "AudioEngineFactory.h"
 #include "AudioEngine.h"
 
+// These are temporary just to test if box2d is grabbed correctly
+#include "Box2D\Box2D.h"
+
+
 #include <vector>
 
 LevelLoader::LevelLoader() :
@@ -42,6 +46,10 @@ LevelLoader::~LevelLoader()
 
 void LevelLoader::loadLevel()
 {
+	// physics testing.. remove eventually
+	b2Vec2 gravity(0.0f, -10.0f);
+	b2World world(gravity);
+
 	assert(_game_loop);
 	assert(_render_thing);
 	assert(_hid_state);
@@ -72,7 +80,8 @@ void LevelLoader::loadLevel()
 		return;
 
 	// Load up all the images
-	_sprite_manager.doThing(tilesets, _render_thing);
+	_sprite_manager.setRenderEngine(_render_thing);
+	_sprite_manager.loadBitMapsForTileMap(tilesets);
 		
 	// Go through all the layers and draw them
 	const std::vector<tmx::Layer::Ptr>& layers = map.getLayers();

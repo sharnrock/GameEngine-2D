@@ -7,7 +7,8 @@
 
 
 
-SpriteSheetManager::SpriteSheetManager()
+SpriteSheetManager::SpriteSheetManager() :
+	_render_engine(nullptr)
 {
 }
 
@@ -15,9 +16,9 @@ SpriteSheetManager::~SpriteSheetManager()
 {
 }
 
-void SpriteSheetManager::doThing(const std::vector<tmx::Tileset>& tilesets, RenderEngine* render_engine)
+void SpriteSheetManager::loadBitMapsForTileMap(const std::vector<tmx::Tileset>& tilesets)
 {
-	assert(render_engine);
+	assert(_render_engine);
 
 	if (tilesets.empty())
 		return;
@@ -43,7 +44,7 @@ void SpriteSheetManager::doThing(const std::vector<tmx::Tileset>& tilesets, Rend
 
 		int width = 0, height = 0;
 		tilesets[i].getImageConstraints(width, height);
-		BITMAP_HANDL image_handle = render_engine->loadBitmapAssetFromFilepath(tilesets[i].getImagePath(), width, height);
+		BITMAP_HANDL image_handle = _render_engine->loadBitmapAssetFromFilepath(tilesets[i].getImagePath(), width, height);
 
 		int tile_width = tilesets[i].getTileSize().x;
 		int tile_height = tilesets[i].getTileSize().y;
@@ -99,3 +100,8 @@ DynamicList<RECTF_TYPE> SpriteSheetManager::getHitBoxesFromID(int id)
 	return result;
 }
 
+void SpriteSheetManager::loadAnimatedSprites(const GString& img_file, const GString& json_file)
+{
+	assert(_render_engine);
+
+}

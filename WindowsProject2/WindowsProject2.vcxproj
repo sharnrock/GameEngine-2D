@@ -91,7 +91,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>DemoApp.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Users\Keith\source\repos\WindowsProject2\EngineCore;..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Keith\source\repos\WindowsProject2\Box2DPhysics;C:\Users\Keith\source\repos\WindowsProject2\EngineCore;..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -108,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Keith\source\repos\WindowsProject2\EngineCore;..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Keith\source\repos\WindowsProject2\Box2DPhysics;C:\Users\Keith\source\repos\WindowsProject2\EngineCore;..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -128,7 +128,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>DemoApp.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Users\Keith\source\repos\WindowsProject2\EngineCore;..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Keith\source\repos\WindowsProject2\Physics;C:\Users\Keith\source\repos\WindowsProject2\EngineCore;..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -148,7 +148,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Keith\source\repos\WindowsProject2\EngineCore;..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Keith\source\repos\WindowsProject2\Physics;C:\Users\Keith\source\repos\WindowsProject2\EngineCore;..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -180,7 +180,6 @@
     <ClInclude Include="HPElapsedTimer.h" />
     <ClInclude Include="HumanInputDeviceState.h" />
     <ClInclude Include="HumanPossessor.h" />
-    <ClInclude Include="LevelData.h" />
     <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="Locations.h" />
     <ClInclude Include="ObjectDefines.h" />
@@ -219,7 +218,6 @@
     <ClCompile Include="HPElapsedTimer.cpp" />
     <ClCompile Include="HumanInputDeviceState.cpp" />
     <ClCompile Include="HumanPossessor.cpp" />
-    <ClCompile Include="LevelData.cpp" />
     <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="ObjectDefines.cpp" />
     <ClCompile Include="ObjectFactory.cpp" />
@@ -240,6 +238,9 @@
   <ItemGroup>
     <ProjectReference Include="..\AudioEngine\AudioEngine.vcxproj">
       <Project>{5e96e394-72c5-4582-9087-7f890e8c2571}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Box2DPhysics\Box2DPhysics.vcxproj">
+      <Project>{d5be4530-2c0d-472b-956a-129e2b264581}</Project>
     </ProjectReference>
     <ProjectReference Include="..\EngineCore\EngineCore.vcxproj">
       <Project>{9b92568a-e439-4b32-bee2-6e713a65a4ed}</Project>

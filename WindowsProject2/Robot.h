@@ -35,5 +35,7 @@ private:
 	float speed_px_s;
 	Sprite _sprite;
 	ObjectFactory* _obj_factory;
+	__int64 _weapon_timer;
+	__int64 _weapon_cooldown;
 };
 

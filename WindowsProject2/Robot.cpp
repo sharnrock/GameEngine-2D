@@ -7,7 +7,9 @@ Robot::Robot(float x, float y, float w, float h, ObjectFactory* obj_factory) :
 	DisplayableBitmap(x, y, w, h),
 	_possessor(nullptr),
 	speed_px_s(100),
-	_obj_factory(obj_factory)
+	_obj_factory(obj_factory),
+	_weapon_timer(0),
+	_weapon_cooldown(100000)
 {
 }
 
@@ -41,7 +43,11 @@ void Robot::moveDown(__int64 dt)
 
 void Robot::firePrimary(__int64 dt)
 {
-	_obj_factory->createProjectile(_x+30.0f, _y, _x + 30, _y); // fires to the right
+	if (_weapon_timer <= 0)
+	{
+		_obj_factory->createProjectile(_x + 30.0f, _y, _x + 30, _y); // fires to the right
+		_weapon_timer = _weapon_cooldown;
+	}
 }
 
 void Robot::setPossesor(Possessor* possessor)
@@ -52,6 +58,9 @@ void Robot::setPossesor(Possessor* possessor)
 
 void Robot::update(__int64 dt)
 {
+	// update the weapon cooldown
+	_weapon_timer = (_weapon_timer > 0) ? _weapon_timer - dt : 0;
+
 	_possessor->update(dt);
 }
 
