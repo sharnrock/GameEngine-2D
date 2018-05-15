@@ -22,6 +22,29 @@ GString::GString(const char* c_str)
 	prepareHash(); 
 }
 
+void GString::convertWStringToCharPtr(std::wstring input, char ** outputString)
+{
+	size_t outputSize = 1;
+	while (outputSize < input.length() + 1)
+		outputSize <<= 1; // double
+
+	*outputString = new char[outputSize];
+	size_t charsConverted = 0;
+	wcstombs_s(&charsConverted, *outputString, outputSize, input.c_str(), input.length());
+	_count = (int)charsConverted;
+	_size  = (int)outputSize;
+}
+
+GString::GString(const wchar_t* c_str) :
+	_is_null(false)
+{
+	if (_array)
+		delete[] _array;
+
+	convertWStringToCharPtr(c_str, &_array);
+	prepareHash();
+}
+
 GString::GString(const std::string& str)
 {
 	_is_null = false;
@@ -103,6 +126,37 @@ GString& GString::operator=(GString&& other)
 	return *this;
 }
 
+GString& GString::operator+=(const GString& add)
+{
+	--_count; // remove null pointer
+	for (int i = 0; i < add.count(); i++)
+	{
+		char a = add.at(i);
+		append(add.at(i));
+	}
+	this->prepareHash();
+	return *this;
+}
+
+GString GString::operator+(const GString& add) const
+{
+	GString result = *this;
+	result += add;
+	return result;
+}
+
+bool GString::endsWith(const GString& end) const
+{
+	int offset = count() - end.count();
+	for (int i = 0; i < end.count(); i++)
+	{
+		if (_array[i+offset] != end._array[i])
+			return false;
+	}
+
+	return true;
+}
+
 UINT32 GString::toHash() const
 {
 	return _hash;
@@ -179,6 +233,11 @@ int GString::getStringSize() const
 }
 
 GString GString::number(int i)
+{
+	return GString(std::to_string(i));
+}
+
+GString GString::number(UINT32 i)
 {
 	return GString(std::to_string(i));
 }

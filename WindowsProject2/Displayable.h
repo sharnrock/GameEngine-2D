@@ -2,7 +2,7 @@
 
 #include "GameObject.h"
 #include "Gstring.h"
-class Sprite;
+#include "Sprite.h"
 
 
 class Displayable : 
@@ -15,7 +15,8 @@ public:
 		Rectangle,
 		Bitmap,
 		Text,
-		DontRender
+		DontRender,
+		AnimatedBitmap // might not be needed
 	};
 
 	Displayable();
@@ -36,8 +37,11 @@ public:
 	}
 
 	virtual DrawType      getDrawType() const { return Bitmap; }
-	virtual const Sprite& getSprite() const = 0;
-	virtual void          setSprite(const Sprite&) = 0;
+	virtual const Sprite& getSprite() const { return _sprite; }
+	virtual void          setSprite(const Sprite& sprite);
+
+protected:
+	Sprite _sprite;
 };
 
 class DisplayableText :
@@ -56,5 +60,21 @@ public:
 
 protected:
 	GString content;
+};
+
+class DisplayableAnimation :
+	public Displayable
+{
+public:
+	DisplayableAnimation() {}
+	DisplayableAnimation(float x, float y, float width, float height) :
+		Displayable(x, y, width, height)
+	{
+	}
+
+	virtual DrawType      getDrawType() const { return Bitmap; }
+
+	virtual const Sprite& getSprite() const = 0;
+	virtual void          setSprite(const Sprite&) = 0;
 };
 

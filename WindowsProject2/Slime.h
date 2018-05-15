@@ -16,8 +16,8 @@ public:
 
 	void update(__int64 dt);
 
-	const Sprite & getSprite() const;
-	void setSprite(const Sprite& sprite);
+	//const Sprite & getSprite() const;
+	//void setSprite(const Sprite& sprite);
 
 	bool isSolid() const { return true; }
 
@@ -33,6 +33,6 @@ protected:
 private:
 	Possessor * _possessor;
 	float speed_px_s;
-	Sprite _sprite;
+	//Sprite _sprite;
 };
 

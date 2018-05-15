@@ -187,6 +187,7 @@
     <ClInclude Include="RenderEngine.h" />
     <ClInclude Include="Robot.h" />
     <ClInclude Include="Slime.h" />
+    <ClInclude Include="SpinnyBox.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="SpriteSheet.h" />
     <ClInclude Include="SpriteSheetManager.h" />
@@ -221,6 +222,7 @@
     <ClCompile Include="RenderEngine.cpp" />
     <ClCompile Include="Robot.cpp" />
     <ClCompile Include="Slime.cpp" />
+    <ClCompile Include="SpinnyBox.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteSheet.cpp" />
     <ClCompile Include="SpriteSheetManager.cpp" />

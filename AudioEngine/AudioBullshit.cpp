@@ -3,12 +3,10 @@
 
 
 
+
 // I don't know exactly what this thing does.  Maybe I can get rid of it or understand it better later
 HRESULT FindMediaFileCch(_Out_writes_(cchDest) WCHAR* strDestPath, _In_ int cchDest, _In_z_ LPCWSTR strFilename);
 
-// temp globals
-// This guy has to stay around..
-std::unique_ptr<uint8_t[]> waveFile;
 
 AudioBullshit::AudioBullshit() :
 	pXAudio2(nullptr),
@@ -20,20 +18,17 @@ AudioBullshit::AudioBullshit() :
 AudioBullshit::~AudioBullshit()
 {
 	CloseHandle(hBufferEndEvent);
-	// Take care of these
-	/*IXAudio2* pXAudio2;
-	IXAudio2MasteringVoice* pMasterVoice;
 
-	DynamicList<XAUDIO2_BUFFER*> _x2_buffers;
-	DynamicList<IXAudio2SourceVoice*> _source_voices;
-	DynamicList< std::unique_ptr<uint8_t[]>* > _wav_file_data;*/
-	
+	for (int i = 0; i < _available_source_voices.count(); i++)
+	{
+		_available_source_voices[i]->DestroyVoice();
+	}
 
-	//for (int i = 0; i < _wav_file_data.count(); i++)
-	//{
-	//	_wav_file_data[i]->release();
-	//	delete _wav_file_data[i];
-	//}
+	for (int i = 0; i < _in_use_source_voices.count(); i++)
+	{
+		_in_use_source_voices[i]->Stop();
+		_in_use_source_voices[i]->DestroyVoice();
+	}
 
 	if (pMasterVoice)
 		pMasterVoice->DestroyVoice();
@@ -54,65 +49,37 @@ HRESULT AudioBullshit::init()
 	return hr;
 }
 
-void AudioBullshit::loadTestSound()
-{
-	// this is all going away
-	loadSoundFile("C:\\Users\\Keith\\source\\repos\\WindowsProject2\\Assets\\Audio\\shoot.wav");
-	loadSoundFile("C:\\Users\\Keith\\source\\repos\\WindowsProject2\\Assets\\Audio\\jump.wav");
-}
-
-void AudioBullshit::playTestSound()
-{
-	playSound("C:\\Users\\Keith\\source\\repos\\WindowsProject2\\Assets\\Audio\\jump.wav");
-}
-
 void AudioBullshit::playSound(const GString& wav_file)
 {
+	GString msg = GString("\nPlaying: ") + wav_file;
+	OutputDebugString(msg.toWideString().c_str());
+
 	IXAudio2SourceVoice *pSourceVoice = getSourceVoice();
 
 	HRESULT hr = S_OK;
 
-
 	XAUDIO2_BUFFER *buffer_ptr = _x2_buffers[wav_file.toHash()];
 	XAUDIO2_BUFFER &buffer = *buffer_ptr;
 
+	GString msg2("Playing Hash:");
+	msg2 += GString::number(wav_file.toHash());
+	OutputDebugString(msg2.toWideString().c_str());
 
+	if (!buffer_ptr)
+		return;
 
-
-	// This part should be in play sound!!!!!!!!
 	if (FAILED(hr = pSourceVoice->SubmitSourceBuffer(&buffer)))
 	{
 		wprintf(L"Error %#X submitting source buffer\n", hr);
-		//pSourceVoice->DestroyVoice();
 		return;
 	}
 
-
 	hr = pSourceVoice->Start(0);
 	return;
-
-	// do this eventually somewhere..
-	//pSourceVoice->DestroyVoice();
-
-
-
-
-
-
-
 }
 
 void AudioBullshit::loadSoundFile(const GString& wav_file)
 {
-	// TODO: yank out the source creation so it can object pool instead
-	// Keep the loading of buffer and wav_file in
-
-	// S1 find file
-	// S2 create voice - take this out and create object pool
-	// S3 create buffer
-	// S4 load buffer in to voice - Probably take this out and come up with more complicated system
-	// S5 call start to play it - Create something totally different to start playback
-	
 	WCHAR strFilePath[MAX_PATH];
 	HRESULT hr = FindMediaFileCch(strFilePath, MAX_PATH, wav_file.toWideString().c_str());
 	if (FAILED(hr))
@@ -129,34 +96,18 @@ void AudioBullshit::loadSoundFile(const GString& wav_file)
 		wprintf(L"Failed reading WAV file: %#X (%s)\n", hr, strFilePath);
 		return;
 	}
-	//_wav_file_data = (std::unique_ptr<uint8_t[]>&&)waveFile;
-	//_wav_file_data.append(waveFile); 
+	
 	setMasterAudioFormat(*waveData.wfx);
-	// This is pretty much the point where we can Stop..
-	// Let some other piece of the program take over the handling of source voices
-	// actually, we still need to create the buffer
-
-
-
-	// Create the source voice
-#if 0
-
-	IXAudio2SourceVoice *pSourceVoice = getSourceVoice();
-	if (FAILED(hr = this->pXAudio2->CreateSourceVoice(&pSourceVoice, waveData.wfx)))
-	{
-		wprintf(L"Error %#X creating source voice\n", hr);
-		return;
-	}
-	_source_voices.append(pSourceVoice);
-#endif
-
-
+	
 	// Submit the wave sample data using an XAUDIO2_BUFFER structure
 	// Create a new instance of this thing, but turn it into an alias so I don't have to change a bunch of code
 	XAUDIO2_BUFFER *buffer_ptr = new XAUDIO2_BUFFER;
 	XAUDIO2_BUFFER &buffer = *buffer_ptr;
 	_x2_buffers[wav_file.toHash()] = buffer_ptr;
-	//_x2_buffers.append(buffer_ptr);
+
+	GString msg("Loading Hash:");
+	msg += GString::number(wav_file.toHash());
+	OutputDebugString(msg.toWideString().c_str());
 
 	buffer = { 0 };
 	buffer.pAudioData = waveData.startAudio;
@@ -170,43 +121,20 @@ void AudioBullshit::loadSoundFile(const GString& wav_file)
 		buffer.LoopCount = 1; // We'll just assume we play the loop twice
 	}
 
-return;
-
+	return;
 }
 
 void AudioBullshit::loadFilesInThisDir(const GString& audio_dir)
 {
-	OutputDebugString(TEXT("AudioBullshit::loadFilesInThisDir: Not yet implemented"));
-	return;
-#if 0
-	WIN32_FIND_DATA ffd;
-	//LARGE_INTEGER filesize;
-	TCHAR szDir[MAX_PATH];
-	//size_t length_of_arg;
-	HANDLE hFind = INVALID_HANDLE_VALUE;
-	//DWORD dwError = 0;
-	FindFirstFile(szDir, &ffd);
-		//if (INVALID_HANDLE_VALUE == hFind)
-
-	do
+	GDir dir(audio_dir);
+	DynamicList<GString> files = dir.getFileList();
+	for (int i = 0; i < files.count(); i++)
 	{
-		if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
-		{
-			_tprintf(TEXT("  %s   <DIR>\n"), ffd.cFileName);
-		}
-		else
-		{
-			filesize.LowPart = ffd.nFileSizeLow;
-			filesize.HighPart = ffd.nFileSizeHigh;
-			_tprintf(TEXT("  %s   %ld bytes\n"), ffd.cFileName, filesize.QuadPart);
-		}
-	} while (FindNextFile(hFind, &ffd) != 0);
-
-	std::wstring msg(L"Trying to load asset dir");
-	msg += audio_dir.toWideString();
-	OutputDebugString(msg.c_str());
-#endif
-
+		GString msg = GString("\nLoading: ") + audio_dir + files.at(i);
+		OutputDebugString(msg.toWideString().c_str());
+		if (files.at(i).endsWith(".wav"))
+			loadSoundFile(audio_dir + files.at(i));
+	}
 }
 
 IXAudio2SourceVoice* AudioBullshit::getSourceVoice()
@@ -240,15 +168,6 @@ IXAudio2SourceVoice* AudioBullshit::getSourceVoice()
 		return pSourceVoice;
 	}
 }
-
-
-
-
-
-
-
-
-
 
 
 

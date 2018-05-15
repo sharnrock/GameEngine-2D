@@ -65,18 +65,18 @@ void Robot::update(__int64 dt)
 	_possessor->update(dt);
 }
 
-const Sprite & Robot::getSprite() const
-{
-	return _sprite;
-}
-
-void Robot::setSprite(const Sprite& sprite)
-{
-	_sprite = sprite;
-	float width = _sprite.getSourceRect().right - _sprite.getSourceRect().left;
-	float height = _sprite.getSourceRect().bottom - _sprite.getSourceRect().top;
-	setSize(width, height);
-}
+//const Sprite & Robot::getSprite() const
+//{
+//	return _sprite;
+//}
+//
+//void Robot::setSprite(const Sprite& sprite)
+//{
+//	_sprite = sprite;
+//	float width = _sprite.getSourceRect().right - _sprite.getSourceRect().left;
+//	float height = _sprite.getSourceRect().bottom - _sprite.getSourceRect().top;
+//	setSize(width, height);
+//}
 
 
 

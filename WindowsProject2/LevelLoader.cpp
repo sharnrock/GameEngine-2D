@@ -6,6 +6,7 @@
 #include "SpriteSheetManager.h"
 #include "Robot.h"
 #include "Slime.h"
+#include "SpinnyBox.h"
 #include "FPSCounter.h"
 #include "Camera.h"
 #include "AIPossessor.h"
@@ -27,6 +28,10 @@
 #include <assert.h>
 #include <vector>
 
+// temp for test..
+#include "GDir.h"
+#include "DynamicList.h"
+
 LevelLoader::LevelLoader() :
 	_game_loop(nullptr),
 	_render_thing(nullptr),
@@ -47,11 +52,13 @@ void LevelLoader::loadLevel()
 
 	_audio_engine = AudioEngineFactory::getAudioEngine();
 	_audio_engine->init();
-	_audio_engine->loadTestSound();
-	_audio_engine->playTestSound();
-	// _audio_engine->loadFilesInThisDir(AUDIO_PATH); // doesn't do anything yet..
-
+	_audio_engine->loadFilesInThisDir(AUDIO_PATH);
 	ObjectFactory::Instance().initialize(_game_loop, _render_thing, &_sprite_manager, _audio_engine);
+
+
+	_audio_engine->playSound(AUDIO_PATH "jump.wav");
+	
+
 
 	tmx::Map map;
 	if (!map.load("E:\\Keith\\Documents\\TheBigGame\\Mapping\\images\\map3.tmx"))
@@ -140,6 +147,13 @@ void LevelLoader::createObjectLayer(tmx::ObjectGroup* obj_layer, int layer)
 			Possessor* poss = new AIPossessor();
 			thing->setPossesor(poss);
 			poss->setControllable(thing);
+		}
+		else if (objects.at(i).getType() == "SpinnyBox")
+		{
+			float x = objects.at(i).getPosition().x;
+			float y = objects.at(i).getPosition().y;
+			
+			SpinnyBox* thing = static_cast<SpinnyBox*>(ObjectFactory::Instance().createSpinnyBox(x, y, 43, layer));
 		}
 	}
 }

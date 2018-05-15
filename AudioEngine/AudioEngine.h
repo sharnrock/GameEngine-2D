@@ -14,10 +14,6 @@ public:
 	// Must be called after instantiation and before any other function calls
 	virtual HRESULT init() = 0;
 
-	// These will probably go away
-	virtual void loadTestSound() = 0;
-	virtual void playTestSound() = 0;
-
 	// Loads a sound file into memory for continual reuse
 	virtual void loadSoundFile(const GString&) = 0;
 	virtual void loadFilesInThisDir(const GString&) = 0;

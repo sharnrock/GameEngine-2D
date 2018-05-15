@@ -1,5 +1,7 @@
 #pragma once
+
 #include "Sprite.h"
+
 class AnimatedSprite
 {
 public:
@@ -11,6 +13,8 @@ public:
 	void incrementFrame() { ++_current_frame; }
 	void decrementFrame() { --_current_frame; }
 	int getCurrentFrame() { return _current_frame; }
+
+	Sprite generateSpriteFromCurrentFrame() { return Sprite(); }
 
 protected:
 	int _frame_count;

@@ -16,8 +16,8 @@ public:
 	void setPossesor(Possessor* possessor);
 	void update(__int64 dt);
 
-	const Sprite & getSprite() const;
-	void setSprite(const Sprite& sprite);
+	//const Sprite & getSprite() const;
+	//void setSprite(const Sprite& sprite);
 
 	bool isSolid() const { return true; }
 
@@ -34,7 +34,7 @@ private:
 
 	Possessor* _possessor;
 	float speed_px_s;
-	Sprite _sprite;
+	/*Sprite _sprite;*/
 	ObjectFactory* _obj_factory;
 	__int64 _weapon_timer;
 	__int64 _weapon_cooldown;

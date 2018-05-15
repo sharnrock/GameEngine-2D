@@ -12,10 +12,10 @@ public:
 	~BackGroundTileDisplayable();
 
 	Displayable::DrawType      getDrawType() const;
-	const Sprite& getSprite() const;
-	void          setSprite(const Sprite& sprite);
+	//const Sprite& getSprite() const;
+	//void          setSprite(const Sprite& sprite);
 
 private:
-	Sprite _sprite;
+	//Sprite _sprite;
 };
 

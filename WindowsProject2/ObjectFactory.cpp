@@ -4,6 +4,7 @@
 
 #include "Robot.h"
 #include "Slime.h"
+#include "SpinnyBox.h"
 #include "BackGroundTileDisplayable.h"
 #include "Projectile.h"
 
@@ -141,7 +142,32 @@ GameObject * ObjectFactory::createBackgroundTile(float x, float y, int id, int l
 	return thing;
 }
 
+GameObject* ObjectFactory::createSpinnyBox(float x, float y, int id, int layer)
+{
 
+
+	DisplayableAnimation* thing = new SpinnyBox();
+
+	if (!_sprite_manager->getHitBoxesFromID(id).isEmpty())
+	{
+		thing->setSolid(true);
+		for (int rect = 0; rect < _sprite_manager->getHitBoxesFromID(id).count(); rect++)
+			thing->addTinyCollisionBoxesForStage2Detect(_sprite_manager->getHitBoxesFromID(id).at(rect));
+	}
+
+	Sprite sprite = _sprite_manager->getSpriteFromID(id);
+	thing->setSprite(sprite);
+
+	thing->setWorldCoordinates(x, y);
+	_render_engine->addDisplayableObject(thing, layer);
+	_game_loop->addUpdatableObject(thing);
+
+	// let it know it exists now
+	thing->onEvent(&BirthEvent());
+
+	return thing;
+	
+}
 
 
 

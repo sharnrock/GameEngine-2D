@@ -16,6 +16,11 @@ SpriteSheetManager::~SpriteSheetManager()
 {
 }
 
+AnimatedSprite getAnimatedSprite(const GString& file_path)
+{
+	return AnimatedSprite();
+}
+
 void SpriteSheetManager::loadBitMapsForTileMap(const std::vector<tmx::Tileset>& tilesets)
 {
 	assert(_render_engine);

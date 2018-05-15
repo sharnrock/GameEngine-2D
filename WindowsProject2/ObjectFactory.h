@@ -32,6 +32,7 @@ public:
 	GameObject* createRobot(float x, float y, int layer);
 	GameObject* createSlime(float x, float y, int layer);
 	GameObject* createBackgroundTile(float x, float y, int id, int layer);
+	GameObject* createSpinnyBox(float x, float y, int id, int layer);
 
 private:
 

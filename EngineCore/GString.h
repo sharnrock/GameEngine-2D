@@ -25,6 +25,7 @@ public:
 
 	~GString();
 	GString(const char* c_str);
+	GString(const wchar_t* c_str);
 	GString(const std::string& str);
 	
 	// Deep copies
@@ -34,6 +35,14 @@ public:
 	// Moves rvalues
 	GString(GString&& other);
 	GString& operator=(GString&& other);
+
+	// Concat 2 strings and store in lvalue
+	GString& operator+=(const GString& add);
+	GString operator+(const GString& add) const;
+	
+
+	// returns true if the string ends with the expression provided (for example ".txt" for filename)
+	bool endsWith(const GString& end) const;
 
 	// returns CRC32 hash of string buffer.  Used for logical comparisons
 	UINT32 toHash() const;
@@ -59,6 +68,7 @@ public:
 	// Generate GStrings from numbers
 	static GString number(int i);
 	static GString number(float f);
+	static GString number(UINT32 i);
 
 	// GString() is null and empty
 	bool isNull() const { return _is_null; }
@@ -70,6 +80,9 @@ private:
 	// runs the hash algorithm on the _array buffer and returns the answer to _hash
 	void prepareHash();
 
+	void convertWStringToCharPtr(std::wstring input, char ** outputString);
+
+	// _array , _count, _size are inherited
 	bool _is_null;
 	UINT32 _hash;
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include "Sprite.h"
+#include "AnimatedSprite.h"
 #include "Types.h"
 #include "tmxlite\Tileset.hpp"
 
@@ -18,6 +19,8 @@ public:
 	SpriteSheetManager();
 	~SpriteSheetManager();
 	
+	AnimatedSprite getAnimatedSprite(const GString& file_path);
+
 	void setRenderEngine(RenderEngine* render_engine) { _render_engine = render_engine; }
 
 	// TODO: Rename this..

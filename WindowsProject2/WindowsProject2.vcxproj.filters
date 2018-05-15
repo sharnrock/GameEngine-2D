@@ -120,6 +120,9 @@
     <ClInclude Include="ComHelpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SpinnyBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -216,6 +219,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="AnimationEvent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpinnyBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

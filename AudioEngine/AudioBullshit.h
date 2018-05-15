@@ -16,16 +16,8 @@ public:
 
 	HRESULT init(); 
 
-	// Currently loads all the sounds needed by the program..
-	// This will change eventually
-	void loadTestSound();
-	// Plays the jump sound once
-	void playTestSound();
-
 	void playSound(const GString& wav_file);
 	void loadSoundFile(const GString& wav_file);
-
-	// Not yet implemented..
 	void loadFilesInThisDir(const GString& audio_dir);
 
 
@@ -57,6 +49,8 @@ private:
 
 	IXAudio2* pXAudio2;
 	IXAudio2MasteringVoice* pMasterVoice;
+
+	// Only needs to be set once, holds info like 44.1k 16bit yada, yada
 	WAVEFORMATEX _master_format;
 
 	DynamicList<IXAudio2SourceVoice*> _available_source_voices;
@@ -64,9 +58,6 @@ private:
 
 	std::map<UINT32, XAUDIO2_BUFFER*> _x2_buffers;
 };
-// This might need to persist... I don't know.  I'm taking it out, but if the audio starts to 
-// buckle, put it back in to see if that fixes it
-//DynamicList< std::unique_ptr<uint8_t[]>* > _wav_file_data;
 
 
 

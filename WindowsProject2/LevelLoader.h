@@ -1,7 +1,5 @@
 #pragma once
 
-//#include "DynamicList.h"
-//#include "GMap.h"
 #include "ObjectFactory.h"
 #include "SpriteSheetManager.h"
 

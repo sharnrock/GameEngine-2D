@@ -13,7 +13,8 @@ GameObject::GameObject() :
 	_h(0),
 	_is_solid(false),
 	_is_active(true),
-	_audio_engine(nullptr)
+	_audio_engine(nullptr),
+	_sprite_manager(nullptr)
 {
 	_bounding_rect.left   = 0;
 	_bounding_rect.right  = 0;
@@ -29,7 +30,8 @@ GameObject::GameObject(float x, float y, float width, float height, AudioEngine*
 	_is_solid(false),
 	_is_active(true),
 	_audio_engine(audio_engine),
-	_obj_factory(nullptr)
+	_obj_factory(nullptr),
+	_sprite_manager(nullptr)
 {
 	updateBoundingRect();
 }
