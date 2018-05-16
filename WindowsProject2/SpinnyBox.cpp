@@ -13,14 +13,12 @@ SpinnyBox::~SpinnyBox()
 
 void SpinnyBox::update(__int64 dt)
 {
-	//_ani_sprite.update(dt);
+	_ani_sprite.update(dt);
 }
 
 const Sprite & SpinnyBox::getSprite() const
 {
-	//return _ani_sprite.generateSpriteFromCurrentFrame();
-	return _sprite;
-	//return _ani_sprite.generateSpriteFromCurrentFrame();
+	return _ani_sprite.generateSpriteFromCurrentFrame();
 }
 
 void SpinnyBox::setSprite(const Sprite &sprite)
@@ -37,7 +35,8 @@ void SpinnyBox::onCollisionEvent(CollisionEvent*)
 
 void SpinnyBox::onBirthEvent(BirthEvent*)
 {
-	//_animated_sprite = getSpriteManager()->getAnimatedSprite(_sprite_location);
+	_ani_sprite = getSpriteManager()->getAnimatedSprite(_sprite_location);
+	_ani_sprite.sendEventsToGameObject(this);
 }
 
 void SpinnyBox::onDestroyEvent(DestroyEvent*)

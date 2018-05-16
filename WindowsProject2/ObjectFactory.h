@@ -34,7 +34,10 @@ public:
 	GameObject* createBackgroundTile(float x, float y, int id, int layer);
 	GameObject* createSpinnyBox(float x, float y, int id, int layer);
 
+	
+
 private:
+	void loadUpGameObjectWithPtrs(GameObject * obj);
 
 	GameLoop*                _game_loop;
 	RenderEngine*            _render_engine;

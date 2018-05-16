@@ -31,7 +31,9 @@ public:
 	DynamicList<RECTF_TYPE> getHitBoxesFromID(int id);
 
 	// an animated file is going to need a json file to describe th animation..
-	void loadAnimatedSprites(const GString& img_file, const GString& json_file);
+	void loadAnimatedSprite(const GString& img_file, const GString& json_file);
+
+
 
 private:
 	RECTF_TYPE getRectF(const tmx::FloatRect& rect);
@@ -39,6 +41,8 @@ private:
 	GMap<int, DynamicList<RECTF_TYPE>> _tile_collision_walls;
 	DynamicList<SpriteSheet*> _sprite_sheets;
 	RenderEngine* _render_engine;
+
+	GMap<UINT32, AnimatedSprite> _animated_sprites;
 };
 
 

@@ -8,8 +8,7 @@ class AnimationEvent :
 public:
 	enum Action
 	{
-		AnimationLoopEnd,
-		AnimationLoopStart,
+		AnimationLoopEnd
 	};
 
 	AnimationEvent(Action action) :

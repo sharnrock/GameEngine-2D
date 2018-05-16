@@ -12,7 +12,7 @@ class AnimationEvent;
 
 class AudioEngine;
 class ObjectFactory;
-class SpriteManager;
+class SpriteSheetManager;
 
 // Base class for just about everything in the game world
 class GameObject
@@ -25,7 +25,7 @@ public:
 	// give access to audio engine for events
 	void setAudioEngine(AudioEngine* audio_engine) { _audio_engine = audio_engine; }
 	void setObjectFactory(ObjectFactory* obj_factory) { _obj_factory = obj_factory; }
-	void setSpriteManager(SpriteManager* sprite_manager) { _sprite_manager = sprite_manager; }
+	void setSpriteManager(SpriteSheetManager* sprite_manager) { _sprite_manager = sprite_manager; }
 
 	// if returns true, it won't render or update or collide
 	virtual void setActive(bool is_active = true) { _is_active = is_active; }
@@ -99,11 +99,11 @@ protected:
 
 	AudioEngine*   getAudioEngine() { assert(_audio_engine); return _audio_engine; }
 	ObjectFactory* getObjectFactory() { assert(_obj_factory); return _obj_factory; }
-	SpriteManager* getSpriteManager() { assert(_sprite_manager);  return _sprite_manager; }
+	SpriteSheetManager* getSpriteManager() { assert(_sprite_manager);  return _sprite_manager; }
 
 private:
 	AudioEngine*   _audio_engine;
 	ObjectFactory* _obj_factory;
-	SpriteManager* _sprite_manager;
+	SpriteSheetManager* _sprite_manager;
 };
 

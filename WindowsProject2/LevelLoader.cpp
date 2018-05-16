@@ -59,6 +59,12 @@ void LevelLoader::loadLevel()
 	_audio_engine->playSound(AUDIO_PATH "jump.wav");
 	
 
+	// this is testing
+	_sprite_manager.setRenderEngine(_render_thing);
+	_sprite_manager.loadAnimatedSprite("E:\\Keith\\Documents\\Sprites\\cube.png", "E:\\Keith\\Documents\\Sprites\\cube.json");
+	//_sprite_manager.getAnimatedSprite("E:\\Keith\\Documents\\Sprites\\cube.png");
+	// end testing...
+
 
 	tmx::Map map;
 	if (!map.load("E:\\Keith\\Documents\\TheBigGame\\Mapping\\images\\map3.tmx"))

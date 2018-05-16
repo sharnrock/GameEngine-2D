@@ -147,6 +147,7 @@ GameObject* ObjectFactory::createSpinnyBox(float x, float y, int id, int layer)
 
 
 	DisplayableAnimation* thing = new SpinnyBox();
+	loadUpGameObjectWithPtrs(thing);
 
 	if (!_sprite_manager->getHitBoxesFromID(id).isEmpty())
 	{
@@ -167,6 +168,13 @@ GameObject* ObjectFactory::createSpinnyBox(float x, float y, int id, int layer)
 
 	return thing;
 	
+}
+
+void ObjectFactory::loadUpGameObjectWithPtrs(GameObject* obj)
+{
+	obj->setSpriteManager(_sprite_manager);
+	obj->setAudioEngine(_audio_engine);
+	obj->setObjectFactory(this);
 }
 
 

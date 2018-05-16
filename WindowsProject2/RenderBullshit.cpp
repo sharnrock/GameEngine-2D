@@ -375,7 +375,6 @@ void RenderBullshit::OnResize(UINT width, UINT height)
 
 }
 
-
 int RenderBullshit::loadBitmapAssetFromFilepath(const std::string& file_path, int width, int height)
 {
 	_bit_maps.append(nullptr);

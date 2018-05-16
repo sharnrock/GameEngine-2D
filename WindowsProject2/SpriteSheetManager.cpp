@@ -2,6 +2,7 @@
 #include "SpriteSheet.h"
 #include "RenderEngine.h"
 #include "GString.h"
+#include "document.h"
 
 #include "tmxlite\Tileset.hpp"
 
@@ -16,9 +17,9 @@ SpriteSheetManager::~SpriteSheetManager()
 {
 }
 
-AnimatedSprite getAnimatedSprite(const GString& file_path)
+AnimatedSprite SpriteSheetManager::getAnimatedSprite(const GString& file_path)
 {
-	return AnimatedSprite();
+	return _animated_sprites[file_path.toHash()];
 }
 
 void SpriteSheetManager::loadBitMapsForTileMap(const std::vector<tmx::Tileset>& tilesets)
@@ -105,8 +106,42 @@ DynamicList<RECTF_TYPE> SpriteSheetManager::getHitBoxesFromID(int id)
 	return result;
 }
 
-void SpriteSheetManager::loadAnimatedSprites(const GString& img_file, const GString& json_file)
+
+
+
+#include "GFile.h"
+
+void SpriteSheetManager::loadAnimatedSprite(const GString& img_file, const GString& json_file)
 {
+	// TODO: this code can be cleaned up
+	AnimatedSprite new_ani_sprite;
 	assert(_render_engine);
 
+	// read file into string
+	GFile gjson_file(json_file);
+	std::string json_str = gjson_file.getFileAsString();
+	
+	// put string into parser
+	rapidjson::Document document;
+	document.Parse(json_str.c_str());
+	
+	assert(document["frames"].IsArray());
+	const rapidjson::Value& a = document["frames"];
+	assert(a.IsArray());
+	
+	new_ani_sprite.setFrameCount(a.Size());
+	new_ani_sprite.setFrameDuration(a[0]["duration"].GetInt());
+	int sprite_w = a[0]["sourceSize"]["w"].GetInt();
+	int sprite_h = a[0]["sourceSize"]["h"].GetInt();
+	new_ani_sprite.setSpriteSize(sprite_w, sprite_h);
+
+	assert(document["meta"].IsObject());
+	const rapidjson::Value& meta = document["meta"];
+	assert(meta["size"].IsObject());
+	int width  = meta["size"]["w"].GetInt();
+	int height = meta["size"]["h"].GetInt();
+
+	BITMAP_HANDL hndl = _render_engine->loadBitmapAssetFromFilepath(img_file.toStdString(), width, height);
+	new_ani_sprite.setBitmapHandle(hndl);
+	_animated_sprites[img_file.toHash()] = new_ani_sprite;
 }

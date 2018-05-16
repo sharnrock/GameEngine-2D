@@ -5,6 +5,9 @@
 class Sprite
 {
 public:
+
+	// TODO: add section for transform matrix stuff can be transmitted like rotate or skew etc..
+
 	Sprite() : _is_null(true) {}
 	Sprite(int bm_handle, int left, int top, int right, int bottom);
 	~Sprite();

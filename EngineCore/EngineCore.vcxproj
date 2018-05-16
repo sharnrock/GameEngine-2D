@@ -151,6 +151,7 @@
     <ClInclude Include="DynamicList.h" />
     <ClInclude Include="EngineCoreGlobal.h" />
     <ClInclude Include="GDir.h" />
+    <ClInclude Include="GFile.h" />
     <ClInclude Include="GString.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -159,6 +160,7 @@
     <ClCompile Include="CRC.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="GDir.cpp" />
+    <ClCompile Include="GFile.cpp" />
     <ClCompile Include="GString.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

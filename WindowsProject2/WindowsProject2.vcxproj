@@ -91,7 +91,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>DemoApp.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>C:\Users\Keith\source\repos\WindowsProject2\Box2DPhysics;C:\Users\Keith\source\repos\WindowsProject2\EngineCore;..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Keith\source\repos\WindowsProject2\JSon;C:\Users\Keith\source\repos\WindowsProject2\Box2DPhysics;C:\Users\Keith\source\repos\WindowsProject2\EngineCore;..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -108,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Keith\source\repos\WindowsProject2\Box2DPhysics;C:\Users\Keith\source\repos\WindowsProject2\EngineCore;..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Keith\source\repos\WindowsProject2\JSon;C:\Users\Keith\source\repos\WindowsProject2\Box2DPhysics;C:\Users\Keith\source\repos\WindowsProject2\EngineCore;..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -240,6 +240,9 @@
     </ProjectReference>
     <ProjectReference Include="..\EngineCore\EngineCore.vcxproj">
       <Project>{9b92568a-e439-4b32-bee2-6e713a65a4ed}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\JSon\JSon.vcxproj">
+      <Project>{650b6c69-41e5-4027-b47a-077bf1833e61}</Project>
     </ProjectReference>
     <ProjectReference Include="..\tmxlite\tmxlite.vcxproj">
       <Project>{0bc0c535-febb-4a83-8197-af74fa26e100}</Project>
