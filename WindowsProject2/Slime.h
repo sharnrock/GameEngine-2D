@@ -12,12 +12,10 @@ public:
 	Slime(float x, float y, float w, float h);
 	~Slime();
 
+
 	void setPossesor(Possessor* possessor);
 
 	void update(__int64 dt);
-
-	//const Sprite & getSprite() const;
-	//void setSprite(const Sprite& sprite);
 
 	bool isSolid() const { return true; }
 
@@ -33,6 +31,5 @@ protected:
 private:
 	Possessor * _possessor;
 	float speed_px_s;
-	//Sprite _sprite;
 };
 

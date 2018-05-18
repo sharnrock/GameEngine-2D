@@ -18,6 +18,9 @@ public:
 	void     setPossesor(Possessor* possessor); 
 	void     update(__int64 dt);
 
+	
+	void convertScreenCoordToWorldCoord(float in_x, float in_y, float& out_x, float& out_y);
+
 protected:
 	void onControlEvent(ControlEvent* e);
 	void moveLeft(__int64 dt);

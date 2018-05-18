@@ -228,11 +228,18 @@ LRESULT CALLBACK WindowsBullshit::WndProc(HWND hwnd, UINT message, WPARAM wParam
 				result = 0;
 			}
 			break;
-
-			case WM_MOUSEHOVER:
+			case WM_MOUSEMOVE:
 			{
+				// TODO: probabbly the best place to do resolution math for mouse position
+				D2D1_SIZE_U size = pDemoApp->render_bs->getTargetResolution();
+				D2D1_SIZE_U realres = pDemoApp->render_bs->getWindowSize();
+
 				int xPos = GET_X_LPARAM(lParam);
 				int yPos = GET_Y_LPARAM(lParam);
+
+				xPos = xPos * size.width / realres.width;
+				yPos = yPos * size.height / realres.height;
+
 				pDemoApp->hid_state->setMouseCoords(xPos, yPos);
 				result = 0;
 			}

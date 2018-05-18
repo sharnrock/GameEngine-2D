@@ -1,11 +1,10 @@
 #pragma once
 
 #include "Types.h"
-#include <string>
 
 class Camera;
 class Displayable;
-
+class GString;
 
 class RenderEngine
 {
@@ -25,7 +24,7 @@ public:
 	virtual void         addDisplayableObject(Displayable* object, int layer) = 0;
 	virtual void         clearDisplayables() = 0;
 	
-	virtual BITMAP_HANDL loadBitmapAssetFromFilepath(const std::string& file_path, int width, int height) = 0;
+	virtual BITMAP_HANDL loadBitmapAssetFromFilepath(const GString& file_path, int width, int height) = 0;
 
 	virtual Camera*      getCamera() = 0;
 };

@@ -11,6 +11,7 @@ public:
 	bool contains(const Key& key);
 };
 
+// Returns true if key already exists
 template <class Key, class Value>
 bool GMap<Key, Value>::contains(const Key& key)
 {

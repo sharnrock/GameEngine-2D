@@ -6,6 +6,10 @@
 class Displayable;
 #include "RenderEngine.h"
 #include "Camera.h"
+#include "GMap.h"
+
+#include "Types.h"
+class GString;
 
 #include <windows.h>
 
@@ -20,7 +24,7 @@ class Displayable;
 #include <dwrite.h>
 #include <wincodec.h>
 
-#include <string>
+
 
 #ifndef HINST_THISCOMPONENT
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
@@ -62,26 +66,28 @@ public:
 	void setScreenRatio(ScreenRatio ratio) { _screen_ratio = ratio; }
 	ScreenRatio getScreenRatio() const { return _screen_ratio; }
 	D2D1_SIZE_U getWindowSize() const { return window_size; }
+	D2D1_SIZE_U getTargetResolution() const;
+
 
 	HWND getHWND() { return m_hwnd; }
 	ID2D1Factory* getDirect2DFactory() { return m_pDirect2dFactory; }
 	ID2D1HwndRenderTarget* getRenderTarget() { return m_pRenderTarget; }
-	ID2D1SolidColorBrush* getGrayBrush() const { return m_pLightSlateGrayBrush; }
-	ID2D1SolidColorBrush* getBlueBrush() const { return m_pCornflowerBlueBrush; }
-	ID2D1SolidColorBrush* getBlackBrush() const { return m_pBlackBrush; }
+	//ID2D1SolidColorBrush* getGrayBrush() const { return m_pLightSlateGrayBrush; }
+	//ID2D1SolidColorBrush* getBlueBrush() const { return m_pCornflowerBlueBrush; }
+	//ID2D1SolidColorBrush* getBlackBrush() const { return m_pBlackBrush; }
 
 	void setHWND(HWND hwnd) { m_hwnd = hwnd; }
 	void setD2DFactory(ID2D1Factory* factory) { m_pDirect2dFactory = factory; }
-	void setGrayBrush(ID2D1SolidColorBrush* brush) { m_pLightSlateGrayBrush = brush; }
-	void setBlueBrush(ID2D1SolidColorBrush* brush) { m_pCornflowerBlueBrush = brush; }
-	void setBlackBrush(ID2D1SolidColorBrush* brush) { m_pBlackBrush = brush; }
+	//void setGrayBrush(ID2D1SolidColorBrush* brush) { m_pLightSlateGrayBrush = brush; }
+	//void setBlueBrush(ID2D1SolidColorBrush* brush) { m_pCornflowerBlueBrush = brush; }
+	//void setBlackBrush(ID2D1SolidColorBrush* brush) { m_pBlackBrush = brush; }
 
 	void addDisplayableObject(Displayable* object, int layer = 0);
 	void clearDisplayables();
 
 	// loads the bitmap into memory and returns a handle for it
 	// TODO: probably going to come up with a type instead of int; even it it's typedef int BMHANDLE
-	int loadBitmapAssetFromFilepath(const std::string& file_path, int width, int height);
+	BITMAP_HANDL loadBitmapAssetFromFilepath(const GString& file_path, int width, int height);
 
 	Camera* getCamera() { return &_camera_view; }
 	
@@ -93,16 +99,18 @@ private:
 	HWND m_hwnd;
 	ID2D1Factory* m_pDirect2dFactory;
 	ID2D1HwndRenderTarget* m_pRenderTarget;
-	ID2D1SolidColorBrush* m_pLightSlateGrayBrush;
-	ID2D1SolidColorBrush* m_pCornflowerBlueBrush;
+	//ID2D1SolidColorBrush* m_pLightSlateGrayBrush;
+	//ID2D1SolidColorBrush* m_pCornflowerBlueBrush;
 	ID2D1SolidColorBrush* m_pBlackBrush;
 	DynamicList<DynamicList<Displayable*> > _displayables;
-	//DynamicList<Displayable*> _displayables;
-	DynamicList<ID2D1Bitmap*> _bit_maps;
+	GMap<BITMAP_HANDL, ID2D1Bitmap*> _bit_maps;
 	Camera _camera_view;
 	D2D1_SIZE_U window_size;
 	ScreenRatio _screen_ratio;
 	IDWriteFactory* m_pDWriteFactory;
 	IDWriteTextFormat* m_pTextFormat;
+
+	UINT32 _target_res_x;
+	UINT32 _target_res_y;
 };
 

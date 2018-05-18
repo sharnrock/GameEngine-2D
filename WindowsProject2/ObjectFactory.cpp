@@ -36,6 +36,7 @@ ObjectFactory::~ObjectFactory()
 
 Projectile* ObjectFactory::createProjectile(float x, float y, float target_x, float target_y)
 {
+	_render_engine->getCamera()->convertScreenCoordToWorldCoord(target_x, target_y, target_x, target_y);
 	if (_idle_projs.isEmpty())
 	{
 		// create
@@ -64,6 +65,7 @@ Projectile* ObjectFactory::createProjectile(float x, float y, float target_x, fl
 		Projectile* proj = _idle_projs.popBack();
 		_active_projs.append(proj);
 		proj->setWorldCoordinates(x,y);
+		proj->setTarget(target_x, target_y);
 
 		proj->setActive(true);
 		BirthEvent event;
@@ -175,6 +177,7 @@ void ObjectFactory::loadUpGameObjectWithPtrs(GameObject* obj)
 	obj->setSpriteManager(_sprite_manager);
 	obj->setAudioEngine(_audio_engine);
 	obj->setObjectFactory(this);
+	obj->setCamera(_render_engine->getCamera());
 }
 
 

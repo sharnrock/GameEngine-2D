@@ -30,7 +30,7 @@ private:
 	void moveUp(__int64 dt);
 	void moveRight(__int64 dt);
 	void moveDown(__int64 dt);
-	void firePrimary(__int64 dt);
+	void firePrimary(int mouse_x, int mouse_y);
 
 	Possessor* _possessor;
 	float speed_px_s;

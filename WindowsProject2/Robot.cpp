@@ -12,6 +12,7 @@ Robot::Robot(float x, float y, float w, float h, ObjectFactory* obj_factory) :
 	_weapon_timer(0),
 	_weapon_cooldown(100000)
 {
+	_obj_type = "Robot";
 }
 
 Robot::~Robot()
@@ -42,11 +43,11 @@ void Robot::moveDown(__int64 dt)
 	updateBoundingRect();
 }
 
-void Robot::firePrimary(__int64 dt)
+void Robot::firePrimary(int mouse_x, int mouse_y)
 {
 	if (_weapon_timer <= 0)
 	{
-		_obj_factory->createProjectile(_x + 30.0f, _y, _x + 30, _y); // fires to the right
+		_obj_factory->createProjectile(_x + 30.0f, _y, (float)mouse_x, (float)mouse_y); // fires to the right
 		_weapon_timer = _weapon_cooldown;
 	}
 }
@@ -65,23 +66,13 @@ void Robot::update(__int64 dt)
 	_possessor->update(dt);
 }
 
-//const Sprite & Robot::getSprite() const
-//{
-//	return _sprite;
-//}
-//
-//void Robot::setSprite(const Sprite& sprite)
-//{
-//	_sprite = sprite;
-//	float width = _sprite.getSourceRect().right - _sprite.getSourceRect().left;
-//	float height = _sprite.getSourceRect().bottom - _sprite.getSourceRect().top;
-//	setSize(width, height);
-//}
-
-
-
 void Robot::onCollisionEvent(CollisionEvent* e)
 {
+	static GString projectile_type("Projectile");
+
+	if (e->getCollider()->getObjectType() == projectile_type)
+		return;
+
 	for (int y = 0; y < e->getCollider()->getFineCollisionBoxes().count(); y++)
 	{
 		RECTF_TYPE collider_box = e->getCollider()->getFineCollisionBoxes().at(y);
@@ -168,7 +159,7 @@ void Robot::onControlEvent(ControlEvent* e)
 		moveUp(e->getDt());
 		break;
 	case ControlEvent::FirePrimary:
-		firePrimary(e->getDt());
+		firePrimary(e->getMouseX(), e->getMouseY());
 		break;
 	}
 }

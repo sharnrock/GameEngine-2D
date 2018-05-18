@@ -3,11 +3,13 @@
 
 BackGroundTileDisplayable::BackGroundTileDisplayable()
 {
+	_obj_type = "BackGroundTileDisplayable";
 }
 
 BackGroundTileDisplayable::BackGroundTileDisplayable(float x, float y, float width, float height) :
 	DisplayableBitmap(x, y, width, height)
 {
+	_obj_type = "BackGroundTileDisplayable";
 }
 
 BackGroundTileDisplayable::~BackGroundTileDisplayable()

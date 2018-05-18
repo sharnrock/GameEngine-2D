@@ -27,7 +27,7 @@ public:
 
 	void releaseProjectile(Projectile*);
 
-	// These are actually used
+	// Converts screen coords at target_x/y to world coordinates
 	Projectile* createProjectile(float x, float y, float target_x, float target_y);
 	GameObject* createRobot(float x, float y, int layer);
 	GameObject* createSlime(float x, float y, int layer);

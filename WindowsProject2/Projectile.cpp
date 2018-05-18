@@ -4,6 +4,8 @@
 #include "Locations.h"
 #include "AudioEngine.h"
 #include "ObjectFactory.h"
+
+#include <math.h>
 #include <assert.h>
 
 Projectile::Projectile(float x, float y, float target_x, float target_y) :
@@ -13,8 +15,14 @@ Projectile::Projectile(float x, float y, float target_x, float target_y) :
 	_speed(400),
 	_distance_travelled(0),
 	_fire_sound(AUDIO_PATH "shoot.wav"),
-	_max_distance(400)
+	_max_distance(400), 
+	_angle_rad(0)
 {
+	_obj_type = "Projectile";
+	
+	_delta_x = _target_x - _x;
+	_delta_y = _target_y - _y;
+
 	updateAngle();
 	_w = 32;
 	_h = 32;
@@ -23,7 +31,7 @@ Projectile::Projectile(float x, float y, float target_x, float target_y) :
 
 void Projectile::updateAngle()
 {
-	// calc the angle from target coords
+	_angle_rad = atan2f(_delta_y, _delta_x);
 }
 
 
@@ -45,18 +53,27 @@ void Projectile::setTarget(float x, float y)
 {
 	_target_x = x;
 	_target_y = y;
+	_delta_x = _target_x - _x;
+	_delta_y = _target_y - _y;
+	updateAngle();
 }
 
-void Projectile::setAngle(float degrees)
+void Projectile::setAngle(float rads)
 {
-	_angle_dgr = degrees;
+	_angle_rad = rads;
 }
 
 void Projectile::update(__int64 dt)
 {
 	// TODO: put angle into this calc!
 	float distance = (float)(dt * _speed / 1E6f);
-	_x += distance;
+
+	//_x += distance * (_delta_x / fabs(_delta_x + _delta_y)) ;
+	//_y += distance * (_delta_y / fabs(_delta_x + _delta_y));
+
+	_x += distance * cosf(_angle_rad);
+	_y += distance * sinf(_angle_rad);
+
 	_distance_travelled += distance;
 	if (_distance_travelled > _max_distance)
 		destroy();
@@ -65,6 +82,10 @@ void Projectile::update(__int64 dt)
 
 void Projectile::onCollisionEvent(CollisionEvent* e)
 {
+	static GString robot_type("Robot");
+	if (e->getCollider()->getObjectType() == robot_type)
+		return;
+
 	GameObject* obj = e->getCollider();
 	if (obj->isSolid())
 	{

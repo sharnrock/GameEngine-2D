@@ -4,6 +4,7 @@
 
 FPSCounter::FPSCounter()
 {
+	_obj_type = "FPSCounter";
 }
 
 

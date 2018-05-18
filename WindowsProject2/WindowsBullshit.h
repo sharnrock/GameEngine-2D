@@ -49,6 +49,7 @@ public:
 
 	LevelLoader * _level_loader;
 
+
 private:
 	static LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 	HRESULT                 initialize();

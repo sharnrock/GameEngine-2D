@@ -13,7 +13,7 @@ public:
 
 	void setSpeed(float speed);
 	void setTarget(float x, float y);
-	void setAngle(float degrees);
+	void setAngle(float rads);
 	void update(__int64 dt);
 
 	const Sprite & getSprite() const;
@@ -30,7 +30,7 @@ private:
 
 	float _speed;
 	float _target_x, _target_y;
-	float _angle_dgr;
+	float _angle_rad;
 
 	// Limit the life of the projectile
 	float _max_distance;
@@ -38,5 +38,8 @@ private:
 
 	Sprite _sprite;
 	GString _fire_sound;
+
+	float _delta_x;
+	float _delta_y;
 };
 

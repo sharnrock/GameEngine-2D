@@ -7,6 +7,7 @@ Camera::Camera() :
 	speed_px_s(30.0f),
 	_focus_object(nullptr)
 {
+	_obj_type = "Camera";
 }
 
 Camera::~Camera()
@@ -71,6 +72,12 @@ void Camera::update(__int64 dt)
 		_possessor->update(dt);
 	}
 	// or nothing will happen...
+}
+
+void Camera::convertScreenCoordToWorldCoord(float in_x, float in_y, float& out_x, float& out_y)
+{
+	out_x = X() + in_x;
+	out_y = Y() + in_y;
 }
 
 void Camera::onControlEvent(ControlEvent* e)

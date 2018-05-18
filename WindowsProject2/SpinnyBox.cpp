@@ -4,6 +4,7 @@
 SpinnyBox::SpinnyBox() :
 	_sprite_location("E:\\Keith\\Documents\\Sprites\\cube.png")
 {
+	_obj_type = "SpinnyBox";
 }
 
 

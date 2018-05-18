@@ -2,6 +2,7 @@
 
 #include "Types.h"
 #include "DynamicList.h"
+#include "GString.h"
 
 class Event;
 class CollisionEvent;
@@ -13,6 +14,7 @@ class AnimationEvent;
 class AudioEngine;
 class ObjectFactory;
 class SpriteSheetManager;
+class Camera;
 
 // Base class for just about everything in the game world
 class GameObject
@@ -26,6 +28,11 @@ public:
 	void setAudioEngine(AudioEngine* audio_engine) { _audio_engine = audio_engine; }
 	void setObjectFactory(ObjectFactory* obj_factory) { _obj_factory = obj_factory; }
 	void setSpriteManager(SpriteSheetManager* sprite_manager) { _sprite_manager = sprite_manager; }
+	void setCamera(Camera* camera) { _camera = camera; }
+	
+	// this should return a gstring type
+	virtual const GString& getObjectType() const { return _obj_type; }
+	
 
 	// if returns true, it won't render or update or collide
 	virtual void setActive(bool is_active = true) { _is_active = is_active; }
@@ -66,7 +73,7 @@ public:
 
 	
 protected:
-
+	GString _obj_type;
 	// Events
 	
 	// ran into something
@@ -100,10 +107,12 @@ protected:
 	AudioEngine*   getAudioEngine() { assert(_audio_engine); return _audio_engine; }
 	ObjectFactory* getObjectFactory() { assert(_obj_factory); return _obj_factory; }
 	SpriteSheetManager* getSpriteManager() { assert(_sprite_manager);  return _sprite_manager; }
+	Camera* getCamera() { return _camera; }
 
 private:
 	AudioEngine*   _audio_engine;
 	ObjectFactory* _obj_factory;
 	SpriteSheetManager* _sprite_manager;
+	Camera* _camera;
 };
 

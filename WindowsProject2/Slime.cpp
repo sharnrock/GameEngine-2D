@@ -8,6 +8,7 @@ Slime::Slime(float x, float y, float w, float h) :
 	_possessor(nullptr),
 	speed_px_s(30)
 {
+	_obj_type = "Slime";
 }
 
 Slime::~Slime()
@@ -64,7 +65,7 @@ void Slime::update(__int64 dt)
 
 void Slime::onCollisionEvent(CollisionEvent* e)
 {
-	OutputDebugString(TEXT("Something hit slime\n"));
+	//OutputDebugString(TEXT("Something hit slime\n"));
 }
 
 void Slime::onControlEvent(ControlEvent* e)

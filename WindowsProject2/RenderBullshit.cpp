@@ -31,11 +31,14 @@ RenderBullshit::RenderBullshit() :
 	m_hwnd(NULL),
 	m_pDirect2dFactory(NULL),
 	m_pRenderTarget(NULL),
-	m_pLightSlateGrayBrush(NULL),
-	m_pCornflowerBlueBrush(NULL),
+	/*m_pLightSlateGrayBrush(NULL),
+	m_pCornflowerBlueBrush(NULL),*/
 	m_pBlackBrush(NULL),
-	_screen_ratio(Screen_16_9)
+	_screen_ratio(Screen_16_9),
+	_target_res_x(0),
+	_target_res_y(0)
 {
+	window_size = D2D1::SizeU(200,200);
 	// This is only temp!
 	_displayables.append( DynamicList<Displayable*>(256) ); 
 }
@@ -44,20 +47,10 @@ RenderBullshit::~RenderBullshit()
 {
 	SafeRelease(&m_pDirect2dFactory);
 	SafeRelease(&m_pRenderTarget);
-	SafeRelease(&m_pLightSlateGrayBrush);
+	//SafeRelease(&m_pLightSlateGrayBrush);
 	SafeRelease(&m_pBlackBrush);
-	SafeRelease(&m_pCornflowerBlueBrush);
+	//SafeRelease(&m_pCornflowerBlueBrush);
 }
-
-// Let's see if this keeps it from all crashing down
-//void RenderBullshit::releaseAll()
-//{
-//	SafeRelease(&m_pDirect2dFactory);
-//	SafeRelease(&m_pRenderTarget);
-//	SafeRelease(&m_pLightSlateGrayBrush);
-//	SafeRelease(&m_pBlackBrush);
-//	SafeRelease(&m_pCornflowerBlueBrush);
-//}
 
 void RenderBullshit::addDisplayableObject(Displayable* object, int layer)
 {
@@ -109,9 +102,6 @@ HRESULT RenderBullshit::CreateDeviceIndependentResources()
 	}
 	// NEEDED FOR TEXT OUTPUT ON SCREEN
 
-
-
-
 	return hr;
 }
 
@@ -140,22 +130,22 @@ HRESULT RenderBullshit::CreateDeviceResources()
 		);
 
 
-		if (SUCCEEDED(hr))
-		{
-			// Create a gray brush.
-			hr = m_pRenderTarget->CreateSolidColorBrush(
-				D2D1::ColorF(D2D1::ColorF::LightSlateGray),
-				&m_pLightSlateGrayBrush
-			);
-		}
-		if (SUCCEEDED(hr))
-		{
-			// Create a blue brush.
-			hr = m_pRenderTarget->CreateSolidColorBrush(
-				D2D1::ColorF(D2D1::ColorF::CornflowerBlue),
-				&m_pCornflowerBlueBrush
-			);
-		}
+		//if (SUCCEEDED(hr))
+		//{
+		//	// Create a gray brush.
+		//	hr = m_pRenderTarget->CreateSolidColorBrush(
+		//		D2D1::ColorF(D2D1::ColorF::LightSlateGray),
+		//		&m_pLightSlateGrayBrush
+		//	);
+		//}
+		//if (SUCCEEDED(hr))
+		//{
+		//	// Create a blue brush.
+		//	hr = m_pRenderTarget->CreateSolidColorBrush(
+		//		D2D1::ColorF(D2D1::ColorF::CornflowerBlue),
+		//		&m_pCornflowerBlueBrush
+		//	);
+		//}
 		if (SUCCEEDED(hr))
 		{
 			// Create a blue brush.
@@ -174,10 +164,15 @@ HRESULT RenderBullshit::CreateDeviceResources()
 void RenderBullshit::DiscardDeviceResources()
 {
 	SafeRelease(&m_pRenderTarget);
-	SafeRelease(&m_pLightSlateGrayBrush);
-	SafeRelease(&m_pCornflowerBlueBrush);
+	//SafeRelease(&m_pLightSlateGrayBrush);
+	//SafeRelease(&m_pCornflowerBlueBrush);
 }
 
+
+D2D1_SIZE_U RenderBullshit::getTargetResolution() const
+{
+	return D2D1::SizeU(_target_res_x, _target_res_y);
+}
 
 //Implement the DemoApp::OnRender method.First, create an HRESULT.Then call the CreateDeviceResource method.This method is called every time the window is painted.Recall that, in step 4 of Part 3, you added an if statement to prevent the method from doing any work if the render target already exists.
 
@@ -351,6 +346,8 @@ void RenderBullshit::OnResize(UINT width, UINT height)
 	_camera_view.setSize(
 		(float)ratio_x*screen_size,
 		(float)ratio_y*screen_size);
+	_target_res_x = ratio_x * screen_size;
+	_target_res_y = ratio_y * screen_size;
 #else
 	_camera_view.setSize(
 		(float)width,
@@ -375,20 +372,23 @@ void RenderBullshit::OnResize(UINT width, UINT height)
 
 }
 
-int RenderBullshit::loadBitmapAssetFromFilepath(const std::string& file_path, int width, int height)
+BITMAP_HANDL RenderBullshit::loadBitmapAssetFromFilepath(const GString& file_path, int width, int height)
 {
-	_bit_maps.append(nullptr);
+	if (_bit_maps.contains(file_path.toHash()))
+		return file_path.toHash();
+
+	_bit_maps[file_path.toHash()] = nullptr;
+	
 	HRESULT result;
 	result = Hilo::Direct2DHelpers::Direct2DUtility::LoadBitmapFromFile(
 		m_pRenderTarget,
 		GString(file_path).toWideString().c_str(),
 		width,
 		height,
-		&_bit_maps.back()
-		//&_bm
+		&_bit_maps[file_path.toHash()]
 	);
 
-	return _bit_maps.count() - 1;
+	return file_path.toHash();
 }
 
 
