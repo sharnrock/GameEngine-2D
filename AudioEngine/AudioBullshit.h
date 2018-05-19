@@ -14,7 +14,7 @@ public:
 	AudioBullshit();
 	~AudioBullshit();
 
-	HRESULT init(); 
+	HRESULT initialize();
 
 	void playSound(const GString& wav_file);
 	void loadSoundFile(const GString& wav_file);
@@ -47,16 +47,17 @@ private:
 	void setMasterAudioFormat(const WAVEFORMATEX& format) { _master_format = format; }
 	IXAudio2SourceVoice* getSourceVoice();
 
-	IXAudio2* pXAudio2;
-	IXAudio2MasteringVoice* pMasterVoice;
+	IXAudio2*                         pXAudio2;
+	IXAudio2MasteringVoice*           pMasterVoice;
 
 	// Only needs to be set once, holds info like 44.1k 16bit yada, yada
-	WAVEFORMATEX _master_format;
-
+	WAVEFORMATEX                      _master_format;
 	DynamicList<IXAudio2SourceVoice*> _available_source_voices;
 	DynamicList<IXAudio2SourceVoice*> _in_use_source_voices;
-
 	std::map<UINT32, XAUDIO2_BUFFER*> _x2_buffers;
+
+	// Inherited via AudioEngine
+	virtual HRESULT uninitialize() override;
 };
 
 

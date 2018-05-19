@@ -5,7 +5,7 @@
 
 class AudioEngine;
 class GameLoop;
-class RenderBullshit;
+class DirectX11GraphicsEngine;
 class HumanInputDeviceState;
 class SpriteSheet;
 class WallCollisions;
@@ -25,17 +25,17 @@ public:
 	void loadLevel();
 
 	void setGameLoop(GameLoop* game_loop)                           { _game_loop    = game_loop; }
-	void setRenderBullshit(RenderBullshit* renderer)                { _render_thing = renderer; }
-	void setHumanInputDeviceState(HumanInputDeviceState* hid_state) { _hid_state    = hid_state; }
+	void setRenderBullshit(GraphicsEngine* renderer)                { _render_thing = renderer; }
+	void setHumanInputDeviceState(const HumanInputDeviceState* hid_state) { _hid_state    = hid_state; }
 
 private:
 	void createTileLayer(tmx::TileLayer* tile_layer, int layer);
 	void createObjectLayer(tmx::ObjectGroup* obj_layer, int layer);
 
-	GameLoop*                  _game_loop;
-	RenderBullshit*            _render_thing;
-	HumanInputDeviceState*     _hid_state;
-	SpriteSheetManager         _sprite_manager;
-	AudioEngine*               _audio_engine;
+	GameLoop*                    _game_loop;
+	GraphicsEngine*              _render_thing;
+	const HumanInputDeviceState* _hid_state;
+	SpriteSheetManager           _sprite_manager;
+	AudioEngine*                 _audio_engine;
 };
 

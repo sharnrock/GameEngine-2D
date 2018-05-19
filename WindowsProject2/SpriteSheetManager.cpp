@@ -1,6 +1,6 @@
 #include "SpriteSheetManager.h"
 #include "SpriteSheet.h"
-#include "RenderEngine.h"
+#include "GraphicsEngine.h"
 #include "GString.h"
 #include "document.h"
 

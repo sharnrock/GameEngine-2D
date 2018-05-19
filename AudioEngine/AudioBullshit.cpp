@@ -17,28 +17,9 @@ AudioBullshit::AudioBullshit() :
 
 AudioBullshit::~AudioBullshit()
 {
-	CloseHandle(hBufferEndEvent);
-
-	for (int i = 0; i < _available_source_voices.count(); i++)
-	{
-		_available_source_voices[i]->DestroyVoice();
-	}
-
-	for (int i = 0; i < _in_use_source_voices.count(); i++)
-	{
-		_in_use_source_voices[i]->Stop();
-		_in_use_source_voices[i]->DestroyVoice();
-	}
-
-	if (pMasterVoice)
-		pMasterVoice->DestroyVoice();
-	
-	// release this last
-	if (pXAudio2)
-		pXAudio2->Release();
 }
 
-HRESULT AudioBullshit::init()
+HRESULT AudioBullshit::initialize()
 {
 	HRESULT hr = S_OK;
 	if (FAILED(hr = XAudio2Create(&pXAudio2, 0, XAUDIO2_DEFAULT_PROCESSOR)))
@@ -167,6 +148,31 @@ IXAudio2SourceVoice* AudioBullshit::getSourceVoice()
 		_in_use_source_voices.append(pSourceVoice);
 		return pSourceVoice;
 	}
+}
+
+HRESULT AudioBullshit::uninitialize()
+{
+	CloseHandle(hBufferEndEvent);
+
+	for (int i = 0; i < _available_source_voices.count(); i++)
+	{
+		_available_source_voices[i]->DestroyVoice();
+	}
+
+	for (int i = 0; i < _in_use_source_voices.count(); i++)
+	{
+		_in_use_source_voices[i]->Stop();
+		_in_use_source_voices[i]->DestroyVoice();
+	}
+
+	if (pMasterVoice)
+		pMasterVoice->DestroyVoice();
+
+	// release this last
+	if (pXAudio2)
+		pXAudio2->Release();
+
+	return S_OK;
 }
 
 

@@ -168,6 +168,7 @@
     <ClInclude Include="CollisionEvent.h" />
     <ClInclude Include="ComHelpers.h" />
     <ClInclude Include="ControlEvent.h" />
+    <ClInclude Include="Cursor.h" />
     <ClInclude Include="DestroyEvent.h" />
     <ClInclude Include="Direct2DUtility.h" />
     <ClInclude Include="Displayable.h" />
@@ -180,11 +181,12 @@
     <ClInclude Include="HumanPossessor.h" />
     <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="Locations.h" />
+    <ClInclude Include="MainLoop.h" />
     <ClInclude Include="ObjectDefines.h" />
     <ClInclude Include="ObjectFactory.h" />
     <ClInclude Include="Possessor.h" />
     <ClInclude Include="Projectile.h" />
-    <ClInclude Include="RenderEngine.h" />
+    <ClInclude Include="GraphicsEngine.h" />
     <ClInclude Include="Robot.h" />
     <ClInclude Include="Slime.h" />
     <ClInclude Include="SpinnyBox.h" />
@@ -192,9 +194,9 @@
     <ClInclude Include="SpriteSheet.h" />
     <ClInclude Include="SpriteSheetManager.h" />
     <ClInclude Include="Types.h" />
-    <ClInclude Include="WindowsBullshit.h" />
+    <ClInclude Include="MainWindow.h" />
     <ClInclude Include="GameLoop.h" />
-    <ClInclude Include="RenderBullshit.h" />
+    <ClInclude Include="DirectX11GraphicsEngine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AIPossessor.cpp" />
@@ -205,6 +207,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionEvent.cpp" />
     <ClCompile Include="ControlEvent.cpp" />
+    <ClCompile Include="Cursor.cpp" />
     <ClCompile Include="DestroyEvent.cpp" />
     <ClCompile Include="Direct2DUtility.cpp" />
     <ClCompile Include="Displayable.cpp" />
@@ -215,21 +218,22 @@
     <ClCompile Include="HumanInputDeviceState.cpp" />
     <ClCompile Include="HumanPossessor.cpp" />
     <ClCompile Include="LevelLoader.cpp" />
+    <ClCompile Include="MainLoop.cpp" />
     <ClCompile Include="ObjectDefines.cpp" />
     <ClCompile Include="ObjectFactory.cpp" />
     <ClCompile Include="Possessor.cpp" />
     <ClCompile Include="Projectile.cpp" />
-    <ClCompile Include="RenderEngine.cpp" />
+    <ClCompile Include="GraphicsEngine.cpp" />
     <ClCompile Include="Robot.cpp" />
     <ClCompile Include="Slime.cpp" />
     <ClCompile Include="SpinnyBox.cpp" />
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="SpriteSheet.cpp" />
     <ClCompile Include="SpriteSheetManager.cpp" />
-    <ClCompile Include="WindowsBullshit.cpp" />
+    <ClCompile Include="MainWindow.cpp" />
     <ClCompile Include="GameLoop.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="RenderBullshit.cpp" />
+    <ClCompile Include="DirectX11GraphicsEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AudioEngine\AudioEngine.vcxproj">

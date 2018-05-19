@@ -1,15 +1,13 @@
-#include "RenderBullshit.h"
+#include "DirectX11GraphicsEngine.h"
 #include "Displayable.h"
 #include "GString.h"
 #include "Sprite.h"
-//#include "Types.h"
-//#include <wincodec.h>
-
-//#include "comptr.h"
-#include <wrl/client.h>
 
 // probably temporary
 #include "Direct2DUtility.h"
+
+#include <wrl/client.h>
+
 
 // enable one of the following
 #define USE_640_x_360
@@ -24,15 +22,11 @@
 // makes the camera use fine adjustement while moving
 //#define SMOOTH_CAM_MOVE
 
-//#include <Objbase.h>
-//#include <comptr.h>
 
-RenderBullshit::RenderBullshit() :
+DirectX11GraphicsEngine::DirectX11GraphicsEngine() :
 	m_hwnd(NULL),
 	m_pDirect2dFactory(NULL),
 	m_pRenderTarget(NULL),
-	/*m_pLightSlateGrayBrush(NULL),
-	m_pCornflowerBlueBrush(NULL),*/
 	m_pBlackBrush(NULL),
 	_screen_ratio(Screen_16_9),
 	_target_res_x(0),
@@ -43,16 +37,14 @@ RenderBullshit::RenderBullshit() :
 	_displayables.append( DynamicList<Displayable*>(256) ); 
 }
 
-RenderBullshit::~RenderBullshit()
+DirectX11GraphicsEngine::~DirectX11GraphicsEngine()
 {
-	SafeRelease(&m_pDirect2dFactory);
+	/*SafeRelease(&m_pDirect2dFactory);
 	SafeRelease(&m_pRenderTarget);
-	//SafeRelease(&m_pLightSlateGrayBrush);
-	SafeRelease(&m_pBlackBrush);
-	//SafeRelease(&m_pCornflowerBlueBrush);
+	SafeRelease(&m_pBlackBrush);*/
 }
 
-void RenderBullshit::addDisplayableObject(Displayable* object, int layer)
+void DirectX11GraphicsEngine::addDisplayableObject(Displayable* object, int layer)
 {
 	while (_displayables.count()-1 < layer)
 	{
@@ -61,12 +53,12 @@ void RenderBullshit::addDisplayableObject(Displayable* object, int layer)
 	_displayables[layer].append(object);
 }
 
-void RenderBullshit::clearDisplayables()
+void DirectX11GraphicsEngine::clearDisplayables()
 {
 	_displayables.clear();
 }
 
-HRESULT RenderBullshit::CreateDeviceIndependentResources()
+HRESULT DirectX11GraphicsEngine::CreateDeviceIndependentResources()
 {
 	HRESULT hr = S_OK;
 
@@ -108,7 +100,7 @@ HRESULT RenderBullshit::CreateDeviceIndependentResources()
 
 
 //Because this method will be called repeatedly, add an if statement to check whether the render target(m_pRenderTarget) already exists.The following code shows the complete CreateDeviceResources method.
-HRESULT RenderBullshit::CreateDeviceResources()
+HRESULT DirectX11GraphicsEngine::CreateDeviceResources()
 {
 	HRESULT hr = S_OK;
 
@@ -128,24 +120,6 @@ HRESULT RenderBullshit::CreateDeviceResources()
 			D2D1::HwndRenderTargetProperties(m_hwnd, size),
 			&m_pRenderTarget
 		);
-
-
-		//if (SUCCEEDED(hr))
-		//{
-		//	// Create a gray brush.
-		//	hr = m_pRenderTarget->CreateSolidColorBrush(
-		//		D2D1::ColorF(D2D1::ColorF::LightSlateGray),
-		//		&m_pLightSlateGrayBrush
-		//	);
-		//}
-		//if (SUCCEEDED(hr))
-		//{
-		//	// Create a blue brush.
-		//	hr = m_pRenderTarget->CreateSolidColorBrush(
-		//		D2D1::ColorF(D2D1::ColorF::CornflowerBlue),
-		//		&m_pCornflowerBlueBrush
-		//	);
-		//}
 		if (SUCCEEDED(hr))
 		{
 			// Create a blue brush.
@@ -161,22 +135,32 @@ HRESULT RenderBullshit::CreateDeviceResources()
 
 
 //Implement the DemoApp::DiscardDeviceResources method.In this method, release the render target and the two brushes you created in the DemoApp::CreateDeviceResources method.
-void RenderBullshit::DiscardDeviceResources()
+void DirectX11GraphicsEngine::DiscardDeviceResources()
 {
 	SafeRelease(&m_pRenderTarget);
-	//SafeRelease(&m_pLightSlateGrayBrush);
-	//SafeRelease(&m_pCornflowerBlueBrush);
 }
 
 
-D2D1_SIZE_U RenderBullshit::getTargetResolution() const
+D2D1_SIZE_U DirectX11GraphicsEngine::getTargetResolution() const
 {
 	return D2D1::SizeU(_target_res_x, _target_res_y);
 }
 
+
+HRESULT DirectX11GraphicsEngine::initialize()
+{
+	return CreateDeviceIndependentResources();
+}
+
+void DirectX11GraphicsEngine::getDesktopDpi(float *dpiX, float *dpiY)
+{
+	this->getDirect2DFactory()->GetDesktopDpi(dpiX, dpiY);
+}
+
+
 //Implement the DemoApp::OnRender method.First, create an HRESULT.Then call the CreateDeviceResource method.This method is called every time the window is painted.Recall that, in step 4 of Part 3, you added an if statement to prevent the method from doing any work if the render target already exists.
 
-HRESULT RenderBullshit::OnRender()
+HRESULT DirectX11GraphicsEngine::OnRender()
 {
 	HRESULT hr = S_OK;
 	hr = CreateDeviceResources();
@@ -283,7 +267,7 @@ HRESULT RenderBullshit::OnRender()
 }
 
 
-D2D1_RECT_F RenderBullshit::offsetBoundingBoxWithCameraView(const D2D1_RECT_F& world_coords)
+D2D1_RECT_F DirectX11GraphicsEngine::offsetBoundingBoxWithCameraView(const D2D1_RECT_F& world_coords)
 {
 	D2D1_RECT_F result;
 #ifndef SMOOTH_CAM_MOVE
@@ -300,10 +284,21 @@ D2D1_RECT_F RenderBullshit::offsetBoundingBoxWithCameraView(const D2D1_RECT_F& w
 	return result;
 }
 
+HRESULT DirectX11GraphicsEngine::uninitialize()
+{
+	DiscardDeviceResources();
+	SafeRelease(&m_pDirect2dFactory);
+	SafeRelease(&m_pRenderTarget);
+	SafeRelease(&m_pBlackBrush);
+	return S_OK;
+}
+
+
+
 
 //Implement the DemoApp::OnResize method so that it resizes the render target to the new size of the window.
 
-void RenderBullshit::OnResize(UINT width, UINT height)
+void DirectX11GraphicsEngine::OnResize(UINT width, UINT height)
 {
 	if (!m_pRenderTarget)
 		return;
@@ -372,7 +367,7 @@ void RenderBullshit::OnResize(UINT width, UINT height)
 
 }
 
-BITMAP_HANDL RenderBullshit::loadBitmapAssetFromFilepath(const GString& file_path, int width, int height)
+BITMAP_HANDL DirectX11GraphicsEngine::loadBitmapAssetFromFilepath(const GString& file_path, int width, int height)
 {
 	if (_bit_maps.contains(file_path.toHash()))
 		return file_path.toHash();

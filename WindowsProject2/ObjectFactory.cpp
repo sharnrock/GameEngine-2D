@@ -1,6 +1,6 @@
 #include "ObjectFactory.h"
 #include "GameLoop.h"
-#include "RenderEngine.h"
+#include "GraphicsEngine.h"
 
 #include "Robot.h"
 #include "Slime.h"
@@ -9,7 +9,7 @@
 #include "Projectile.h"
 
 #include "Camera.h"
-#include "RenderEngine.h"
+
 #include "SpriteSheetManager.h"
 
 #include "BirthEvent.h"
@@ -22,7 +22,7 @@ ObjectFactory& ObjectFactory::Instance()
 	return instance;
 }
 
-void ObjectFactory::initialize(GameLoop* gloop, RenderEngine* rengine, SpriteSheetManager* sprite_manager, AudioEngine* audio_engine)
+void ObjectFactory::initialize(GameLoop* gloop, GraphicsEngine* rengine, SpriteSheetManager* sprite_manager, AudioEngine* audio_engine)
 {
 	_game_loop      = (gloop);
 	_render_engine  = (rengine);

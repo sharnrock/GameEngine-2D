@@ -1,12 +1,15 @@
 #include "GameLoop.h"
 #include "GameObject.h"
 #include "CollisionEvent.h"
+#include "LevelLoader.h"
+#include "GraphicsEngine.h"
 
 GameLoop::GameLoop() :
-	_updatables(1)
+	_updatables(1),
+	level_loader(nullptr),
+	graphics(nullptr)
 {
 }
-
 
 GameLoop::~GameLoop()
 {
@@ -20,6 +23,7 @@ void GameLoop::update(__int64 delta_t_us)
 			_updatables[i]->update(delta_t_us);
 	}
 	updateCollisions(delta_t_us);
+	graphics->OnRender();
 }
 
 void GameLoop::updateCollisions(__int64 delta_t_us)
@@ -75,4 +79,19 @@ void GameLoop::addUpdatableObject(GameObject* updatable_object)
 		_collideables.append(updatable_object);
 }
 
+HRESULT GameLoop::initialize()
+{
+	loadLevel();
+	return S_OK;
+}
 
+HRESULT GameLoop::uninitialize()
+{
+	return S_OK;
+}
+
+void GameLoop::loadLevel()
+{
+	assert(this->level_loader);
+	this->level_loader->loadLevel();
+}

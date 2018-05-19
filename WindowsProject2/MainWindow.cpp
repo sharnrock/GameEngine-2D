@@ -1,47 +1,44 @@
-#include "WindowsBullshit.h"
+#include "MainWindow.h"
 #include "HPElapsedTimer.h"
-#include "GameLoop.h"
-#include "RenderBullshit.h"
-#include "HumanInputDeviceState.h"
-#include "LevelLoader.h"
-#include <Strsafe.h>
-#include <Windowsx.h> // does this make windows.h obsolete?
+#include "MainLoop.h"
+#include "AudioEngine.h"
+#include "MainLoop.h"
+#include "GraphicsEngine.h"
 
-WindowsBullshit::WindowsBullshit(GameLoop* game_loop, RenderBullshit* renderer, HumanInputDeviceState* hid_state) :
-	game_loop(game_loop),
-	render_bs(renderer),
-	hid_state(hid_state),
-	_level_loader(nullptr)
+#include <Windowsx.h>
+#include <assert.h>
+
+
+
+MainWindow::MainWindow() :
+	graphics(nullptr),
+	audio(nullptr),
+	main_loop(nullptr)
 {
 }
 
-WindowsBullshit::~WindowsBullshit()
-{
+void MainWindow::setGraphicsSystem(GraphicsEngine* graphics) 
+{ 
+	this->graphics = graphics; 
 }
 
-int WindowsBullshit::exec()
-{
-	HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0);
-	if (SUCCEEDED(CoInitializeEx(NULL, COINIT_APARTMENTTHREADED)))
-	{
-		if (SUCCEEDED(initialize()))
-			mainLoop();
-		CoUninitialize(); 
-	}
-	return 0;
+void MainWindow::setAudioSystem(AudioEngine* audio) 
+{ 
+	this->audio = audio; 
 }
 
-//#define LIMIT_FPS
-void WindowsBullshit::mainLoop()
+void MainWindow::setMainLoop(MainLoop* main_loop) 
+{ 
+	this->main_loop = main_loop; 
+}
+
+void MainWindow::mainLoop()
 {
 	MSG            msg;
+	msg.message = WM_NULL;
+
 	HPElapsedTimer timer;
 	timer.start();
-#ifdef LIMIT_FPS
-	HPElapsedTimer fps_timer;
-	fps_timer.start();
-#endif
-	msg.message = WM_NULL;
 
 	while (msg.message != WM_QUIT)
 	{
@@ -52,43 +49,27 @@ void WindowsBullshit::mainLoop()
 		}
 		else
 		{
-#ifdef LIMIT_FPS
-			long long fps = 100;
-			long long time_needed = 1E6 / fps; // time needed to hit specific fps 33,333 for 30fps
-			long long elapsed = fps_timer.uElapsed(); // restart the timer
-#endif
-
-			this->game_loop->update(timer.uElapsed());
-			this->render_bs->OnRender(); // should this be in game loop?
-#ifdef LIMIT_FPS
-			while (elapsed < time_needed)
-			{
-				elapsed += fps_timer.uElapsed();
-			}
-#endif
+			this->main_loop->update(timer.uElapsed());
 		}
-	} 
-
-
-
-
+	}
 }
 
-HRESULT WindowsBullshit::initialize()
+HRESULT MainWindow::initialize()
 {
-	HRESULT hr;
+	HRESULT hr = S_OK;
 
-	// Initialize device-indpendent resources, such
-	// as the Direct2D factory.
-	hr = render_bs->CreateDeviceIndependentResources();
-	
+	assert(this->graphics);
+	assert(this->audio);
+	assert(this->main_loop);
 
+	if (SUCCEEDED(hr = this->graphics->initialize()))
+	if (SUCCEEDED(hr = this->audio->initialize()))
 	if (SUCCEEDED(hr))
 	{
 		// Register the window class.
 		WNDCLASSEX wcex = { sizeof(WNDCLASSEX) };
 		wcex.style = CS_HREDRAW | CS_VREDRAW;
-		wcex.lpfnWndProc = WindowsBullshit::WndProc;
+		wcex.lpfnWndProc = MainWindow::WndProc;
 		wcex.cbClsExtra = 0;
 		wcex.cbWndExtra = sizeof(LONG_PTR);
 		wcex.hInstance = HINST_THISCOMPONENT;
@@ -107,10 +88,11 @@ HRESULT WindowsBullshit::initialize()
 		// The factory returns the current system DPI. This is also the value it will use
 		// to create its own windows.
 		//render_bs->m_pDirect2dFactory->GetDesktopDpi(&dpiX, &dpiY);
-		render_bs->getDirect2DFactory()->GetDesktopDpi(&dpiX, &dpiY);
+		this->graphics->getDesktopDpi(&dpiX, &dpiY);
+		//render_bs->getDirect2DFactory()->GetDesktopDpi(&dpiX, &dpiY);
 
 		// Create the window.
-		render_bs->setHWND( CreateWindow(
+		this->hwnd = (CreateWindow(
 			L"D2DDemoApp",
 			L"Direct2D Demo App",
 			WS_OVERLAPPEDWINDOW,
@@ -123,42 +105,73 @@ HRESULT WindowsBullshit::initialize()
 			HINST_THISCOMPONENT,
 			this
 		));
-		hr = render_bs->getHWND() ? S_OK : E_FAIL;
+		hr = this->hwnd ? S_OK : E_FAIL;
 		if (SUCCEEDED(hr))
 		{
-			ShowWindow(render_bs->getHWND(), SW_SHOWNORMAL);
-			UpdateWindow(render_bs->getHWND());
-		}
+			this->graphics->setHWND(this->hwnd);
+			ShowWindow(this->hwnd, SW_SHOWNORMAL);
+			UpdateWindow(this->hwnd);
 
-		if (_level_loader)
-			_level_loader->loadLevel(); // now that coinitialize has been called, you're good
+			// this will load level
+			hr = this->main_loop->initialize();
+		}
 	}
 
 	return hr;
 }
 
+HRESULT MainWindow::cleanUp()
+{
+	HRESULT hr = S_OK;
 
+	if (SUCCEEDED(hr = this->audio->uninitialize()))
+		if (SUCCEEDED(hr = this->graphics->uninitialize()))
+			hr = this->main_loop->uninitialize();
 
-LRESULT CALLBACK WindowsBullshit::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
+	return hr;
+}
+
+int MainWindow::exec()
+{
+	assert(this->graphics);
+	assert(this->audio);
+	assert(this->main_loop);
+
+	HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, NULL, 0);
+	if (SUCCEEDED(CoInitializeEx(NULL, COINIT_APARTMENTTHREADED)))
+	{
+		if (SUCCEEDED(this->initialize()))
+			this->mainLoop();
+
+		if (SUCCEEDED(this->cleanUp()))
+			CoUninitialize();
+
+		return 0;
+	}
+
+	return 1;
+}
+
+LRESULT CALLBACK MainWindow::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	LRESULT result = 0;
 
 	if (message == WM_CREATE)
 	{
 		LPCREATESTRUCT pcs = (LPCREATESTRUCT)lParam;
-		WindowsBullshit *pDemoApp = (WindowsBullshit *)pcs->lpCreateParams;
+		MainWindow *_this = (MainWindow *)pcs->lpCreateParams;
 
 		::SetWindowLongPtrW(
 			hwnd,
 			GWLP_USERDATA,
-			PtrToUlong(pDemoApp)
+			PtrToUlong(_this)
 		);
 
 		result = 1;
 	}
 	else
 	{
-		WindowsBullshit *pDemoApp = reinterpret_cast<WindowsBullshit *>(static_cast<LONG_PTR>(::GetWindowLongPtrW(hwnd, GWLP_USERDATA)));
+		MainWindow *pDemoApp = reinterpret_cast<MainWindow *>(static_cast<LONG_PTR>(::GetWindowLongPtrW(hwnd, GWLP_USERDATA)));
 
 		bool wasHandled = false;
 
@@ -170,7 +183,7 @@ LRESULT CALLBACK WindowsBullshit::WndProc(HWND hwnd, UINT message, WPARAM wParam
 			{
 				UINT width = LOWORD(lParam);
 				UINT height = HIWORD(lParam);
-				pDemoApp->render_bs->OnResize(width, height);
+				pDemoApp->graphics->OnResize(width, height);
 			}
 			result = 0;
 			wasHandled = true;
@@ -186,7 +199,7 @@ LRESULT CALLBACK WindowsBullshit::WndProc(HWND hwnd, UINT message, WPARAM wParam
 
 			case WM_PAINT:
 			{
-				pDemoApp->render_bs->OnRender();
+				pDemoApp->graphics->OnRender();
 				ValidateRect(hwnd, NULL);
 			}
 			result = 0;
@@ -204,35 +217,35 @@ LRESULT CALLBACK WindowsBullshit::WndProc(HWND hwnd, UINT message, WPARAM wParam
 			case WM_SYSKEYUP:
 			case WM_KEYUP:
 			{
-				(*pDemoApp->hid_state)[(int)wParam] = (int)WM_KEYUP;
+				pDemoApp->hid_state[(int)wParam] = (int)WM_KEYUP;
 				result = 0;
 			}
 			break;
 			case WM_SYSKEYDOWN:
 			case WM_KEYDOWN:
 			{
-				(*pDemoApp->hid_state)[(int)wParam] = (int)WM_KEYDOWN;
+				pDemoApp->hid_state[(int)wParam] = (int)WM_KEYDOWN;
 				result = 0;
 			}
 			break;
 			case WM_MBUTTONUP:
 			{
-				(*pDemoApp->hid_state)[(int)wParam] = (int)WM_KEYUP;
+				pDemoApp->hid_state[(int)wParam] = (int)WM_KEYUP;
 				result = 0;
 			}
 			break;
 
 			case WM_MBUTTONDOWN:
 			{
-				(*pDemoApp->hid_state)[(int)wParam] = (int)WM_KEYDOWN;
+				pDemoApp->hid_state[(int)wParam] = (int)WM_KEYDOWN;
 				result = 0;
 			}
 			break;
 			case WM_MOUSEMOVE:
 			{
 				// TODO: probabbly the best place to do resolution math for mouse position
-				D2D1_SIZE_U size = pDemoApp->render_bs->getTargetResolution();
-				D2D1_SIZE_U realres = pDemoApp->render_bs->getWindowSize();
+				D2D1_SIZE_U size = pDemoApp->graphics->getTargetResolution();
+				D2D1_SIZE_U realres = pDemoApp->graphics->getWindowSize();
 
 				int xPos = GET_X_LPARAM(lParam);
 				int yPos = GET_Y_LPARAM(lParam);
@@ -240,7 +253,7 @@ LRESULT CALLBACK WindowsBullshit::WndProc(HWND hwnd, UINT message, WPARAM wParam
 				xPos = xPos * size.width / realres.width;
 				yPos = yPos * size.height / realres.height;
 
-				pDemoApp->hid_state->setMouseCoords(xPos, yPos);
+				pDemoApp->hid_state.setMouseCoords(xPos, yPos);
 				result = 0;
 			}
 			break;
@@ -258,6 +271,16 @@ LRESULT CALLBACK WindowsBullshit::WndProc(HWND hwnd, UINT message, WPARAM wParam
 
 	return result;
 }
+
+
+
+
+
+
+
+
+
+
 
 
 

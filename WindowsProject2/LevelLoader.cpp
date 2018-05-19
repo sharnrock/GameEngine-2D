@@ -2,7 +2,7 @@
 // TODO: go through these and get rid of what's not needed
 #include "LevelLoader.h"
 #include "GameLoop.h"
-#include "RenderBullshit.h"
+#include "GraphicsEngine.h"
 #include "SpriteSheetManager.h"
 #include "Robot.h"
 #include "Slime.h"
@@ -51,7 +51,7 @@ void LevelLoader::loadLevel()
 	assert(_hid_state);
 
 	_audio_engine = AudioEngineFactory::getAudioEngine();
-	_audio_engine->init();
+	//_audio_engine->init();
 	_audio_engine->loadFilesInThisDir(AUDIO_PATH);
 	ObjectFactory::Instance().initialize(_game_loop, _render_thing, &_sprite_manager, _audio_engine);
 

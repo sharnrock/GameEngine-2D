@@ -68,9 +68,6 @@ void Projectile::update(__int64 dt)
 	// TODO: put angle into this calc!
 	float distance = (float)(dt * _speed / 1E6f);
 
-	//_x += distance * (_delta_x / fabs(_delta_x + _delta_y)) ;
-	//_y += distance * (_delta_y / fabs(_delta_x + _delta_y));
-
 	_x += distance * cosf(_angle_rad);
 	_y += distance * sinf(_angle_rad);
 

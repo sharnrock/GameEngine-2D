@@ -8,7 +8,7 @@
 #include "DynamicList.h"
 
 class GString;
-class RenderEngine;
+class GraphicsEngine;
 class SpriteSheet;
 
 
@@ -21,7 +21,7 @@ public:
 	
 	AnimatedSprite getAnimatedSprite(const GString& file_path);
 
-	void setRenderEngine(RenderEngine* render_engine) { _render_engine = render_engine; }
+	void setRenderEngine(GraphicsEngine* render_engine) { _render_engine = render_engine; }
 
 	// TODO: Rename this..
 	void loadBitMapsForTileMap(const std::vector<tmx::Tileset>& tilesets);
@@ -40,7 +40,7 @@ private:
 
 	GMap<int, DynamicList<RECTF_TYPE>> _tile_collision_walls;
 	DynamicList<SpriteSheet*> _sprite_sheets;
-	RenderEngine* _render_engine;
+	GraphicsEngine* _render_engine;
 
 	GMap<UINT32, AnimatedSprite> _animated_sprites;
 };

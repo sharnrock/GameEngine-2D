@@ -1,6 +1,13 @@
 #include "Sprite.h"
 
 
+Sprite::Sprite() :
+	_is_null(true), 
+	_transform(None), 
+	_rotation(0) 
+{
+}
+
 
 Sprite::Sprite(int bm_handle, int left, int top, int right, int bottom) :
 	_is_null(false),
@@ -8,7 +15,9 @@ Sprite::Sprite(int bm_handle, int left, int top, int right, int bottom) :
 	left(left), 
 	top(top), 
 	right(right), 
-	bottom(bottom)
+	bottom(bottom),
+	_transform(None),
+	_rotation(0)
 {
 }
 
@@ -36,4 +45,10 @@ float Sprite::getWidth() const
 float Sprite::getHeight() const
 {
 	return (float)(bottom - top);
+}
+
+void Sprite::setRotation(float rads)
+{
+	_rotation = rads;
+	_transform |= Rotate;
 }

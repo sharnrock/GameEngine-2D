@@ -6,7 +6,7 @@
 #include <string>
 
 
-HumanPossessor::HumanPossessor(HumanInputDeviceState* input_devices) :
+HumanPossessor::HumanPossessor(const HumanInputDeviceState* input_devices) :
 	_input_devices(input_devices)
 {
 }
@@ -17,6 +17,8 @@ HumanPossessor::~HumanPossessor()
 
 void HumanPossessor::update(__int64 dt)
 {
+	assert(_input_devices);
+
 	if (_input_devices->isPressed('W'))
 	{
 		_controller->onEvent(&ControlEvent(ControlEvent::MoveUp, dt));

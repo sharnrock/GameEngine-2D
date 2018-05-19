@@ -4,7 +4,7 @@
 class GameObject;
 class Projectile;
 class GameLoop;
-class RenderEngine;
+class GraphicsEngine;
 class SpriteSheetManager;
 class AudioEngine;
 
@@ -19,7 +19,7 @@ public:
 	static ObjectFactory& Instance();
 
 	// This must be called before creating any objects
-	void initialize(GameLoop* gloop, RenderEngine* rengine, SpriteSheetManager* sprite_manager, AudioEngine* audio_engine);
+	void initialize(GameLoop* gloop, GraphicsEngine* rengine, SpriteSheetManager* sprite_manager, AudioEngine* audio_engine);
 
 	// These don't do anything yet
 	void releaseObject(GameObject* object);
@@ -40,7 +40,7 @@ private:
 	void loadUpGameObjectWithPtrs(GameObject * obj);
 
 	GameLoop*                _game_loop;
-	RenderEngine*            _render_engine;
+	GraphicsEngine*            _render_engine;
 	SpriteSheetManager*      _sprite_manager;
 	AudioEngine*             _audio_engine;
 	
