@@ -6,7 +6,7 @@
 // probably temporary
 #include "Direct2DUtility.h"
 
-#include <wrl/client.h>
+
 
 
 // enable one of the following
@@ -24,24 +24,20 @@
 
 
 DirectX11GraphicsEngine::DirectX11GraphicsEngine() :
-	m_hwnd(NULL),
-	m_pDirect2dFactory(NULL),
-	m_pRenderTarget(NULL),
-	m_pBlackBrush(NULL),
+	_hwnd(NULL),
+	_direct2d_factory(NULL),
+	_render_target(NULL),
+	_black_brush(NULL),
 	_screen_ratio(Screen_16_9),
 	_target_res_x(0),
 	_target_res_y(0)
 {
-	window_size = D2D1::SizeU(200,200);
-	// This is only temp!
+	_window_size = D2D1::SizeU(200,200);
 	_displayables.append( DynamicList<Displayable*>(256) ); 
 }
 
 DirectX11GraphicsEngine::~DirectX11GraphicsEngine()
 {
-	/*SafeRelease(&m_pDirect2dFactory);
-	SafeRelease(&m_pRenderTarget);
-	SafeRelease(&m_pBlackBrush);*/
 }
 
 void DirectX11GraphicsEngine::addDisplayableObject(Displayable* object, int layer)
@@ -58,56 +54,15 @@ void DirectX11GraphicsEngine::clearDisplayables()
 	_displayables.clear();
 }
 
-HRESULT DirectX11GraphicsEngine::CreateDeviceIndependentResources()
-{
-	HRESULT hr = S_OK;
-
-	// Create a Direct2D factory.
-	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &m_pDirect2dFactory);
-
-	// NEEDED FOR TEXT OUTPUT ON SCREEN
-	static const WCHAR msc_fontName[] = L"Verdana";
-	static const FLOAT msc_fontSize = 12;
-	if (SUCCEEDED(hr))
-	{
-
-		// Create a DirectWrite factory.
-		hr = DWriteCreateFactory(
-			DWRITE_FACTORY_TYPE_SHARED,
-			__uuidof(m_pDWriteFactory),
-			reinterpret_cast<IUnknown **>(&m_pDWriteFactory)
-		);
-	}
-	if (SUCCEEDED(hr))
-	{
-		// Create a DirectWrite text format object.
-		hr = m_pDWriteFactory->CreateTextFormat(
-			msc_fontName,
-			NULL,
-			DWRITE_FONT_WEIGHT_NORMAL,
-			DWRITE_FONT_STYLE_NORMAL,
-			DWRITE_FONT_STRETCH_NORMAL,
-			msc_fontSize,
-			L"", //locale
-			&m_pTextFormat
-		);
-	}
-	// NEEDED FOR TEXT OUTPUT ON SCREEN
-
-	return hr;
-}
-
-
-
-//Because this method will be called repeatedly, add an if statement to check whether the render target(m_pRenderTarget) already exists.The following code shows the complete CreateDeviceResources method.
 HRESULT DirectX11GraphicsEngine::CreateDeviceResources()
 {
 	HRESULT hr = S_OK;
+	//Because this method will be called repeatedly, add an if statement to check whether the render target(m_pRenderTarget) already exists.The following code shows the complete CreateDeviceResources method.
 
-	if (!m_pRenderTarget)
+	if (!_render_target)
 	{
 		RECT rc;
-		GetClientRect(m_hwnd, &rc);
+		GetClientRect(_hwnd, &rc);
 
 		D2D1_SIZE_U size = D2D1::SizeU(
 			rc.right - rc.left,
@@ -115,17 +70,17 @@ HRESULT DirectX11GraphicsEngine::CreateDeviceResources()
 		);
 
 		// Create a Direct2D render target.
-		hr = m_pDirect2dFactory->CreateHwndRenderTarget(
+		hr = _direct2d_factory->CreateHwndRenderTarget(
 			D2D1::RenderTargetProperties(),
-			D2D1::HwndRenderTargetProperties(m_hwnd, size),
-			&m_pRenderTarget
+			D2D1::HwndRenderTargetProperties(_hwnd, size),
+			&_render_target
 		);
 		if (SUCCEEDED(hr))
 		{
-			// Create a blue brush.
-			hr = m_pRenderTarget->CreateSolidColorBrush(
+			// Create a brush for text display.
+			hr = _render_target->CreateSolidColorBrush(
 				D2D1::ColorF(D2D1::ColorF::Black),
-				&m_pBlackBrush
+				&_black_brush
 			);
 		}
 	}
@@ -133,23 +88,56 @@ HRESULT DirectX11GraphicsEngine::CreateDeviceResources()
 	return hr;
 }
 
-
-//Implement the DemoApp::DiscardDeviceResources method.In this method, release the render target and the two brushes you created in the DemoApp::CreateDeviceResources method.
 void DirectX11GraphicsEngine::DiscardDeviceResources()
 {
-	SafeRelease(&m_pRenderTarget);
+	//Implement the DemoApp::DiscardDeviceResources method.In this method, release the render target and the two brushes you created in the DemoApp::CreateDeviceResources method.
+	SafeRelease(&_render_target);
+	SafeRelease(&_black_brush);
 }
-
 
 D2D1_SIZE_U DirectX11GraphicsEngine::getTargetResolution() const
 {
 	return D2D1::SizeU(_target_res_x, _target_res_y);
 }
 
-
 HRESULT DirectX11GraphicsEngine::initialize()
 {
-	return CreateDeviceIndependentResources();
+	HRESULT hr = S_OK;
+
+	// Create a Direct2D factory.
+	hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &_direct2d_factory);
+
+	// NEEDED FOR TEXT OUTPUT ON SCREEN
+	// TODO: this might be able to be written better
+	static const WCHAR msc_fontName[] = L"Verdana";
+	static const FLOAT msc_fontSize = 12;
+
+	if (SUCCEEDED(hr))
+	{
+
+		// Create a DirectWrite factory.
+		hr = DWriteCreateFactory(
+			DWRITE_FACTORY_TYPE_SHARED,
+			__uuidof(_dwrite_factory),
+			reinterpret_cast<IUnknown **>(&_dwrite_factory)
+		);
+	}
+	if (SUCCEEDED(hr))
+	{
+		// Create a DirectWrite text format object.
+		hr = _dwrite_factory->CreateTextFormat(
+			msc_fontName,
+			NULL,
+			DWRITE_FONT_WEIGHT_NORMAL,
+			DWRITE_FONT_STYLE_NORMAL,
+			DWRITE_FONT_STRETCH_NORMAL,
+			msc_fontSize,
+			L"", //locale
+			&_text_format
+		);
+	}
+
+	return hr;
 }
 
 void DirectX11GraphicsEngine::getDesktopDpi(float *dpiX, float *dpiY)
@@ -157,22 +145,16 @@ void DirectX11GraphicsEngine::getDesktopDpi(float *dpiX, float *dpiY)
 	this->getDirect2DFactory()->GetDesktopDpi(dpiX, dpiY);
 }
 
-
-//Implement the DemoApp::OnRender method.First, create an HRESULT.Then call the CreateDeviceResource method.This method is called every time the window is painted.Recall that, in step 4 of Part 3, you added an if statement to prevent the method from doing any work if the render target already exists.
-
 HRESULT DirectX11GraphicsEngine::OnRender()
 {
 	HRESULT hr = S_OK;
 	hr = CreateDeviceResources();
 
-	//Verify that the CreateDeviceResource method succeeded.If it didn't, don't perform any drawing.
 	if (SUCCEEDED(hr))
 	{
-		//Inside the if statement you just created, initiate drawing by calling the render target's BeginDraw method. 
-		//Set the render target's transform to the identity matrix, and clear the window.
-		m_pRenderTarget->BeginDraw();
+		_render_target->BeginDraw();
 #ifndef USE_SCALING
-		m_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Identity());
+		_render_target->SetTransform(D2D1::Matrix3x2F::Identity());
 #else
 		// These only work on 16:9 ratios
 #ifdef USE_640_x_360
@@ -187,12 +169,6 @@ HRESULT DirectX11GraphicsEngine::OnRender()
 		m_pRenderTarget->SetTransform(D2D1::Matrix3x2F::Scale(window_size.width/fake_width, window_size.height/fake_height));
 #endif
 
-		//m_pRenderTarget->Clear(D2D1::ColorF(D2D1::ColorF::White));
-
-		//Retrieve the size of the drawing area.
-		//D2D1_SIZE_F rtSize = m_pRenderTarget->GetSize();
-	
-
 		// Draw a rectangle for all the game objects
 		for (int layer = 0; layer < _displayables.count(); layer++)
 		{
@@ -205,7 +181,7 @@ HRESULT DirectX11GraphicsEngine::OnRender()
 				{
 				case Displayable::Rectangle:
 				{
-					//m_pRenderTarget->FillRectangle(&_displayables[i]->getBoundingRect(), m_pCornflowerBlueBrush);
+					_render_target->FillRectangle(&_displayables[layer][i]->getBoundingRect(), _black_brush);
 				}
 				break;
 				case Displayable::Bitmap:
@@ -216,7 +192,7 @@ HRESULT DirectX11GraphicsEngine::OnRender()
 #endif
 					DisplayableBitmap* displayable = static_cast<DisplayableBitmap*>(_displayables[layer][i]);
 					const Sprite& sprite = displayable->getSprite();
-					m_pRenderTarget->DrawBitmap(
+					_render_target->DrawBitmap(
 						_bit_maps[sprite.getBitmapHandle()],
 						offsetBoundingBoxWithCameraView(displayable->getBoundingRect()),
 						1.0,
@@ -229,12 +205,12 @@ HRESULT DirectX11GraphicsEngine::OnRender()
 				{
 					DisplayableText* text = static_cast<DisplayableText*>(_displayables[layer][i]);
 
-					m_pRenderTarget->DrawText(
+					_render_target->DrawText(
 						text->getGString().toWideString().c_str(),
 						text->getGString().getStringSize() - 1,
-						m_pTextFormat,
+						_text_format,
 						text->getBoundingRect(),
-						m_pBlackBrush
+						_black_brush
 						// draw text options,
 						// dwrite measuring mode
 					);
@@ -244,14 +220,7 @@ HRESULT DirectX11GraphicsEngine::OnRender()
 			}
 		}
 
-
-
-
-
-
-
-		//Call the render target's EndDraw method. The EndDraw method returns an HRESULT to indicate whether the drawing operations were successful. Close the if statement you began in Step 3.
-		hr = m_pRenderTarget->EndDraw();
+		hr = _render_target->EndDraw();
 	}
 
 	//Check the HRESULT returned by EndDraw.If it indicates that the render target needs to be recreated, call the DemoApp::DiscardDeviceResources method to release it; 
@@ -261,8 +230,7 @@ HRESULT DirectX11GraphicsEngine::OnRender()
 		hr = S_OK;
 		DiscardDeviceResources();
 	}
-
-	//Return the HRESULT and close the method.
+	
 	return hr;
 }
 
@@ -270,37 +238,29 @@ HRESULT DirectX11GraphicsEngine::OnRender()
 D2D1_RECT_F DirectX11GraphicsEngine::offsetBoundingBoxWithCameraView(const D2D1_RECT_F& world_coords)
 {
 	D2D1_RECT_F result;
-#ifndef SMOOTH_CAM_MOVE
+
 	result.left   = floor(world_coords.left   - _camera_view.X());
 	result.right  = floor(world_coords.right  - _camera_view.X());
 	result.top    = floor(world_coords.top    - _camera_view.Y());
 	result.bottom = floor(world_coords.bottom - _camera_view.Y());
-#else
-	result.left   = world_coords.left   - _camera_view.X();
-	result.right  = world_coords.right  - _camera_view.X();
-	result.top    = world_coords.top    - _camera_view.Y();
-	result.bottom = world_coords.bottom - _camera_view.Y();
-#endif
+
 	return result;
 }
 
 HRESULT DirectX11GraphicsEngine::uninitialize()
 {
 	DiscardDeviceResources();
-	SafeRelease(&m_pDirect2dFactory);
-	SafeRelease(&m_pRenderTarget);
-	SafeRelease(&m_pBlackBrush);
+
+	SafeRelease(&_dwrite_factory);
+	SafeRelease(&_direct2d_factory);
+	SafeRelease(&_text_format);
+
 	return S_OK;
 }
 
-
-
-
-//Implement the DemoApp::OnResize method so that it resizes the render target to the new size of the window.
-
 void DirectX11GraphicsEngine::OnResize(UINT width, UINT height)
 {
-	if (!m_pRenderTarget)
+	if (!_render_target)
 		return;
 	
 #ifdef USE_640_x_360
@@ -349,11 +309,11 @@ void DirectX11GraphicsEngine::OnResize(UINT width, UINT height)
 		(float)height);
 #endif
 
-	window_size.width = width;
-	window_size.height = height;
+	_window_size.width = width;
+	_window_size.height = height;
 
 #ifndef USE_SCALING
-	m_pRenderTarget->Resize(D2D1::SizeU(
+	_render_target->Resize(D2D1::SizeU(
 		ratio_x*screen_size, 
 		ratio_y*screen_size
 	));
@@ -362,8 +322,6 @@ void DirectX11GraphicsEngine::OnResize(UINT width, UINT height)
 		width, height
 	));
 #endif
-
-
 
 }
 
@@ -376,7 +334,7 @@ BITMAP_HANDL DirectX11GraphicsEngine::loadBitmapAssetFromFilepath(const GString&
 	
 	HRESULT result;
 	result = Hilo::Direct2DHelpers::Direct2DUtility::LoadBitmapFromFile(
-		m_pRenderTarget,
+		_render_target,
 		GString(file_path).toWideString().c_str(),
 		width,
 		height,
@@ -385,9 +343,4 @@ BITMAP_HANDL DirectX11GraphicsEngine::loadBitmapAssetFromFilepath(const GString&
 
 	return file_path.toHash();
 }
-
-
-
-
-
 

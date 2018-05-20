@@ -4,46 +4,25 @@
 #include "XAudio2.h"
 #include "DynamicList.h"
 #include <map>
-#include <memory>
+
 
 class AudioBullshit :
-	public AudioEngine,
-	public IXAudio2VoiceCallback
+	public AudioEngine
 {
+	friend class VoiceCallback;
 public:
 	AudioBullshit();
 	~AudioBullshit();
 
 	HRESULT initialize();
+	HRESULT uninitialize();
 
 	void playSound(const GString& wav_file);
 	void loadSoundFile(const GString& wav_file);
 	void loadFilesInThisDir(const GString& audio_dir);
 
-
-// 
-// Call back stuff for voices
-//
-public:
-	HANDLE hBufferEndEvent;
-
-	// This is the one we want
-	void OnStreamEnd() { SetEvent(hBufferEndEvent); }
-
-	//Unused methods are stubs
-	void OnVoiceProcessingPassEnd() { }
-	void OnVoiceProcessingPassStart(UINT32) {    }
-	void OnBufferEnd(void *) {  } 
-	void OnBufferStart(void *) {    }
-	void OnLoopEnd(void *) {    }
-	void OnVoiceError(void *, HRESULT Error) { }
-// 
-// Call back stuff for voices
-//
-
-
-
 private:
+	void sourceVoiceIsIdle(IXAudio2SourceVoice* idle_voice);
 	void setMasterAudioFormat(const WAVEFORMATEX& format) { _master_format = format; }
 	IXAudio2SourceVoice* getSourceVoice();
 
@@ -56,29 +35,33 @@ private:
 	DynamicList<IXAudio2SourceVoice*> _in_use_source_voices;
 	std::map<UINT32, XAUDIO2_BUFFER*> _x2_buffers;
 
-	// Inherited via AudioEngine
-	virtual HRESULT uninitialize() override;
+	DynamicList<VoiceCallback*>       _callbacks;
 };
 
 
 
-#if 0
+// Call back used to idle source voices
 class VoiceCallback : public IXAudio2VoiceCallback
 {
 public:
-	HANDLE hBufferEndEvent;
-	VoiceCallback() : hBufferEndEvent(CreateEvent(NULL, FALSE, FALSE, NULL)) {}
-	~VoiceCallback() { CloseHandle(hBufferEndEvent); }
+	VoiceCallback(AudioBullshit* voice_container);
+	void setSourceVoice(IXAudio2SourceVoice* voice) { this->voice = voice; }
 
-	//Called when the voice has just finished playing a contiguous audio stream.
-	void OnStreamEnd() { SetEvent(hBufferEndEvent); }
+	// called when the audio has finished playing
+	void OnStreamEnd();
 
-	//Unused methods are stubs
-	void OnVoiceProcessingPassEnd() { }
-	void OnVoiceProcessingPassStart(UINT32 SamplesRequired) {    }
-	void OnBufferEnd(void * pBufferContext) { }
-	void OnBufferStart(void * pBufferContext) {    }
-	void OnLoopEnd(void * pBufferContext) {    }
-	void OnVoiceError(void * pBufferContext, HRESULT Error) { }
+	void OnVoiceProcessingPassStart(UINT32 ) {}
+	void OnVoiceProcessingPassEnd(void) {}
+	void OnBufferStart(void * ) {}
+	void OnBufferEnd(void * ) {}
+	void OnLoopEnd(void * ) {}
+	void OnVoiceError(void * , HRESULT ) {} // could probably be fed into log
+
+	AudioBullshit*       getAudioEngine() { return voice_container; }
+	IXAudio2SourceVoice* getSourceVoice() { return voice; }
+
+private:
+	AudioBullshit*       voice_container; 
+	IXAudio2SourceVoice* voice;
 };
-#endif
+

@@ -3,6 +3,5 @@
 // #ifdef DIRECTX
 #include <d2d1.h>
 typedef D2D1_RECT_F RECTF_TYPE;
-
 typedef unsigned int BITMAP_HANDL;
 

@@ -5,7 +5,7 @@
 
 class AudioEngine;
 class GameLoop;
-class DirectX11GraphicsEngine;
+class GraphicsEngine;
 class HumanInputDeviceState;
 class SpriteSheet;
 class WallCollisions;

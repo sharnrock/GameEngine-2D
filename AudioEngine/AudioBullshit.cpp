@@ -3,20 +3,21 @@
 
 
 
-
 // I don't know exactly what this thing does.  Maybe I can get rid of it or understand it better later
+// It might help determine what type of file and how to load it.. idk
 HRESULT FindMediaFileCch(_Out_writes_(cchDest) WCHAR* strDestPath, _In_ int cchDest, _In_z_ LPCWSTR strFilename);
 
 
 AudioBullshit::AudioBullshit() :
 	pXAudio2(nullptr),
-	pMasterVoice(nullptr),
-	hBufferEndEvent(CreateEvent(NULL, FALSE, FALSE, NULL))
+	pMasterVoice(nullptr)
 {
 }
 
 AudioBullshit::~AudioBullshit()
 {
+	for (int i = 0; i < _callbacks.count(); i++)
+		delete _callbacks[i];
 }
 
 HRESULT AudioBullshit::initialize()
@@ -121,29 +122,28 @@ void AudioBullshit::loadFilesInThisDir(const GString& audio_dir)
 IXAudio2SourceVoice* AudioBullshit::getSourceVoice()
 {
 	HRESULT hr = S_OK;
-	// Create the source voice
-
 	
 	if (_available_source_voices.isEmpty())
 	{
-		// TODO: find a way to use the callbacks, probably going to have to create some command pattern type class that 
-		// takes in the object pool stuff and handles all that... 
-		// later...
-		
-		// we create it..
+		// We're out of source voices, we need to create more
+		VoiceCallback* cb = new VoiceCallback(this);
 		IXAudio2SourceVoice *pSourceVoice;
-		if (FAILED(hr = this->pXAudio2->CreateSourceVoice(&pSourceVoice, &_master_format))) // old one
-		//if (FAILED(hr = pXAudio2->CreateSourceVoice(&pSourceVoice, &_master_format,
-		//	0, XAUDIO2_DEFAULT_FREQ_RATIO, this, NULL, NULL)))
+		if (FAILED(hr = pXAudio2->CreateSourceVoice(&pSourceVoice, &_master_format,
+			0, XAUDIO2_DEFAULT_FREQ_RATIO, cb, NULL, NULL)))
 		{
 			wprintf(L"Error %#X creating source voice\n", hr);
 			return nullptr;
 		}
+
+		cb->setSourceVoice(pSourceVoice);
+		_callbacks.append(cb);
+		
 		_in_use_source_voices.append(pSourceVoice);
 		return pSourceVoice;
 	}
 	else
 	{
+		// We already have an idle source voice, let's return that
 		IXAudio2SourceVoice *pSourceVoice = _available_source_voices.popBack();
 		_in_use_source_voices.append(pSourceVoice);
 		return pSourceVoice;
@@ -152,8 +152,6 @@ IXAudio2SourceVoice* AudioBullshit::getSourceVoice()
 
 HRESULT AudioBullshit::uninitialize()
 {
-	CloseHandle(hBufferEndEvent);
-
 	for (int i = 0; i < _available_source_voices.count(); i++)
 	{
 		_available_source_voices[i]->DestroyVoice();
@@ -176,7 +174,14 @@ HRESULT AudioBullshit::uninitialize()
 }
 
 
+void AudioBullshit::sourceVoiceIsIdle(IXAudio2SourceVoice* idle_voice)
+{
+	assert(idle_voice);
+	idle_voice->Stop();
 
+	_in_use_source_voices.remove(idle_voice);
+	_available_source_voices.append(idle_voice);
+}
 
 
 
@@ -267,5 +272,14 @@ HRESULT FindMediaFileCch(WCHAR* strDestPath, int cchDest, LPCWSTR strFilename)
 	return HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND);
 }
 
+VoiceCallback::VoiceCallback(AudioBullshit* voice_container) :
+	voice_container(voice_container),
+	voice(nullptr)
+{
+}
 
+void VoiceCallback::OnStreamEnd()
+{
+	this->getAudioEngine()->sourceVoiceIsIdle(this->voice);
+}
 

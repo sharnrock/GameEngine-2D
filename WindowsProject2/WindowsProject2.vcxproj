@@ -182,7 +182,6 @@
     <ClInclude Include="LevelLoader.h" />
     <ClInclude Include="Locations.h" />
     <ClInclude Include="MainLoop.h" />
-    <ClInclude Include="ObjectDefines.h" />
     <ClInclude Include="ObjectFactory.h" />
     <ClInclude Include="Possessor.h" />
     <ClInclude Include="Projectile.h" />
@@ -219,7 +218,6 @@
     <ClCompile Include="HumanPossessor.cpp" />
     <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="MainLoop.cpp" />
-    <ClCompile Include="ObjectDefines.cpp" />
     <ClCompile Include="ObjectFactory.cpp" />
     <ClCompile Include="Possessor.cpp" />
     <ClCompile Include="Projectile.cpp" />
