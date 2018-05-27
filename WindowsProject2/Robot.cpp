@@ -10,7 +10,8 @@ Robot::Robot(float x, float y, float w, float h, ObjectFactory* obj_factory) :
 	speed_px_s(100),
 	_obj_factory(obj_factory),
 	_weapon_timer(0),
-	_weapon_cooldown(100000)
+	_weapon_cooldown(100000),
+	_acceleration(5.0) // was 20 as movement force
 {
 	_obj_type = "Robot";
 }
@@ -21,25 +22,33 @@ Robot::~Robot()
 
 void Robot::moveLeft(__int64 dt)
 {
-	_x -= speed_px_s * dt / 1E6f;
+	//_move_force.x -= dt * _acceleration / 1E6F;
+	_move_force.x = -1 * _acceleration;
+	//_x -= speed_px_s * dt / 1E6f;
 	updateBoundingRect();
 }
 
 void Robot::moveUp(__int64 dt)
 {
-	_y -= speed_px_s * dt / 1E6f;
+	//_move_force.y -= dt * _acceleration / 1E6F;
+	_move_force.y = -1 * _acceleration;
+	//_y -= speed_px_s * dt / 1E6f;
 	updateBoundingRect();
 }
 
 void Robot::moveRight(__int64 dt)
 {
-	_x += speed_px_s * dt / 1E6f;
+	//_move_force.x += dt * _acceleration / 1E6F;
+	_move_force.x = _acceleration;
+	//_x += speed_px_s * dt / 1E6f;
 	updateBoundingRect();
 }
 
 void Robot::moveDown(__int64 dt)
 {
-	_y += speed_px_s * dt / 1E6f;
+	//_move_force.y -= dt * _acceleration / 1E6F;
+	_move_force.y = _acceleration;
+	//_y += speed_px_s * dt / 1E6f;
 	updateBoundingRect();
 }
 
@@ -62,8 +71,13 @@ void Robot::update(__int64 dt)
 {
 	// update the weapon cooldown
 	_weapon_timer = (_weapon_timer > 0) ? _weapon_timer - dt : 0;
+	
+	//_move_force.x -= dt * _acceleration / 1E6F;
+	_move_force.SetZero();
 
 	_possessor->update(dt);
+
+
 }
 
 void Robot::onCollisionEvent(CollisionEvent* e)

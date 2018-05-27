@@ -114,13 +114,14 @@ HRESULT MainWindow::initialize()
 
 			// this will load level
 			hr = this->main_loop->initialize();
+			this->graphics->OnResize(640, 480);
 		}
 	}
 
 	return hr;
 }
 
-HRESULT MainWindow::cleanUp()
+HRESULT MainWindow::uninitialize()
 {
 	HRESULT hr = S_OK;
 
@@ -143,7 +144,7 @@ int MainWindow::exec()
 		if (SUCCEEDED(this->initialize()))
 			this->mainLoop();
 
-		if (SUCCEEDED(this->cleanUp()))
+		if (SUCCEEDED(this->uninitialize()))
 			CoUninitialize();
 
 		return 0;
@@ -228,19 +229,35 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPA
 				result = 0;
 			}
 			break;
-			case WM_MBUTTONUP:
+			case WM_LBUTTONDOWN:
 			{
-				pDemoApp->hid_state[(int)wParam] = (int)WM_KEYUP;
+				pDemoApp->hid_state[MK_LBUTTON] = (int)WM_KEYDOWN; 
 				result = 0;
 			}
 			break;
+			case WM_LBUTTONUP:
+			{
+				pDemoApp->hid_state[MK_LBUTTON] = (int)WM_KEYUP;
+				result = 0;
+			}
+			break;
+#if 0 // optional mouse keys
+			WM_LBUTTONDOWN	The left mouse button was pressed.
+				WM_LBUTTONUP	The left mouse button was released.
+				WM_MBUTTONDBLCLK	The middle mouse button was double - clicked.
+				WM_MBUTTONDOWN	The middle mouse button was pressed.
+				WM_MBUTTONUP	The middle mouse button was released.
+				WM_RBUTTONDBLCLK	The right mouse button was double - clicked.
+				WM_RBUTTONDOWN	The right mouse button was pressed.
+				WM_RBUTTONUP	The right mouse button was released.
+				WM_XBUTTONDBLCLK	An X mouse button was double - clicked.
+				WM_XBUTTONDOWN	An X mouse button was pressed.
+				WM_XBUTTONUP	An X mouse button was released.
+#endif
 
-			case WM_MBUTTONDOWN:
-			{
-				pDemoApp->hid_state[(int)wParam] = (int)WM_KEYDOWN;
-				result = 0;
-			}
-			break;
+
+
+
 			case WM_MOUSEMOVE:
 			{
 				// TODO: probabbly the best place to do resolution math for mouse position

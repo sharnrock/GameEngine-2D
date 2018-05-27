@@ -59,6 +59,7 @@ public:
 	virtual bool isSolid() const { return _is_solid; }
 	virtual void setSolid(bool is_solid) { _is_solid = is_solid; }
 
+	VECTORF getMoveForce() const { return _move_force; }
 
 	// These need to go..
 	bool hasCoarseCollisionWith(const GameObject& other) const;
@@ -71,8 +72,9 @@ public:
 	// handles events
 	virtual void onEvent(Event* e);
 
-	
+
 protected:
+	VECTORF _move_force; // gonna try and use this for moving stuff within physics engine
 	GString _obj_type;
 	// Events
 	

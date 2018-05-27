@@ -25,7 +25,9 @@ public:
 
 	bool isPressed(int key_code) const
 	{
-		return ((*this)[key_code] == WM_KEYDOWN || (*this)[key_code] == WM_SYSKEYDOWN);
+		if (_key_states.contains(key_code))
+			return ((*this)[key_code] == WM_KEYDOWN || (*this)[key_code] == WM_SYSKEYDOWN);
+		return false;
 	}
 
 	void setMouseCoords(int xPos, int yPos)

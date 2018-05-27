@@ -6,7 +6,8 @@
 Slime::Slime(float x, float y, float w, float h) :
 	DisplayableBitmap(x,y,w,h),
 	_possessor(nullptr),
-	speed_px_s(30)
+	speed_px_s(30),
+	_acceleration(2.0)
 {
 	_obj_type = "Slime";
 }
@@ -17,25 +18,29 @@ Slime::~Slime()
 
 void Slime::moveLeft(__int64 dt)
 {
-	_x -= speed_px_s * dt / 1E6f;
+	_move_force.x = -1 * _acceleration;
+	//_x -= speed_px_s * dt / 1E6f;
 	updateBoundingRect();
 }
 
 void Slime::moveUp(__int64 dt)
 {
-	_y -= speed_px_s * dt / 1E6f;
+	_move_force.y = -1 * _acceleration;
+	//_y -= speed_px_s * dt / 1E6f;
 	updateBoundingRect();
 }
 
 void Slime::moveRight(__int64 dt)
 {
-	_x += speed_px_s * dt / 1E6f;
+	_move_force.x = 1 * _acceleration;
+	//_x += speed_px_s * dt / 1E6f;
 	updateBoundingRect();
 }
 
 void Slime::moveDown(__int64 dt)
 {
-	_y += speed_px_s * dt / 1E6f;
+	_move_force.y = 1 * _acceleration;
+	//_y += speed_px_s * dt / 1E6f;
 	updateBoundingRect();
 }
 
@@ -47,6 +52,7 @@ void Slime::setPossesor(Possessor* possessor)
 
 void Slime::update(__int64 dt)
 {
+	_move_force.SetZero();
 	_possessor->update(dt);
 }
 
@@ -65,7 +71,7 @@ void Slime::update(__int64 dt)
 
 void Slime::onCollisionEvent(CollisionEvent* e)
 {
-	//OutputDebugString(TEXT("Something hit slime\n"));
+	OutputDebugString(TEXT("Something hit slime\n"));
 }
 
 void Slime::onControlEvent(ControlEvent* e)

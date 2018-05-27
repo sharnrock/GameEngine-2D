@@ -31,5 +31,6 @@ protected:
 private:
 	Possessor * _possessor;
 	float speed_px_s;
+	float _acceleration;
 };
 

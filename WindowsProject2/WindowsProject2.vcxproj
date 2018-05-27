@@ -164,6 +164,7 @@
     <ClInclude Include="AnimationEvent.h" />
     <ClInclude Include="BackGroundTileDisplayable.h" />
     <ClInclude Include="BirthEvent.h" />
+    <ClInclude Include="Box2dPhysicsEngine.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CollisionEvent.h" />
     <ClInclude Include="ComHelpers.h" />
@@ -183,6 +184,8 @@
     <ClInclude Include="Locations.h" />
     <ClInclude Include="MainLoop.h" />
     <ClInclude Include="ObjectFactory.h" />
+    <ClInclude Include="PhysicsEngine.h" />
+    <ClInclude Include="PhysicsGameObject.h" />
     <ClInclude Include="Possessor.h" />
     <ClInclude Include="Projectile.h" />
     <ClInclude Include="GraphicsEngine.h" />
@@ -203,6 +206,7 @@
     <ClCompile Include="AnimationEvent.cpp" />
     <ClCompile Include="BackGroundTileDisplayable.cpp" />
     <ClCompile Include="BirthEvent.cpp" />
+    <ClCompile Include="Box2dPhysicsEngine.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionEvent.cpp" />
     <ClCompile Include="ControlEvent.cpp" />
@@ -219,6 +223,8 @@
     <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="MainLoop.cpp" />
     <ClCompile Include="ObjectFactory.cpp" />
+    <ClCompile Include="PhysicsEngine.cpp" />
+    <ClCompile Include="PhysicsGameObject.cpp" />
     <ClCompile Include="Possessor.cpp" />
     <ClCompile Include="Projectile.cpp" />
     <ClCompile Include="GraphicsEngine.cpp" />

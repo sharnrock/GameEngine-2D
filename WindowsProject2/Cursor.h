@@ -7,7 +7,5 @@ class Cursor :
 public:
 	Cursor();
 	~Cursor();
-
-	
 };
 

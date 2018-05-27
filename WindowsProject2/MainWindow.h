@@ -51,7 +51,7 @@ private:
 	HRESULT initialize(); 
 
 	// called before couninitialize: uninitializes all the sub systems
-	HRESULT cleanUp();   
+	HRESULT uninitialize();   
 
 	GraphicsEngine*          graphics; 
 	AudioEngine*           audio;

@@ -1,6 +1,7 @@
 #include "ObjectFactory.h"
 #include "GameLoop.h"
 #include "GraphicsEngine.h"
+#include "PhysicsEngine.h"
 
 #include "Robot.h"
 #include "Slime.h"
@@ -11,7 +12,6 @@
 #include "Camera.h"
 
 #include "SpriteSheetManager.h"
-
 #include "BirthEvent.h"
 
 #include <assert.h>
@@ -22,12 +22,13 @@ ObjectFactory& ObjectFactory::Instance()
 	return instance;
 }
 
-void ObjectFactory::initialize(GameLoop* gloop, GraphicsEngine* rengine, SpriteSheetManager* sprite_manager, AudioEngine* audio_engine)
+void ObjectFactory::initialize(GameLoop* gloop, GraphicsEngine* rengine, SpriteSheetManager* sprite_manager, AudioEngine* audio_engine, PhysicsEngine* physics_engine)
 {
-	_game_loop      = (gloop);
-	_render_engine  = (rengine);
-	_sprite_manager = (sprite_manager);
-	_audio_engine   = (audio_engine);
+	_game_loop      = gloop;
+	_render_engine  = rengine;
+	_sprite_manager = sprite_manager;
+	_audio_engine   = audio_engine;
+	_physics_engine = physics_engine;
 }
 
 ObjectFactory::~ObjectFactory()
@@ -44,9 +45,9 @@ Projectile* ObjectFactory::createProjectile(float x, float y, float target_x, fl
 		proj->setAudioEngine(_audio_engine);
 		proj->setObjectFactory(this);
 
-		proj->setSprite(_sprite_manager->getSpriteFromID(42));
-		for (int i = 0; i < _sprite_manager->getHitBoxesFromID(42).count(); i++)
-			proj->addTinyCollisionBoxesForStage2Detect(_sprite_manager->getHitBoxesFromID(42).at(i));
+		proj->setSprite(_sprite_manager->getSpriteFromID(38));
+		for (int i = 0; i < _sprite_manager->getHitBoxesFromID(38).count(); i++)
+			proj->addTinyCollisionBoxesForStage2Detect(_sprite_manager->getHitBoxesFromID(38).at(i));
 
 		proj->setSolid(true);
 
@@ -92,9 +93,9 @@ GameObject* ObjectFactory::createRobot(float x, float y, int layer)
 {
 	// TODO: figure out how to organize keyboard
 	Robot *thing = new Robot(x, y, 32, 32, this);
-	thing->setSprite(_sprite_manager->getSpriteFromID(37));
-	for (int boxes = 0; boxes < _sprite_manager->getHitBoxesFromID(37).count(); boxes++)
-		thing->addTinyCollisionBoxesForStage2Detect(_sprite_manager->getHitBoxesFromID(37).at(boxes));
+	thing->setSprite(_sprite_manager->getSpriteFromID(47));
+	for (int boxes = 0; boxes < _sprite_manager->getHitBoxesFromID(47).count(); boxes++)
+		thing->addTinyCollisionBoxesForStage2Detect(_sprite_manager->getHitBoxesFromID(47).at(boxes));
 
 	_render_engine->addDisplayableObject(thing, layer);
 
@@ -102,6 +103,7 @@ GameObject* ObjectFactory::createRobot(float x, float y, int layer)
 	_render_engine->getCamera()->centerScreenOnThisGuy(thing);
 	_game_loop->addUpdatableObject(_render_engine->getCamera());
 	_game_loop->addUpdatableObject(thing);
+	_physics_engine->addDynamicGameObject(thing);
 
 	return thing;
 }
@@ -111,14 +113,15 @@ GameObject* ObjectFactory::createSlime(float x, float y, int layer)
 #if 1
 	Slime *thing = new Slime(x, y, 32, 32);
 	// TODO: this shouldn't be hard coded
-	for (int boxes = 0; boxes < _sprite_manager->getHitBoxesFromID(41).count(); boxes++)
+	for (int boxes = 0; boxes < _sprite_manager->getHitBoxesFromID(37).count(); boxes++)
 	{
-		thing->addTinyCollisionBoxesForStage2Detect(_sprite_manager->getHitBoxesFromID(41).at(boxes));
+		thing->addTinyCollisionBoxesForStage2Detect(_sprite_manager->getHitBoxesFromID(37).at(boxes));
 	}
-	thing->setSprite(_sprite_manager->getSpriteFromID(41));
+	thing->setSprite(_sprite_manager->getSpriteFromID(37));
 
 	_render_engine->addDisplayableObject(thing, layer);
 	_game_loop->addUpdatableObject(thing);
+	_physics_engine->addDynamicGameObject(thing);
 #endif
 	return thing;
 }
@@ -126,10 +129,13 @@ GameObject* ObjectFactory::createSlime(float x, float y, int layer)
 GameObject * ObjectFactory::createBackgroundTile(float x, float y, int id, int layer)
 {
 	DisplayableBitmap* thing = new BackGroundTileDisplayable();
+	thing->setWorldCoordinates(x, y);
 
 	if (!_sprite_manager->getHitBoxesFromID(id).isEmpty())
 	{
 		thing->setSolid(true);
+		if (_sprite_manager->getHitBoxesFromID(id).count())
+			_physics_engine->addStaticGameObject(thing);
 		for (int rect = 0; rect < _sprite_manager->getHitBoxesFromID(id).count(); rect++)
 			thing->addTinyCollisionBoxesForStage2Detect(_sprite_manager->getHitBoxesFromID(id).at(rect));
 	}
@@ -137,7 +143,7 @@ GameObject * ObjectFactory::createBackgroundTile(float x, float y, int id, int l
 	Sprite sprite = _sprite_manager->getSpriteFromID(id);
 	thing->setSprite(sprite);
 
-	thing->setWorldCoordinates(x, y);
+	// was here.
 	_render_engine->addDisplayableObject(thing, layer);
 	_game_loop->addUpdatableObject(thing);
 

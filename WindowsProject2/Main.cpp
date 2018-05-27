@@ -3,7 +3,8 @@
 #include "GameLoop.h"
 #include "LevelLoader.h"
 #include "AudioEngineFactory.h"
-
+#include "Box2dPhysicsEngine.h"
+#include "ObjectFactory.h"
 
 int WINAPI WinMain(HINSTANCE /* hInstance */, HINSTANCE /* hPrevInstance */, LPSTR /* lpCmdLine */, int /* nCmdShow */)
 {
@@ -11,8 +12,10 @@ int WINAPI WinMain(HINSTANCE /* hInstance */, HINSTANCE /* hPrevInstance */, LPS
 	DirectX11GraphicsEngine renderer;
 	LevelLoader             loader;
 	AudioEngine*            audio = AudioEngineFactory::getAudioEngine();
-
+	Box2dPhysicsEngine      physics;
 	MainWindow              w;
+	
+	ObjectFactory::Instance().initialize(&game_loop, &renderer, loader.getSpriteManager(), audio, &physics);
 
 	// Set up level loader
 	loader.setGameLoop(&game_loop);
@@ -22,6 +25,7 @@ int WINAPI WinMain(HINSTANCE /* hInstance */, HINSTANCE /* hPrevInstance */, LPS
 	// Set up game loop
 	game_loop.setLevelLoader(&loader);
 	game_loop.setGraphicsEngine(&renderer);
+	game_loop.setPhysicsEngine(&physics);
 	
 	// Set up main window
 	w.setAudioSystem(audio);

@@ -7,6 +7,9 @@ class GameLoop;
 class GraphicsEngine;
 class SpriteSheetManager;
 class AudioEngine;
+class PhysicsEngine;
+
+
 
 // Object pool for all the different stuff
 // Not actually an object pool yet..
@@ -19,7 +22,7 @@ public:
 	static ObjectFactory& Instance();
 
 	// This must be called before creating any objects
-	void initialize(GameLoop* gloop, GraphicsEngine* rengine, SpriteSheetManager* sprite_manager, AudioEngine* audio_engine);
+	void initialize(GameLoop* gloop, GraphicsEngine* rengine, SpriteSheetManager* sprite_manager, AudioEngine* audio_engine, PhysicsEngine* physics_engine);
 
 	// These don't do anything yet
 	void releaseObject(GameObject* object);
@@ -34,15 +37,14 @@ public:
 	GameObject* createBackgroundTile(float x, float y, int id, int layer);
 	GameObject* createSpinnyBox(float x, float y, int id, int layer);
 
-	
-
 private:
 	void loadUpGameObjectWithPtrs(GameObject * obj);
 
 	GameLoop*                _game_loop;
-	GraphicsEngine*            _render_engine;
+	GraphicsEngine*          _render_engine;
 	SpriteSheetManager*      _sprite_manager;
 	AudioEngine*             _audio_engine;
+	PhysicsEngine*           _physics_engine;
 	
 	DynamicList<GameObject*> _objects;
 	DynamicList<Projectile*> _active_projs;
@@ -55,6 +57,7 @@ private:
 		_render_engine(nullptr),
 		_sprite_manager(nullptr),
 		_audio_engine(nullptr),
+		_physics_engine(nullptr),
 		_objects(256) // TODO: decide how to initialize the rest of the dynamic lists
 	{
 	}

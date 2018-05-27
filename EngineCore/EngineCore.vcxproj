@@ -148,6 +148,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="CRC.h" />
+    <ClInclude Include="DebugLog.h" />
     <ClInclude Include="DynamicList.h" />
     <ClInclude Include="EngineCoreGlobal.h" />
     <ClInclude Include="GDir.h" />
@@ -158,6 +159,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CRC.cpp" />
+    <ClCompile Include="DebugLog.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="GDir.cpp" />
     <ClCompile Include="GFile.cpp" />

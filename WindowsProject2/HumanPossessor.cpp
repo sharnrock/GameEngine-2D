@@ -35,7 +35,8 @@ void HumanPossessor::update(__int64 dt)
 	{
 		_controller->onEvent(&ControlEvent(ControlEvent::MoveRight, dt));
 	}
-	if (_input_devices->isPressed(VK_SPACE))
+	if (_input_devices->isPressed(MK_LBUTTON))
+	//if (_input_devices->isPressed(VK_SPACE))
 	{
 		int mx = _input_devices->mouseX();
 		int my = _input_devices->mouseY();

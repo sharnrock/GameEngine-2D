@@ -51,11 +51,7 @@ void LevelLoader::loadLevel()
 	assert(_hid_state);
 
 	_audio_engine = AudioEngineFactory::getAudioEngine();
-	//_audio_engine->init();
 	_audio_engine->loadFilesInThisDir(AUDIO_PATH);
-	ObjectFactory::Instance().initialize(_game_loop, _render_thing, &_sprite_manager, _audio_engine);
-
-
 	_audio_engine->playSound(AUDIO_PATH "jump.wav");
 	
 
@@ -159,7 +155,7 @@ void LevelLoader::createObjectLayer(tmx::ObjectGroup* obj_layer, int layer)
 			float x = objects.at(i).getPosition().x;
 			float y = objects.at(i).getPosition().y;
 			
-			SpinnyBox* thing = static_cast<SpinnyBox*>(ObjectFactory::Instance().createSpinnyBox(x, y, 43, layer));
+			SpinnyBox* thing = static_cast<SpinnyBox*>(ObjectFactory::Instance().createSpinnyBox(x, y, 39, layer));
 		}
 	}
 }

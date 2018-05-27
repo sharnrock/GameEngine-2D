@@ -1,6 +1,7 @@
 #pragma once
 #include "Displayable.h"
 #include "Sprite.h"
+#include "Types.h"
 
 class ObjectFactory;
 class ControlEvent;
@@ -21,6 +22,7 @@ public:
 
 	bool isSolid() const { return true; }
 
+
 protected:
 	void onCollisionEvent(CollisionEvent* e);
 	void onControlEvent(ControlEvent* e);
@@ -38,5 +40,7 @@ private:
 	ObjectFactory* _obj_factory;
 	__int64 _weapon_timer;
 	__int64 _weapon_cooldown;
+	
+	float _acceleration;
 };
 

@@ -27,6 +27,7 @@ public:
 	void setGameLoop(GameLoop* game_loop)                           { _game_loop    = game_loop; }
 	void setRenderBullshit(GraphicsEngine* renderer)                { _render_thing = renderer; }
 	void setHumanInputDeviceState(const HumanInputDeviceState* hid_state) { _hid_state    = hid_state; }
+	SpriteSheetManager* getSpriteManager()                          { return &_sprite_manager; }
 
 private:
 	void createTileLayer(tmx::TileLayer* tile_layer, int layer);

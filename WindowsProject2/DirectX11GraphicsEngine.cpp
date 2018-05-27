@@ -14,7 +14,7 @@
 //#define USE_320_x_180
 
 // Only game objects within the camera bounding rect will be displayed
-//#define ONLY_DISPLAY_CAMERA_COLLISIONS
+//#define ONLY_DISPLAY_CAMERA_COLLISIONS // TEMP: turned off while moving everything over to box2d
 
 // Let the scaling be done while rendering, not while resizingf
 //#define USE_SCALING 
@@ -187,7 +187,7 @@ HRESULT DirectX11GraphicsEngine::OnRender()
 				case Displayable::Bitmap:
 				{
 #ifdef ONLY_DISPLAY_CAMERA_COLLISIONS
-					if (!_camera_view.hasCollisionWith(*_displayables[i]))
+					if (!_camera_view.hasCoarseCollisionWith(*_displayables[layer][i]))
 						break;
 #endif
 					DisplayableBitmap* displayable = static_cast<DisplayableBitmap*>(_displayables[layer][i]);

@@ -7,7 +7,8 @@
 GameLoop::GameLoop() :
 	_updatables(1),
 	level_loader(nullptr),
-	graphics(nullptr)
+	graphics(nullptr),
+	physics(nullptr) 
 {
 }
 
@@ -17,17 +18,23 @@ GameLoop::~GameLoop()
 
 void GameLoop::update(__int64 delta_t_us)
 {
-	for (int i = 0; i < _updatables.count(); i++)
-	{
-		if (_updatables[i]->isActive())
-			_updatables[i]->update(delta_t_us);
-	}
+	updateObjects(delta_t_us);
 	updateCollisions(delta_t_us);
 	graphics->OnRender();
 }
 
+void GameLoop::updateObjects(__int64 dt)
+{
+	for (int i = 0; i < _updatables.count(); i++)
+	{
+		if (_updatables[i]->isActive())
+			_updatables[i]->update(dt);
+	}
+}
+
 void GameLoop::updateCollisions(__int64 delta_t_us)
 {
+	physics->update(delta_t_us);
 #if 0
 	for (int i = 0; i < _updatables.count(); i++)
 	{
@@ -49,6 +56,7 @@ void GameLoop::updateCollisions(__int64 delta_t_us)
 	// This is still n^2 time
 	// Try to see if grid or tree struc can do this faster
 	// Grid probably won't work because I've thrown all the tiles into a list in an arbitrary order
+#if 0
 	for (int i = 0; i < _collideables.count(); i++)
 	{
 		GameObject* one = _collideables[i];
@@ -70,6 +78,8 @@ void GameLoop::updateCollisions(__int64 delta_t_us)
 		}
 	}
 #endif
+
+#endif
 }
 
 void GameLoop::addUpdatableObject(GameObject* updatable_object)
@@ -82,6 +92,7 @@ void GameLoop::addUpdatableObject(GameObject* updatable_object)
 HRESULT GameLoop::initialize()
 {
 	loadLevel();
+	physics->initialize();
 	return S_OK;
 }
 
