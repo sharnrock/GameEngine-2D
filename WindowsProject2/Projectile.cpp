@@ -12,12 +12,13 @@ Projectile::Projectile(float x, float y, float target_x, float target_y) :
 	DisplayableBitmap(x, y, 0, 0),
 	_target_x(target_x),
 	_target_y(target_y),
-	_speed(10),
+	_speed(18),
 	_distance_travelled(0),
 	_fire_sound(AUDIO_PATH "shoot.wav"),
-	_max_distance(5), 
+	_max_distance(20), 
 	_angle_rad(0),
-	_mark_for_destroy(false)
+	_mark_for_destroy(false),
+	_damage(10)
 {
 	_obj_type = "Projectile";
 	

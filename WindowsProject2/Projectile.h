@@ -19,6 +19,8 @@ public:
 	const Sprite & getSprite() const;
 	void setSprite(const Sprite& sprite);
 
+	float getDamage() const { return _damage; }
+
 	// placeholder until we can get better event system
 	void destroy();
 
@@ -42,5 +44,7 @@ private:
 	float _delta_x;
 	float _delta_y;
 	bool _mark_for_destroy;
+
+	float _damage;
 };
 

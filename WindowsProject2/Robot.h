@@ -48,5 +48,7 @@ private:
 	
 	float _acceleration;
 	Weapon* _weapon;
+
+	float _health;
 };
 

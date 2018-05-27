@@ -17,6 +17,8 @@ public:
 
 	void update(__int64 dt);
 
+	float getDamage() const { return _damage; }
+
 	bool isSolid() const { return true; }
 
 protected:
@@ -29,6 +31,9 @@ protected:
 	void moveDown(__int64 dt);
 
 private:
+	float _health;
+	float _damage;
+
 	Possessor * _possessor;
 	float speed_px_s;
 	float _acceleration;

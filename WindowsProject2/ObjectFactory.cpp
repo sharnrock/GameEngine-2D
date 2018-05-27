@@ -91,8 +91,9 @@ void ObjectFactory::releaseProjectile(Projectile* obj)
 
 void ObjectFactory::releaseObject(GameObject * object)
 {
+	_physics_engine->destroyBody(object);
 	_objects.remove(object);
-	delete object;
+	//delete object;
 }
 
 GameObject* ObjectFactory::createRobot(float x, float y, int layer)
