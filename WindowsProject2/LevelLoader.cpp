@@ -116,10 +116,13 @@ void LevelLoader::createTileLayer(tmx::TileLayer* tile_layer, int layer)
 
 		int tile_count_in_width = (int)tile_layer->getWidth();
 
-		float x = (float)((int)(i % tile_count_in_width)) * _sprite_manager.getSpriteFromID(id).getWidth();
-		float y = (float)((int)(i / tile_count_in_width)) * _sprite_manager.getSpriteFromID(id).getHeight();
+		float tile_height = _sprite_manager.getSpriteFromID(id).getHeight();
+		float tile_width = _sprite_manager.getSpriteFromID(id).getWidth();
 
-		ObjectFactory::Instance().createBackgroundTile(x, y, id, layer);
+		float x = (float)((int)(i % tile_count_in_width)) * tile_width;
+		float y = (float)((int)(i / tile_count_in_width)) * tile_height;
+
+		ObjectFactory::Instance().createBackgroundTile(x, y, tile_width, tile_height, id, layer);
 	}
 }
 

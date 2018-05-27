@@ -41,5 +41,6 @@ private:
 
 	float _delta_x;
 	float _delta_y;
+	bool _mark_for_destroy;
 };
 

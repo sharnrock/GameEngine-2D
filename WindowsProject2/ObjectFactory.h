@@ -34,9 +34,10 @@ public:
 	Projectile* createProjectile(float x, float y, float target_x, float target_y);
 	GameObject* createRobot(float x, float y, int layer);
 	GameObject* createSlime(float x, float y, int layer);
-	GameObject* createBackgroundTile(float x, float y, int id, int layer);
+	GameObject* createBackgroundTile(float x, float y, float w, float h, int id, int layer);
 	GameObject* createSpinnyBox(float x, float y, int id, int layer);
 
+	GameObject* createCamera();
 private:
 	void loadUpGameObjectWithPtrs(GameObject * obj);
 
@@ -68,12 +69,4 @@ private:
 	ObjectFactory& operator=(const ObjectFactory&&) = delete;
 };
 
-// Example code from box2d...
-// This will be done eventually
-//
-//GameActor* actor = GameCreateActor();
-//b2BodyDef bodyDef;
-//bodyDef.userData = actor;
-//actor->body = box2Dworld->CreateBody(&bodyDef);
 
-// And then fixtures fit into this somehow?

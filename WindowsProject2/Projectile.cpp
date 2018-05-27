@@ -12,11 +12,12 @@ Projectile::Projectile(float x, float y, float target_x, float target_y) :
 	DisplayableBitmap(x, y, 0, 0),
 	_target_x(target_x),
 	_target_y(target_y),
-	_speed(400),
+	_speed(10),
 	_distance_travelled(0),
 	_fire_sound(AUDIO_PATH "shoot.wav"),
-	_max_distance(400), 
-	_angle_rad(0)
+	_max_distance(5), 
+	_angle_rad(0),
+	_mark_for_destroy(false)
 {
 	_obj_type = "Projectile";
 	
@@ -27,6 +28,9 @@ Projectile::Projectile(float x, float y, float target_x, float target_y) :
 	_w = 32;
 	_h = 32;
 	updateBoundingRect();
+
+	_move_force.x = _speed * cosf(_angle_rad);
+	_move_force.y = _speed * sinf(_angle_rad);
 }
 
 void Projectile::updateAngle()
@@ -41,6 +45,7 @@ Projectile::~Projectile()
 
 void Projectile::destroy()
 {
+	_mark_for_destroy = false;
 	getObjectFactory()->releaseProjectile(this);
 }
 
@@ -56,6 +61,8 @@ void Projectile::setTarget(float x, float y)
 	_delta_x = _target_x - _x;
 	_delta_y = _target_y - _y;
 	updateAngle();
+	_move_force.x = _speed * cosf(_angle_rad);
+	_move_force.y = _speed * sinf(_angle_rad);
 }
 
 void Projectile::setAngle(float rads)
@@ -65,11 +72,16 @@ void Projectile::setAngle(float rads)
 
 void Projectile::update(__int64 dt)
 {
+	if (_mark_for_destroy)
+	{
+		destroy();
+		return;
+	}
 	// TODO: put angle into this calc!
 	float distance = (float)(dt * _speed / 1E6f);
 
-	_x += distance * cosf(_angle_rad);
-	_y += distance * sinf(_angle_rad);
+	//_x += distance * cosf(_angle_rad);
+	//_y += distance * sinf(_angle_rad);
 
 	_distance_travelled += distance;
 	if (_distance_travelled > _max_distance)
@@ -83,11 +95,7 @@ void Projectile::onCollisionEvent(CollisionEvent* e)
 	if (e->getCollider()->getObjectType() == robot_type)
 		return;
 
-	GameObject* obj = e->getCollider();
-	if (obj->isSolid())
-	{
-		this->destroy();
-	}
+	this->_mark_for_destroy = true;
 }
 
 void Projectile::onBirthEvent(BirthEvent*)

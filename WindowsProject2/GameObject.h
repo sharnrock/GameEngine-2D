@@ -20,20 +20,18 @@ class Camera;
 class GameObject
 {
 public:
-	GameObject(float x, float y, float width, float height, AudioEngine* audio_engine = nullptr);  // TODO: pull out audio engine
+	GameObject(float x, float y, float width, float height); 
 	GameObject();
 	~GameObject();
 
-	// give access to audio engine for events
-	void setAudioEngine(AudioEngine* audio_engine) { _audio_engine = audio_engine; }
-	void setObjectFactory(ObjectFactory* obj_factory) { _obj_factory = obj_factory; }
-	void setSpriteManager(SpriteSheetManager* sprite_manager) { _sprite_manager = sprite_manager; }
-	void setCamera(Camera* camera) { _camera = camera; }
+	void setAudioEngine   (AudioEngine* audio_engine)          { _audio_engine   = audio_engine;   }
+	void setObjectFactory (ObjectFactory* obj_factory)         { _obj_factory    = obj_factory;    }
+	void setSpriteManager (SpriteSheetManager* sprite_manager) { _sprite_manager = sprite_manager; }
+	void setCamera        (Camera* camera)                     { _camera         = camera;         }
 	
 	// this should return a gstring type
 	virtual const GString& getObjectType() const { return _obj_type; }
 	
-
 	// if returns true, it won't render or update or collide
 	virtual void setActive(bool is_active = true) { _is_active = is_active; }
 	virtual bool isActive() const { return _is_active; }
@@ -45,7 +43,11 @@ public:
 	void  setWorldCoordinates(float x, float y); // updates the bounding rect
 	float X() const { return _x; }
 	float Y() const { return _y; }
-	
+
+	// These coordinates should make the center of the object
+	virtual void setWorldCenterCoords(float x, float y);
+	virtual VECTORF getWorldCenterCoords() const;
+
 	void  setSize(float width, float height);    // updates the bounding rect
 	float getHeight() const { return _h; }
 	float getWidth() const { return _w; }
@@ -59,16 +61,9 @@ public:
 	virtual bool isSolid() const { return _is_solid; }
 	virtual void setSolid(bool is_solid) { _is_solid = is_solid; }
 
+	// TODO: rename this to velocity .. or something that is true; it's not a force
 	VECTORF getMoveForce() const { return _move_force; }
 
-	// These need to go..
-	bool hasCoarseCollisionWith(const GameObject& other) const;
-	virtual bool hasFineCollisionWith(const GameObject& other) const;
-protected:
-	bool hasCollision(const RECTF_TYPE& rect1, const RECTF_TYPE& rect2) const;
-public:
-	// End of stuff that has to go
-	
 	// handles events
 	virtual void onEvent(Event* e);
 
@@ -93,7 +88,6 @@ protected:
 	// A control action has been performed; could have been keyboard or AI control..
 	virtual void onControlEvent(ControlEvent*) {}
 
-
 	
 	void updateBoundingRect();
 	
@@ -106,15 +100,15 @@ protected:
 	float _x, _y; // these should probably be private so whenever they change update bounding box has to be called. no forgetting it
 	float _w, _h;
 
-	AudioEngine*   getAudioEngine() { assert(_audio_engine); return _audio_engine; }
-	ObjectFactory* getObjectFactory() { assert(_obj_factory); return _obj_factory; }
+	AudioEngine*        getAudioEngine() { assert(_audio_engine); return _audio_engine; }
+	ObjectFactory*      getObjectFactory() { assert(_obj_factory); return _obj_factory; }
 	SpriteSheetManager* getSpriteManager() { assert(_sprite_manager);  return _sprite_manager; }
-	Camera* getCamera() { return _camera; }
+	Camera*             getCamera() { return _camera; }
 
 private:
-	AudioEngine*   _audio_engine;
-	ObjectFactory* _obj_factory;
+	AudioEngine*        _audio_engine;
+	ObjectFactory*      _obj_factory;
 	SpriteSheetManager* _sprite_manager;
-	Camera* _camera;
+	Camera*             _camera;
 };
 

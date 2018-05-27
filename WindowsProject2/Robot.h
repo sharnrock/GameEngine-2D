@@ -6,6 +6,7 @@
 class ObjectFactory;
 class ControlEvent;
 class Possessor;
+class Weapon;
 
 class Robot :
 	public DisplayableBitmap
@@ -22,6 +23,10 @@ public:
 
 	bool isSolid() const { return true; }
 
+	void    setWorldCenterCoords(float x, float y);
+	VECTORF getWorldCenterCoords() const;
+
+	void equipWeapon(Weapon* weapon);
 
 protected:
 	void onCollisionEvent(CollisionEvent* e);
@@ -42,5 +47,6 @@ private:
 	__int64 _weapon_cooldown;
 	
 	float _acceleration;
+	Weapon* _weapon;
 };
 

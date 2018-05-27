@@ -62,7 +62,7 @@ public:
 	BITMAP_HANDL loadBitmapAssetFromFilepath(const GString& file_path, int width, int height);
 	void         addDisplayableObject(Displayable* object, int layer = 0);
 	void         clearDisplayables();
-	Camera*      getCamera() { return &_camera_view; }
+	Camera*      getCamera() { return _camera_view; }
 
 private: 
 	// converts world coordinates to screen coordinates
@@ -77,7 +77,7 @@ private:
 	GMap<BITMAP_HANDL, ID2D1Bitmap*>        _bit_maps;
 	IDWriteFactory*                         _dwrite_factory;
 	IDWriteTextFormat*                      _text_format;
-	Camera                                  _camera_view;
+	Camera*                                 _camera_view;
 	D2D1_SIZE_U                             _window_size;
 	ScreenRatio                             _screen_ratio;
 

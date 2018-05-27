@@ -58,6 +58,9 @@ Projectile* ObjectFactory::createProjectile(float x, float y, float target_x, fl
 		proj->onEvent(&event);
 
 		_active_projs.append(proj);
+
+		_physics_engine->addProjectile(proj);
+
 		return proj;
 	}
 	else
@@ -72,12 +75,15 @@ Projectile* ObjectFactory::createProjectile(float x, float y, float target_x, fl
 		BirthEvent event;
 		proj->onEvent(&event);
 
+		_physics_engine->reset(proj);
+
 		return proj;
 	}
 }
 
 void ObjectFactory::releaseProjectile(Projectile* obj)
 {
+	_physics_engine->destroyBody(obj);
 	obj->setActive(false);
 	_active_projs.remove(obj);
 	_idle_projs.append(obj);
@@ -100,7 +106,7 @@ GameObject* ObjectFactory::createRobot(float x, float y, int layer)
 	_render_engine->addDisplayableObject(thing, layer);
 
 	// Camera stuff might need to be moved outside
-	_render_engine->getCamera()->centerScreenOnThisGuy(thing);
+	_render_engine->getCamera()->centerScreenOnThisGuy(thing); // put this back
 	_game_loop->addUpdatableObject(_render_engine->getCamera());
 	_game_loop->addUpdatableObject(thing);
 	_physics_engine->addDynamicGameObject(thing);
@@ -126,18 +132,18 @@ GameObject* ObjectFactory::createSlime(float x, float y, int layer)
 	return thing;
 }
 
-GameObject * ObjectFactory::createBackgroundTile(float x, float y, int id, int layer)
+GameObject * ObjectFactory::createBackgroundTile(float x, float y, float w, float h, int id, int layer)
 {
-	DisplayableBitmap* thing = new BackGroundTileDisplayable();
-	thing->setWorldCoordinates(x, y);
-
+	DisplayableBitmap* thing = new BackGroundTileDisplayable(x,y,w,h);
+	
 	if (!_sprite_manager->getHitBoxesFromID(id).isEmpty())
 	{
 		thing->setSolid(true);
-		if (_sprite_manager->getHitBoxesFromID(id).count())
-			_physics_engine->addStaticGameObject(thing);
+
 		for (int rect = 0; rect < _sprite_manager->getHitBoxesFromID(id).count(); rect++)
 			thing->addTinyCollisionBoxesForStage2Detect(_sprite_manager->getHitBoxesFromID(id).at(rect));
+		if (_sprite_manager->getHitBoxesFromID(id).count())
+			_physics_engine->addStaticGameObject(thing);
 	}
 
 	Sprite sprite = _sprite_manager->getSpriteFromID(id);
@@ -176,6 +182,12 @@ GameObject* ObjectFactory::createSpinnyBox(float x, float y, int id, int layer)
 
 	return thing;
 	
+}
+
+GameObject * ObjectFactory::createCamera()
+{
+	static Camera camera;
+	return &camera;
 }
 
 void ObjectFactory::loadUpGameObjectWithPtrs(GameObject* obj)

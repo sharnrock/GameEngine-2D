@@ -3,6 +3,14 @@
 #include "CollisionEvent.h"
 #include "DebugLog.h"
 
+#include "Projectile.h"
+
+// Collsion masks
+#define FRIENDLY_PROJECTILE_MASK 0x0002
+#define ROBOT_MASK               0x0004
+#define SLIME_MASK               0x0008
+#define IMPASSABLE_TERRAIN       0x0010
+#define COLLIDE_WITH_ALL         0xFFFF
 
 Box2dPhysicsEngine::Box2dPhysicsEngine() :
 	_gravity(0.0f, 0.0f),
@@ -44,19 +52,24 @@ void Box2dPhysicsEngine::initialize()
 
 void Box2dPhysicsEngine::addStaticGameObject(GameObject* obj)
 {
-	float x = convertPxToMeters(obj->X());
-	float y = convertPxToMeters( obj->Y()); 
+	if (obj->getFineCollisionBoxes().isEmpty())
+		return;
+
+	b2Vec2 pos = obj->getWorldCenterCoords();
+	pos.x = convertPxToMeters(pos.x);
+	pos.y = convertPxToMeters(pos.y);
 	// TODO: sort this out
 	b2BodyDef groundBodyDef; // this doesn't need to stick around
-	groundBodyDef.position.Set(x, y);
+	groundBodyDef.position.Set(pos.x, pos.y);
 
 	b2Body* groundBody = _world.CreateBody(&groundBodyDef);
+	_ptr_to_bdy[obj] = groundBody;
 	groundBody->SetUserData(obj);
 	
 	// Get hit box from game obj
-	RECTF_TYPE box = obj->getBoundingRect();
-	float half_w = (box.right - box.left) * 0.5f;
-	float half_h = (box.bottom - box.top) * 0.5f;
+	RECTF_TYPE box = obj->getFineCollisionBoxes().at(0);
+	float half_w = (box.right - box.left) *0.5f;
+	float half_h = (box.bottom - box.top) *0.5f;
 	half_w = convertPxToMeters(half_w);
 	half_h = convertPxToMeters(half_h);
 
@@ -68,28 +81,34 @@ void Box2dPhysicsEngine::addStaticGameObject(GameObject* obj)
 
 void Box2dPhysicsEngine::addDynamicGameObject(GameObject* obj)
 {
+	const static GString slime_str("Slime");
+	const static GString robot_str("Robot");
+
 	// Get position from game obj
-	float x = convertPxToMeters( obj->X() );
-	float y = convertPxToMeters( obj->Y() ); // temp for testing
+	b2Vec2 pos = obj->getWorldCenterCoords();
+	pos.x = convertPxToMeters(pos.x);
+	pos.y = convertPxToMeters(pos.y);
 
 	// Get hit box from game obj
 	//RECTF_TYPE box = obj->getBoundingRect(); // old and bad
 	RECTF_TYPE box = obj->getFineCollisionBoxes().at(0);
-	float half_w = (box.right - box.left) * 0.5f;
-	float half_h = (box.bottom - box.top) * 0.5f;
+	float half_w = (box.right - box.left) *0.5f;
+	float half_h = (box.bottom - box.top) *0.5f;
 	half_w = convertPxToMeters( half_w );
 	half_h = convertPxToMeters( half_h );
 
 	b2BodyDef bodyDef;
 	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(x, y);
+	bodyDef.position.Set(pos.x, pos.y);
+	
 
-	if (obj->getObjectType() == GString("Robot"))
-		bodyDef.linearVelocity.Set(1.4f, 0);
-	else
-		bodyDef.linearVelocity.Set(-1.4f, 0);
+	//if (obj->getObjectType() == GString("Robot"))
+	//	bodyDef.linearVelocity.Set(1.4f, 0);
+	//else
+	//	bodyDef.linearVelocity.Set(-1.4f, 0);
 
 	b2Body* body = _world.CreateBody(&bodyDef);
+	_ptr_to_bdy[obj] = body;
 
 	body->SetUserData(obj);
 
@@ -98,10 +117,82 @@ void Box2dPhysicsEngine::addDynamicGameObject(GameObject* obj)
 
 	b2FixtureDef fixtureDef;
 	fixtureDef.shape = &dynamicBox;
-	fixtureDef.density =  (obj->getObjectType() == GString("Robot")) ? 1.0f : 0.5f;
+	fixtureDef.density =  (obj->getObjectType() == robot_str) ? 1.0f : 0.5f;
 	fixtureDef.friction = 0.3f;
 
+	if (obj->getObjectType() == robot_str)
+	{
+		fixtureDef.filter.categoryBits = ROBOT_MASK;
+		fixtureDef.filter.maskBits     = ~FRIENDLY_PROJECTILE_MASK;
+	}
+	else if (obj->getObjectType() == slime_str)
+	{
+		fixtureDef.filter.categoryBits = SLIME_MASK;
+		fixtureDef.filter.maskBits = COLLIDE_WITH_ALL;
+	}
+
+
 	body->CreateFixture(&fixtureDef);
+}
+
+
+
+void Box2dPhysicsEngine::addProjectile(GameObject* obj)
+{
+	Projectile* proj = static_cast<Projectile*>(obj);
+		// Get position from game obj
+	b2Vec2 pos = proj->getWorldCenterCoords();
+	pos.x = convertPxToMeters(pos.x);
+	pos.y = convertPxToMeters(pos.y);
+
+	// Get hit box from game obj
+	//RECTF_TYPE box = obj->getBoundingRect(); // old and bad
+	RECTF_TYPE box = proj->getFineCollisionBoxes().at(0);
+	float half_w = (box.right - box.left) *0.5f;
+	float half_h = (box.bottom - box.top) *0.5f;
+	half_w = convertPxToMeters( half_w );
+	half_h = convertPxToMeters( half_h );
+
+	b2BodyDef bodyDef;
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.bullet = true;
+	bodyDef.position.Set(pos.x, pos.y);
+	
+	bodyDef.linearVelocity = proj->getMoveForce();
+
+	b2Body* body = _world.CreateBody(&bodyDef);
+	_ptr_to_bdy[obj] = body;
+
+	body->SetUserData(proj);
+
+	b2PolygonShape dynamicBox;
+	dynamicBox.SetAsBox(half_w, half_h);
+
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &dynamicBox;
+	fixtureDef.density =  0.5f;
+	fixtureDef.friction = 0.3f;
+	fixtureDef.filter.categoryBits = FRIENDLY_PROJECTILE_MASK;
+	fixtureDef.filter.maskBits     = ~FRIENDLY_PROJECTILE_MASK;
+
+	body->CreateFixture(&fixtureDef);
+}
+
+void Box2dPhysicsEngine::reset(GameObject* obj)
+{
+	destroyBody(obj);
+	addProjectile(obj);
+}
+
+void Box2dPhysicsEngine::destroyBody(GameObject* obj)
+{
+	if (!_ptr_to_bdy.contains(obj))
+		return;
+	if (_ptr_to_bdy[obj] == nullptr)
+		return;
+
+	_world.DestroyBody(_ptr_to_bdy[obj]);
+	_ptr_to_bdy[obj] = nullptr;
 }
 
 void Box2dPhysicsEngine::update(__int64 dt)
@@ -114,15 +205,12 @@ void Box2dPhysicsEngine::update(__int64 dt)
 
 	_world.Step(timeStep, velocityIterations, positionIterations);
 
+
+
 	for (b2Body* b = _world.GetBodyList(); b; b = b->GetNext())
 	{
-		//if (b->GetType() == b2_staticBody)
-		//	continue;
 		if (!b->IsActive())
 			continue;
-		// TODO: bring this back once things get moving!
-		//if (!b->IsAwake())
-		//	continue;
 
 		GameObject* obj = static_cast<GameObject*>(b->GetUserData());
 		assert(obj);
@@ -130,31 +218,33 @@ void Box2dPhysicsEngine::update(__int64 dt)
 		float y = b->GetPosition().y;
 		x = convertMetersToPx(x);
 		y = convertMetersToPx(y);
-		obj->setWorldCoordinates(x,y);
-		//b->ApplyForceToCenter(obj->getMoveForce(), true);
+		obj->setWorldCenterCoords(x,y);
 		b->SetLinearVelocity(obj->getMoveForce());
 		//float32 angle = body->GetAngle();
 	}
 
 	for (b2Contact* c = _world.GetContactList(); c; c = c->GetNext())
 	{
-		GameObject* obj      = static_cast<GameObject*>( c->GetFixtureA()->GetBody()->GetUserData() );
-		GameObject* collider = static_cast<GameObject*>( c->GetFixtureB()->GetBody()->GetUserData() );
-		CollisionEvent cevent(collider);
-		obj->onEvent(&cevent);
+		// OK, I think this thing will only generate 1 of these per collision instead of 1 for each object colliding..
+		// I guess it makes more sense in hindsight
+		GameObject* obj      = static_cast<GameObject*>(c->GetFixtureA()->GetBody()->GetUserData());
+		GameObject* collider = static_cast<GameObject*>(c->GetFixtureB()->GetBody()->GetUserData());
+		
+		obj->onEvent(&CollisionEvent(collider));
+		collider->onEvent(&CollisionEvent(obj));
 	}
 }
 
 float Box2dPhysicsEngine::convertPxToMeters(float px)
 {
 	// 32px represents 1 meter, so 32px/1m = 1m/32px inverse scalar
-	const float scalar = 1.0f / 32.0f; 
+	const static float scalar = 1.0f / 32.0f; 
 	return px * scalar;
 }
 
 float Box2dPhysicsEngine::convertMetersToPx(float meters)
 {
 	// 32px represents 1 meter, so 32px/1m = 1m/32px inverse scalar
-	const float scalar = 32.0f / 1.0f;
+	const static float scalar = 32.0f / 1.0f;
 	return meters * scalar;
 }

@@ -2,7 +2,7 @@
 #include "Displayable.h"
 #include "GString.h"
 #include "Sprite.h"
-
+#include "ObjectFactory.h"
 // probably temporary
 #include "Direct2DUtility.h"
 
@@ -22,6 +22,8 @@
 // makes the camera use fine adjustement while moving
 //#define SMOOTH_CAM_MOVE
 
+// Draw the hit boxes of game objects
+#define RENDER_HIT_BOXES
 
 DirectX11GraphicsEngine::DirectX11GraphicsEngine() :
 	_hwnd(NULL),
@@ -32,6 +34,7 @@ DirectX11GraphicsEngine::DirectX11GraphicsEngine() :
 	_target_res_x(0),
 	_target_res_y(0)
 {
+	_camera_view = static_cast<Camera*>(ObjectFactory::Instance().createCamera());
 	_window_size = D2D1::SizeU(200,200);
 	_displayables.append( DynamicList<Displayable*>(256) ); 
 }
@@ -181,16 +184,17 @@ HRESULT DirectX11GraphicsEngine::OnRender()
 				{
 				case Displayable::Rectangle:
 				{
-					_render_target->FillRectangle(&_displayables[layer][i]->getBoundingRect(), _black_brush);
+					//_render_target->FillRectangle(&_displayables[layer][i]->getBoundingRect(), _black_brush);
 				}
 				break;
 				case Displayable::Bitmap:
 				{
 #ifdef ONLY_DISPLAY_CAMERA_COLLISIONS
-					if (!_camera_view.hasCoarseCollisionWith(*_displayables[layer][i]))
+					if (!_camera_view->hasCoarseCollisionWith(*_displayables[layer][i]))
 						break;
 #endif
 					DisplayableBitmap* displayable = static_cast<DisplayableBitmap*>(_displayables[layer][i]);
+
 					const Sprite& sprite = displayable->getSprite();
 					_render_target->DrawBitmap(
 						_bit_maps[sprite.getBitmapHandle()],
@@ -199,6 +203,23 @@ HRESULT DirectX11GraphicsEngine::OnRender()
 						D2D1_BITMAP_INTERPOLATION_MODE_NEAREST_NEIGHBOR,//D2D1_BITMAP_INTERPOLATION_MODE_LINEAR, //
 						sprite.getSourceRect()
 					);
+
+					
+#ifdef RENDER_HIT_BOXES // This should definitely be in another part of the code.. Move it to game loop or something so the argumetn acn be passed from cmdline
+					for (int i = 0; i < displayable->getFineCollisionBoxes().count(); i++)
+					{
+						VECTORF cpos = displayable->getWorldCenterCoords();
+						RECTF_TYPE hbox = displayable->getFineCollisionBoxes().at(i);
+						float half_w = (hbox.right - hbox.left) *0.5f;
+						float half_h = (hbox.bottom - hbox.top) *0.5f;
+						RECTF_TYPE result;
+						result.left   = cpos.x - half_w;
+						result.right  = cpos.x + half_w;
+						result.top    = cpos.y - half_h;
+						result.bottom = cpos.y + half_h;
+						_render_target->DrawRectangle(&offsetBoundingBoxWithCameraView(result), _black_brush);
+					}
+#endif
 				}
 				break;
 				case Displayable::Text:
@@ -239,10 +260,10 @@ D2D1_RECT_F DirectX11GraphicsEngine::offsetBoundingBoxWithCameraView(const D2D1_
 {
 	D2D1_RECT_F result;
 
-	result.left   = floor(world_coords.left   - _camera_view.X());
-	result.right  = floor(world_coords.right  - _camera_view.X());
-	result.top    = floor(world_coords.top    - _camera_view.Y());
-	result.bottom = floor(world_coords.bottom - _camera_view.Y());
+	result.left   = floor(world_coords.left   - _camera_view->X());
+	result.right  = floor(world_coords.right  - _camera_view->X());
+	result.top    = floor(world_coords.top    - _camera_view->Y());
+	result.bottom = floor(world_coords.bottom - _camera_view->Y());
 
 	return result;
 }
@@ -298,13 +319,13 @@ void DirectX11GraphicsEngine::OnResize(UINT width, UINT height)
 	} // switch
 
 #if 1
-	_camera_view.setSize(
+	_camera_view->setSize(
 		(float)ratio_x*screen_size,
 		(float)ratio_y*screen_size);
 	_target_res_x = ratio_x * screen_size;
 	_target_res_y = ratio_y * screen_size;
 #else
-	_camera_view.setSize(
+	_camera_view->setSize(
 		(float)width,
 		(float)height);
 #endif
