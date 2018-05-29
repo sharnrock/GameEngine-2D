@@ -80,6 +80,21 @@ void Camera::convertScreenCoordToWorldCoord(float in_x, float in_y, float& out_x
 	out_y = Y() + in_y;
 }
 
+bool Camera::hasCoarseCollisionWith(GameObject* obj)
+{
+	RECTF_TYPE other = obj->getBoundingRect();
+	if (_bounding_rect.left > other.right)
+		return false;
+	if (_bounding_rect.right < other.left)
+		return false;
+	if (_bounding_rect.top > other.bottom)
+		return false;
+	if (_bounding_rect.bottom < other.top)
+		return false;
+
+	return true;
+}
+
 void Camera::onControlEvent(ControlEvent* e)
 {
 	switch (e->getControl())

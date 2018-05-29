@@ -12,6 +12,7 @@ public:
 	virtual void addStaticGameObject(GameObject* obj) = 0;
 	virtual void addKinematicGameObject(GameObject* obj) = 0;
 	virtual void addProjectile(GameObject* obj) = 0;
+	virtual void addParticleObject(GameObject* obj) = 0;
 	virtual void reset(GameObject* obj) = 0;
 	virtual void destroyBody(GameObject* obj) = 0;
 

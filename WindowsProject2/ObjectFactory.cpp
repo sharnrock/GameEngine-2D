@@ -1,20 +1,25 @@
 #include "ObjectFactory.h"
+
 #include "GameLoop.h"
 #include "GraphicsEngine.h"
 #include "PhysicsEngine.h"
+#include "SpriteSheetManager.h"
+#include "BirthEvent.h"
 
 #include "Robot.h"
 #include "Slime.h"
 #include "SpinnyBox.h"
 #include "BackGroundTileDisplayable.h"
 #include "Projectile.h"
-
+#include "Particle.h"
+#include "ParticleSystem.h"
+#include "Explosion.h"
 #include "Camera.h"
 
-#include "SpriteSheetManager.h"
-#include "BirthEvent.h"
-
+#include "DebugLog.h"
 #include <assert.h>
+
+
 
 ObjectFactory& ObjectFactory::Instance()
 {
@@ -33,13 +38,18 @@ void ObjectFactory::initialize(GameLoop* gloop, GraphicsEngine* rengine, SpriteS
 
 ObjectFactory::~ObjectFactory()
 {
+	for (int i = 0; i < _all_objects.count(); i++)
+		delete _all_objects[i];
 }
 
 Projectile* ObjectFactory::createProjectile(float x, float y, float target_x, float target_y)
-{
+{// TODO: clean this up
 	_render_engine->getCamera()->convertScreenCoordToWorldCoord(target_x, target_y, target_x, target_y);
-	if (_idle_projs.isEmpty())
+	const static GString projectile_str("Projectile");
+
+	if (!hasIdleEquivalent(projectile_str))
 	{
+		DebugLog::Instance().log("Create");
 		// create
 		Projectile* proj = new Projectile(x, y, target_x, target_y);
 		proj->setAudioEngine(_audio_engine);
@@ -50,50 +60,40 @@ Projectile* ObjectFactory::createProjectile(float x, float y, float target_x, fl
 			proj->addTinyCollisionBoxesForStage2Detect(_sprite_manager->getHitBoxesFromID(38).at(i));
 
 		proj->setSolid(true);
-
 		_game_loop->addUpdatableObject(proj);
 		_render_engine->addDisplayableObject(proj, 1);
-
 		BirthEvent event;
 		proj->onEvent(&event);
-
-		_active_projs.append(proj);
-
 		_physics_engine->addProjectile(proj);
-
+		_all_objects.append(proj);
 		return proj;
 	}
 	else
 	{
 		// recycle
-		Projectile* proj = _idle_projs.popBack();
-		_active_projs.append(proj);
+		DebugLog::Instance().log("Reuse");
+		Projectile* proj = static_cast<Projectile*>(_idle_objects[projectile_str].pop());
 		proj->setWorldCoordinates(x,y);
 		proj->setTarget(target_x, target_y);
-
 		proj->setActive(true);
 		BirthEvent event;
 		proj->onEvent(&event);
-
 		_physics_engine->reset(proj);
 
 		return proj;
 	}
+
 }
 
-void ObjectFactory::releaseProjectile(Projectile* obj)
+bool ObjectFactory::hasIdleEquivalent(const GString& obj_type)
 {
-	_physics_engine->destroyBody(obj);
-	obj->setActive(false);
-	_active_projs.remove(obj);
-	_idle_projs.append(obj);
+	return (_idle_objects.contains(obj_type) && !_idle_objects[obj_type].isEmpty());
 }
 
 void ObjectFactory::releaseObject(GameObject * object)
 {
-	_physics_engine->destroyBody(object);
-	_objects.remove(object);
-	//delete object;
+	object->setActive(false); 
+	_idle_objects[object->getObjectType()].push(object);
 }
 
 GameObject* ObjectFactory::createRobot(float x, float y, int layer)
@@ -111,7 +111,7 @@ GameObject* ObjectFactory::createRobot(float x, float y, int layer)
 	_game_loop->addUpdatableObject(_render_engine->getCamera());
 	_game_loop->addUpdatableObject(thing);
 	_physics_engine->addDynamicGameObject(thing);
-
+	_all_objects.append(thing);
 	return thing;
 }
 
@@ -129,6 +129,8 @@ GameObject* ObjectFactory::createSlime(float x, float y, int layer)
 	_render_engine->addDisplayableObject(thing, layer);
 	_game_loop->addUpdatableObject(thing);
 	_physics_engine->addDynamicGameObject(thing);
+	thing->setObjectFactory(this);
+	_all_objects.append(thing);
 #endif
 	return thing;
 }
@@ -150,17 +152,14 @@ GameObject * ObjectFactory::createBackgroundTile(float x, float y, float w, floa
 	Sprite sprite = _sprite_manager->getSpriteFromID(id);
 	thing->setSprite(sprite);
 
-	// was here.
 	_render_engine->addDisplayableObject(thing, layer);
 	_game_loop->addUpdatableObject(thing);
-
+	_all_objects.append(thing);
 	return thing;
 }
 
 GameObject* ObjectFactory::createSpinnyBox(float x, float y, int id, int layer)
 {
-
-
 	DisplayableAnimation* thing = new SpinnyBox();
 	loadUpGameObjectWithPtrs(thing);
 
@@ -180,7 +179,7 @@ GameObject* ObjectFactory::createSpinnyBox(float x, float y, int id, int layer)
 
 	// let it know it exists now
 	thing->onEvent(&BirthEvent());
-
+	_all_objects.append(thing);
 	return thing;
 	
 }
@@ -189,6 +188,49 @@ GameObject * ObjectFactory::createCamera()
 {
 	static Camera camera;
 	return &camera;
+}
+
+GameObject* ObjectFactory::createParticle(VECTORF location, VECTORF velocity, float angle, float angle_velocity, float sizes, float life_time)
+{
+	const static GString particle_str("Particle");
+	Particle* result = nullptr;
+	if (hasIdleEquivalent(particle_str))
+	{
+		// recycle
+		DebugLog::Instance().log("Recycling particle");
+		result  = static_cast<Particle*>(_idle_objects[particle_str].pop());
+		result->setActive(true);
+	}
+	else
+	{
+		// create
+		DebugLog::Instance().log("Creating particle");
+		result = new Particle();
+		result->setObjectFactory(this);
+		_render_engine->addDisplayableObject(result);
+		_game_loop->addUpdatableObject(result);
+		_all_objects.append(result);
+	}
+
+	result->setPosition(location);
+	result->setVelocity(velocity);
+	result->setAngle(angle);
+	result->setAngularVelocity(angle_velocity);
+	result->setSize(sizes);
+	result->setLifeTime(life_time);
+
+	_physics_engine->addParticleObject(result); // gonna have to figure out where to put this one...
+	
+	return result;
+}
+
+GameObject* ObjectFactory::createParticleEmitter(float x, float y)
+{
+	Explosion *result = new Explosion(VECTORF(x, y));
+	result->setObjectFactory(this);
+	_game_loop->addUpdatableObject(result);
+	_all_objects.append(result);
+	return result;
 }
 
 void ObjectFactory::loadUpGameObjectWithPtrs(GameObject* obj)

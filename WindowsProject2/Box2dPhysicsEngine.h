@@ -18,6 +18,7 @@ public:
 	void addDynamicGameObject(GameObject* obj);
 	void addKinematicGameObject(GameObject* obj) {} // TOOD: implement later
 	void addProjectile(GameObject* obj);
+	void addParticleObject(GameObject* obj);
 	void reset(GameObject* obj);
 
 	// Safely destroys a body without breaking the linked list

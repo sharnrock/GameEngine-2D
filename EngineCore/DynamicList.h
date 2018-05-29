@@ -1,5 +1,8 @@
 #pragma once
 #include "EngineCoreGlobal.h"
+
+// For debuging
+#include <Windows.h>
 #include <assert.h>
 
 
@@ -12,7 +15,7 @@ class DllExport DynamicList
 public:
 	// Allocate an array of this many elements on the heap
 	// Typical sizes are factors of 2:  2,4,8,16,256,2048, etc....
-	DynamicList(int prealloc_size = 1);
+	DynamicList(int prealloc_size = 32);
 	virtual ~DynamicList();
 
 	DynamicList(const DynamicList<T>&);
@@ -88,6 +91,12 @@ DynamicList<T>::DynamicList(int prealloc_size) :
 template <class T>
 DynamicList<T>::~DynamicList()
 {
+	// // useful for optimizing the initial size of lists
+	//std::wstring msg = std::wstring(L"size:") + std::to_wstring(_size);
+	//OutputDebugString(msg.c_str());
+	//OutputDebugString(TEXT("\n"));
+	//
+
 	if (_array)
 		delete[] _array;
 	_array = nullptr;

@@ -12,7 +12,7 @@ Projectile::Projectile(float x, float y, float target_x, float target_y) :
 	DisplayableBitmap(x, y, 0, 0),
 	_target_x(target_x),
 	_target_y(target_y),
-	_speed(18),
+	_speed(16),
 	_distance_travelled(0),
 	_fire_sound(AUDIO_PATH "shoot.wav"),
 	_max_distance(20), 
@@ -47,7 +47,7 @@ Projectile::~Projectile()
 void Projectile::destroy()
 {
 	_mark_for_destroy = false;
-	getObjectFactory()->releaseProjectile(this);
+	getObjectFactory()->releaseObject(this);
 }
 
 void Projectile::setSpeed(float speed)
@@ -92,16 +92,13 @@ void Projectile::update(__int64 dt)
 
 void Projectile::onCollisionEvent(CollisionEvent* e)
 {
-	static GString robot_type("Robot");
-	if (e->getCollider()->getObjectType() == robot_type)
-		return;
-
 	this->_mark_for_destroy = true;
 }
 
 void Projectile::onBirthEvent(BirthEvent*)
 {
 	_distance_travelled = 0;
+	_mark_for_destroy = false;
 	getAudioEngine()->playSound(_fire_sound);
 }
 

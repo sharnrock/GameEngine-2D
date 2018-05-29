@@ -9,7 +9,8 @@ GString::~GString()
 	_array = nullptr;
 }
 
-GString::GString(const char* c_str)
+GString::GString(const char* c_str) :
+	DynamicList<char>(32)
 {
 	_is_null = false;
 	while (*c_str != '\0')
@@ -36,6 +37,7 @@ void GString::convertWStringToCharPtr(std::wstring input, char ** outputString)
 }
 
 GString::GString(const wchar_t* c_str) :
+	DynamicList<char>(32),
 	_is_null(false)
 {
 	if (_array)
@@ -45,7 +47,8 @@ GString::GString(const wchar_t* c_str) :
 	prepareHash();
 }
 
-GString::GString(const std::string& str)
+GString::GString(const std::string& str) :
+	DynamicList<char>(32)
 {
 	_is_null = false;
 	const char* c_str = str.c_str();
@@ -59,7 +62,8 @@ GString::GString(const std::string& str)
 	prepareHash();
 }
 
-GString::GString(const GString& other)
+GString::GString(const GString& other) :
+	DynamicList<char>(32)
 {
 	*this = other;
 }
@@ -246,3 +250,9 @@ GString GString::number(float f)
 {
 	return GString(std::to_string(f));
 }
+
+GString GString::number(__int64 i)
+{
+	return GString(std::to_string(i));
+}
+

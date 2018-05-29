@@ -18,12 +18,14 @@ class DllExport GString :
 {
 public:
 	GString() : 
+		DynamicList<char>(32),
 		_is_null(true), 
 		_hash(0) 
 	{  
 	}
 
 	~GString();
+
 	GString(const char* c_str);
 	GString(const wchar_t* c_str);
 	GString(const std::string& str);
@@ -69,6 +71,7 @@ public:
 	static GString number(int i);
 	static GString number(float f);
 	static GString number(UINT32 i);
+	static GString number(__int64 i);
 
 	// GString() is null and empty
 	bool isNull() const { return _is_null; }

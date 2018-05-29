@@ -58,9 +58,10 @@ void Slime::update(__int64 dt)
 	{
 		DebugLog::Instance().log("Slime has died!");
 		_is_active = false;
+		this->getObjectFactory()->createParticleEmitter(X(), Y());
 		//_move_force.SetZero();
 
-		ObjectFactory::Instance().releaseObject(this);
+		getObjectFactory()->releaseObject(this);
 		return;
 	}
 	_move_force.SetZero();

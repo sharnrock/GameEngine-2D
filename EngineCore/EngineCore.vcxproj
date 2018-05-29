@@ -153,6 +153,7 @@
     <ClInclude Include="EngineCoreGlobal.h" />
     <ClInclude Include="GDir.h" />
     <ClInclude Include="GFile.h" />
+    <ClInclude Include="GStack.h" />
     <ClInclude Include="GString.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />

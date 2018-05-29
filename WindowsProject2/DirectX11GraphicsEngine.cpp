@@ -182,15 +182,11 @@ HRESULT DirectX11GraphicsEngine::OnRender()
 
 				switch (_displayables[layer].operator[](i)->getDrawType())
 				{
-				case Displayable::Rectangle:
-				{
-					//_render_target->FillRectangle(&_displayables[layer][i]->getBoundingRect(), _black_brush);
-				}
-				break;
+
 				case Displayable::Bitmap:
 				{
 #ifdef ONLY_DISPLAY_CAMERA_COLLISIONS
-					if (!_camera_view->hasCoarseCollisionWith(*_displayables[layer][i]))
+					if (!_camera_view->hasCoarseCollisionWith(_displayables[layer][i]))
 						break;
 #endif
 					DisplayableBitmap* displayable = static_cast<DisplayableBitmap*>(_displayables[layer][i]);
@@ -220,6 +216,11 @@ HRESULT DirectX11GraphicsEngine::OnRender()
 						_render_target->DrawRectangle(&offsetBoundingBoxWithCameraView(result), _black_brush);
 					}
 #endif
+				}
+				break;
+				case Displayable::Rectangle:
+				{
+					_render_target->FillRectangle(&offsetBoundingBoxWithCameraView(_displayables[layer][i]->getBoundingRect()), _black_brush);
 				}
 				break;
 				case Displayable::Text:

@@ -174,6 +174,7 @@
     <ClInclude Include="Direct2DUtility.h" />
     <ClInclude Include="Displayable.h" />
     <ClInclude Include="Event.h" />
+    <ClInclude Include="Explosion.h" />
     <ClInclude Include="FPSCounter.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GMap.h" />
@@ -184,6 +185,8 @@
     <ClInclude Include="Locations.h" />
     <ClInclude Include="MainLoop.h" />
     <ClInclude Include="ObjectFactory.h" />
+    <ClInclude Include="Particle.h" />
+    <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="PhysicsEngine.h" />
     <ClInclude Include="PhysicsGameObject.h" />
     <ClInclude Include="Pistol.h" />
@@ -217,6 +220,7 @@
     <ClCompile Include="Direct2DUtility.cpp" />
     <ClCompile Include="Displayable.cpp" />
     <ClCompile Include="Event.cpp" />
+    <ClCompile Include="Explosion.cpp" />
     <ClCompile Include="FPSCounter.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="HPElapsedTimer.cpp" />
@@ -225,6 +229,8 @@
     <ClCompile Include="LevelLoader.cpp" />
     <ClCompile Include="MainLoop.cpp" />
     <ClCompile Include="ObjectFactory.cpp" />
+    <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="PhysicsEngine.cpp" />
     <ClCompile Include="PhysicsGameObject.cpp" />
     <ClCompile Include="Pistol.cpp" />

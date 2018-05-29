@@ -54,6 +54,8 @@ void LevelLoader::loadLevel()
 	_audio_engine->loadFilesInThisDir(AUDIO_PATH);
 	_audio_engine->playSound(AUDIO_PATH "jump.wav");
 	
+	// This is also testing:
+	//ObjectFactory::Instance().createParticleEmitter(150.0f,150.0f);
 
 	// this is testing
 	_sprite_manager.setRenderEngine(_render_thing);

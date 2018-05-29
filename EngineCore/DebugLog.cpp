@@ -38,10 +38,10 @@ void DebugLog::dumpLogMsgsToFile()
 
 void DebugLog::log(const GString& msg)
 {
-	GString prefix("Log:");
+	GString prefix("\nLog:");
 	prefix += msg;
 	OutputDebugString(prefix.toWideString().c_str());
-	OutputDebugString(TEXT("\n"));
+	//OutputDebugString(TEXT("\n"));
 }
 
 void DebugLog::warn(const GString& msg)

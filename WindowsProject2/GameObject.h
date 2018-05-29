@@ -30,6 +30,7 @@ public:
 	void setCamera        (Camera* camera)                     { _camera         = camera;         }
 	
 	// this should return a gstring type
+	// TODO: can this become static, so you don't have to create GString("type") strings and store them everywhere..?
 	virtual const GString& getObjectType() const { return _obj_type; }
 	
 	// if returns true, it won't render or update or collide
