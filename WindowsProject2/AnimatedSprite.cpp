@@ -66,7 +66,10 @@ void AnimatedSprite::update(__int64 dt) // in micro seconds
 	{
 		_tick_count -= total_loop_time;
 		if (_event_taker)
-			_event_taker->onEvent(&AnimationEvent(AnimationEvent::AnimationLoopEnd));
+		{
+			auto a = AnimationEvent(AnimationEvent::AnimationLoopEnd);
+			_event_taker->onEvent(&a);
+		}
 	}
 }
 

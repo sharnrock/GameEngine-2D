@@ -178,7 +178,8 @@ GameObject* ObjectFactory::createSpinnyBox(float x, float y, int id, int layer)
 	_game_loop->addUpdatableObject(thing);
 
 	// let it know it exists now
-	thing->onEvent(&BirthEvent());
+	auto a = BirthEvent();
+	thing->onEvent(&a);
 	_all_objects.append(thing);
 	return thing;
 	

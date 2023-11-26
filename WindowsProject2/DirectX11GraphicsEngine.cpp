@@ -145,6 +145,7 @@ HRESULT DirectX11GraphicsEngine::initialize()
 
 void DirectX11GraphicsEngine::getDesktopDpi(float *dpiX, float *dpiY)
 {
+#pragma warning(suppress : 4996)
 	this->getDirect2DFactory()->GetDesktopDpi(dpiX, dpiY);
 }
 
@@ -213,14 +214,16 @@ HRESULT DirectX11GraphicsEngine::OnRender()
 						result.right  = cpos.x + half_w;
 						result.top    = cpos.y - half_h;
 						result.bottom = cpos.y + half_h;
-						_render_target->DrawRectangle(&offsetBoundingBoxWithCameraView(result), _black_brush);
+						auto a = offsetBoundingBoxWithCameraView(result);
+						_render_target->DrawRectangle(&a, _black_brush);
 					}
 #endif
 				}
 				break;
 				case Displayable::Rectangle:
 				{
-					_render_target->FillRectangle(&offsetBoundingBoxWithCameraView(_displayables[layer][i]->getBoundingRect()), _black_brush);
+					auto a = offsetBoundingBoxWithCameraView(_displayables[layer][i]->getBoundingRect());
+					_render_target->FillRectangle(&a, _black_brush);
 				}
 				break;
 				case Displayable::Text:

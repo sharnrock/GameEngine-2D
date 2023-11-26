@@ -284,8 +284,10 @@ void Box2dPhysicsEngine::update(__int64 dt)
 		GameObject* collider = static_cast<GameObject*>(c->GetFixtureB()->GetBody()->GetUserData());
 		//assert(c->IsTouching());
 		
-		obj->onEvent(&CollisionEvent(collider));
-		collider->onEvent(&CollisionEvent(obj));
+		auto a = CollisionEvent(collider);
+		obj->onEvent(&a);
+		auto b = CollisionEvent(obj);
+		collider->onEvent(&b);
 	}
 
 	for (b2Body* b = _world.GetBodyList(); b; b = b->GetNext())

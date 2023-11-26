@@ -66,6 +66,7 @@ namespace Hilo
 				Microsoft::WRL::ComPtr<ID2D1Factory> factory;
 				if (SUCCEEDED(GetD2DFactory(&factory)))
 				{
+#pragma warning(suppress : 4996)
 					factory->GetDesktopDpi(&dpi.x, &dpi.y);
 				}
 
@@ -81,6 +82,7 @@ namespace Hilo
 
 				if (SUCCEEDED(GetD2DFactory(&factory)))
 				{
+#pragma warning(suppress : 4996)
 					factory->GetDesktopDpi(&dpi.x, &dpi.y);
 				}
 
@@ -94,6 +96,7 @@ namespace Hilo
 
 				if (SUCCEEDED(GetD2DFactory(&factory)))
 				{
+#pragma warning(suppress : 4996)
 					factory->GetDesktopDpi(&dpi.x, &dpi.y);
 				}
 
@@ -107,6 +110,7 @@ namespace Hilo
 
 				if (SUCCEEDED(GetD2DFactory(&factory)))
 				{
+#pragma warning(suppress : 4996)
 					factory->GetDesktopDpi(&dpi.x, &dpi.y);
 				}
 

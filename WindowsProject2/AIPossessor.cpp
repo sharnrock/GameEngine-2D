@@ -19,10 +19,12 @@ void AIPossessor::update(__int64 dt)
 	_dt_total += dt;
 	if ((int)(_dt_total / 1E6) % 2)
 	{
-		_controller->onEvent(&ControlEvent(ControlEvent::MoveLeft, dt));
+		auto a = ControlEvent(ControlEvent::MoveLeft, dt);
+		_controller->onEvent(&a);
 	}
 	else
 	{
-		_controller->onEvent(&ControlEvent(ControlEvent::MoveRight, dt));
+		auto a = ControlEvent(ControlEvent::MoveRight, dt);
+		_controller->onEvent(&a);
 	}
 }

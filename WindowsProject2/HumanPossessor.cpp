@@ -21,19 +21,23 @@ void HumanPossessor::update(__int64 dt)
 
 	if (_input_devices->isPressed('W'))
 	{
-		_controller->onEvent(&ControlEvent(ControlEvent::MoveUp, dt));
+		auto a = ControlEvent(ControlEvent::MoveUp, dt);
+		_controller->onEvent(&a);
 	}
 	if (_input_devices->isPressed('S'))
 	{
-		_controller->onEvent(&ControlEvent(ControlEvent::MoveDown, dt));
+		auto a = ControlEvent(ControlEvent::MoveDown, dt);
+		_controller->onEvent(&a);
 	}
 	if (_input_devices->isPressed('A'))
 	{
-		_controller->onEvent(&ControlEvent(ControlEvent::MoveLeft, dt));
+		auto a = ControlEvent(ControlEvent::MoveLeft, dt);
+		_controller->onEvent(&a);
 	}
 	if (_input_devices->isPressed('D'))
 	{
-		_controller->onEvent(&ControlEvent(ControlEvent::MoveRight, dt));
+		auto a = ControlEvent(ControlEvent::MoveRight, dt);
+		_controller->onEvent(&a);
 	}
 	if (_input_devices->isPressed(MK_LBUTTON))
 	//if (_input_devices->isPressed(VK_SPACE))
