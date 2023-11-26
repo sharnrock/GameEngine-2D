@@ -108,7 +108,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Keith\source\repos\WindowsProject2\JSon;C:\Users\Keith\source\repos\WindowsProject2\Box2DPhysics;C:\Users\Keith\source\repos\WindowsProject2\EngineCore;..\tmxlite\include;C:\Users\Keith\source\repos\WindowsProject2\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\JSon;..\Box2DPhysics;..\EngineCore;..\tmxlite\include;..\AudioEngine;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
