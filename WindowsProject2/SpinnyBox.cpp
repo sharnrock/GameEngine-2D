@@ -2,7 +2,7 @@
 #include "SpriteSheetManager.h"
 
 SpinnyBox::SpinnyBox() :
-	_sprite_location("E:\\Keith\\Documents\\Sprites\\cube.png")
+	_sprite_location("..\\Assets\\Sprites\\cube.png")
 {
 	_obj_type = "SpinnyBox";
 }

@@ -59,13 +59,17 @@ void LevelLoader::loadLevel()
 
 	// this is testing
 	_sprite_manager.setRenderEngine(_render_thing);
-	_sprite_manager.loadAnimatedSprite("E:\\Keith\\Documents\\Sprites\\cube.png", "E:\\Keith\\Documents\\Sprites\\cube.json");
-	//_sprite_manager.getAnimatedSprite("E:\\Keith\\Documents\\Sprites\\cube.png");
+
+
+	_sprite_manager.loadAnimatedSprite("..\\Assets\\Sprites\\cube.png", "..\\Assets\\Sprites\\cube.json");
+	//_sprite_manager.getAnimatedSprite("D:\\Previous\\Keith\\Documents\\Sprites\\cube.png");
 	// end testing...
 
 
 	tmx::Map map;
-	if (!map.load("E:\\Keith\\Documents\\TheBigGame\\Mapping\\images\\map3.tmx"))
+	// old but was working: if (!map.load("D:\\Previous\\Keith\\Documents\\TheBigGame\\Mapping\\images\\map3.tmx"))
+	// 
+	if (!map.load("..\\Assets\\Maps\\map3.tmx"))
 	{
 		OutputDebugString(TEXT("Couldn't load tmx map\n"));
 		return;

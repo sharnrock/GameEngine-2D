@@ -127,9 +127,10 @@ IXAudio2SourceVoice* AudioBullshit::getSourceVoice()
 	{
 		// We're out of source voices, we need to create more
 		VoiceCallback* cb = new VoiceCallback(this);
-		IXAudio2SourceVoice *pSourceVoice;
-		if (FAILED(hr = pXAudio2->CreateSourceVoice(&pSourceVoice, &_master_format,
-			0, XAUDIO2_DEFAULT_FREQ_RATIO, cb, NULL, NULL)))
+		IXAudio2SourceVoice *pSourceVoice = nullptr;
+
+		HRESULT hr = pXAudio2->CreateSourceVoice(&pSourceVoice, &_master_format,0, XAUDIO2_DEFAULT_FREQ_RATIO, cb, NULL, NULL);
+		if (FAILED(hr))
 		{
 			wprintf(L"Error %#X creating source voice\n", hr);
 			return nullptr;

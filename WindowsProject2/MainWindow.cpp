@@ -165,14 +165,15 @@ LRESULT CALLBACK MainWindow::WndProc(HWND hwnd, UINT message, WPARAM wParam, LPA
 		::SetWindowLongPtrW(
 			hwnd,
 			GWLP_USERDATA,
-			PtrToUlong(_this)
+			(LONG_PTR)_this
 		);
 
 		result = 1;
 	}
 	else
 	{
-		MainWindow *pDemoApp = reinterpret_cast<MainWindow *>(static_cast<LONG_PTR>(::GetWindowLongPtrW(hwnd, GWLP_USERDATA)));
+		LONG_PTR lpter = GetWindowLongPtrW(hwnd, GWLP_USERDATA);
+		MainWindow* pDemoApp = (MainWindow*)lpter;
 
 		bool wasHandled = false;
 

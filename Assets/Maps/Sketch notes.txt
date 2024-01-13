@@ -1,0 +1,6 @@
+640x480 resolution
+
+Mermaid
+128, 128
+
+Boss 256, 256
